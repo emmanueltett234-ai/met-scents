@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { ProductImage } from "@/components/products/product-image";
 import { ProductDetailActions } from "@/components/products/product-detail-actions";
 import { Badge } from "@/components/ui/badge";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 import { getProductBySlug } from "@/lib/data/products";
 import { getSettings } from "@/lib/data/settings";
 import { GENDER_LABELS } from "@/types";
@@ -41,14 +42,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </nav>
 
       <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
-        <ProductImage
-          src={product.image_url}
-          brand={product.brand}
-          name={product.name}
-          className="aspect-[4/5] w-full lg:sticky lg:top-28"
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          priority
-        />
+        <div className="relative p-3 lg:sticky lg:top-28 lg:self-start">
+          <CornerTicks className="text-border" />
+          <ProductImage
+            src={product.image_url}
+            brand={product.brand}
+            name={product.name}
+            className="aspect-[4/5] w-full"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority
+          />
+        </div>
 
         <div className="lg:pt-4">
           <div className="mb-4 flex flex-wrap gap-2">
@@ -57,6 +61,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Badge variant="outline">{GENDER_LABELS[product.gender]}</Badge>
           </div>
 
+          <p className="kicker mb-2 text-muted-foreground/70">Specimen Record</p>
           <p className="text-xs uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
           <h1 className="mt-2 font-serif text-4xl leading-[1.05] sm:text-5xl">{product.name}</h1>
 

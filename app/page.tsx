@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, MessageCircle, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, MessageCircle, ShieldCheck, Beaker, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 import { ProductGrid } from "@/components/products/product-grid";
 import { getFeaturedProducts } from "@/lib/data/products";
 
@@ -25,7 +26,7 @@ const REASONS = [
     body: "No call centres. Message the shop directly and get a real answer.",
   },
   {
-    icon: Sparkles,
+    icon: Beaker,
     title: "Decant Before You Commit",
     body: "Try a fragrance in 10ml before deciding on a full bottle.",
   },
@@ -45,13 +46,14 @@ export default async function HomePage() {
       {/* Hero                                                              */}
       {/* ---------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-ink text-cream">
+        <div className="lab-grid pointer-events-none absolute inset-0 text-cream/[0.05]" aria-hidden />
         <div
-          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.22] blur-3xl"
-          style={{ background: "radial-gradient(circle, #8A3A29 0%, transparent 70%)" }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.2] blur-3xl"
+          style={{ background: "radial-gradient(circle, #B8672A 0%, transparent 70%)" }}
         />
         <div
-          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full opacity-[0.14] blur-3xl"
-          style={{ background: "radial-gradient(circle, #C9836A 0%, transparent 70%)" }}
+          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full opacity-[0.12] blur-3xl"
+          style={{ background: "radial-gradient(circle, #D99456 0%, transparent 70%)" }}
         />
         <Image
           src="/logo.png"
@@ -59,37 +61,40 @@ export default async function HomePage() {
           width={900}
           height={900}
           aria-hidden
-          className="pointer-events-none absolute right-[-10%] top-1/2 hidden w-[560px] -translate-y-1/2 opacity-[0.06] invert md:block"
+          className="pointer-events-none absolute right-[-10%] top-1/2 hidden w-[560px] -translate-y-1/2 opacity-[0.05] invert md:block"
         />
 
         <div className="container-luxe relative flex min-h-[88vh] flex-col justify-center py-32">
-          <p className="kicker mb-7 flex items-center gap-2 text-accent-light animate-fade-up">
-            <span className="h-px w-8 bg-accent-light" /> Met Scents · Accra, Ghana
-          </p>
-          <h1 className="max-w-3xl font-serif text-[13vw] font-medium leading-[0.98] text-balance sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
-            Find a Scent
-            <br />
-            That Becomes <span className="italic text-accent-light">Yours.</span>
-          </h1>
-          <p className="mt-8 max-w-md text-base leading-relaxed text-cream/70 animate-fade-up [animation-delay:220ms]">
-            Discover carefully selected fragrances and premium decants, curated for people who
-            take scent seriously.
-          </p>
+          <div className="relative max-w-3xl py-8 pl-8 sm:pl-10">
+            <CornerTicks className="text-accent-light/60" />
+            <p className="kicker mb-7 flex items-center gap-2 text-accent-light animate-fade-up">
+              <span className="h-px w-8 bg-accent-light" /> Met Scents · Specimen Catalogue Vol. I
+            </p>
+            <h1 className="font-serif text-[13vw] font-medium leading-[0.98] text-balance sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
+              Find a Scent
+              <br />
+              That Becomes <span className="italic text-accent-light">Yours.</span>
+            </h1>
+            <p className="mt-8 max-w-md text-base leading-relaxed text-cream/70 animate-fade-up [animation-delay:220ms]">
+              Discover carefully selected fragrances and premium decants, curated for people who
+              take scent seriously.
+            </p>
 
-          <div className="mt-11 flex flex-wrap gap-4 animate-fade-up [animation-delay:340ms]">
-            <Button asChild variant="gold" size="lg">
-              <Link href="/catalogue">
-                Explore Fragrances <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-cream/30 text-cream hover:bg-cream hover:text-ink"
-            >
-              <Link href="/catalogue?view=decants">Shop Decants</Link>
-            </Button>
+            <div className="mt-11 flex flex-wrap gap-4 animate-fade-up [animation-delay:340ms]">
+              <Button asChild variant="gold" size="lg">
+                <Link href="/catalogue">
+                  Explore Fragrances <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-cream/30 text-cream hover:bg-cream hover:text-ink"
+              >
+                <Link href="/catalogue?view=decants">Shop Decants</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -115,7 +120,7 @@ export default async function HomePage() {
         <section className="container-luxe py-24 sm:py-28">
           <div className="mb-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="kicker mb-3">Curated Selection</p>
+              <p className="kicker mb-3">Entry No. 01 — Curated Selection</p>
               <h2 className="font-serif text-3xl sm:text-4xl">Featured Fragrances</h2>
             </div>
             <Link
@@ -231,8 +236,9 @@ export default async function HomePage() {
               ["10ml", "Decants From"],
               ["1:1", "Personal Service"],
             ].map(([stat, label]) => (
-              <div key={label} className="border border-border bg-cream p-8 text-center">
-                <p className="font-serif text-4xl text-accent-dark">{stat}</p>
+              <div key={label} className="relative border border-border bg-cream p-8 text-center">
+                <CornerTicks className="text-border" />
+                <p className="specimen-index text-4xl text-accent-dark">{stat}</p>
                 <p className="mt-2 text-xs uppercase tracking-widest2 text-muted-foreground">{label}</p>
               </div>
             ))}

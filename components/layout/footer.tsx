@@ -6,10 +6,14 @@ import { buildGeneralWhatsappLink } from "@/lib/notifications/whatsapp";
 export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | null }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-cream/10 bg-ink text-cream">
-      <div className="container-luxe grid gap-12 py-20 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+    <footer className="relative overflow-hidden border-t border-cream/10 bg-ink text-cream">
+      <div className="lab-grid pointer-events-none absolute inset-0 text-cream/[0.04]" aria-hidden />
+      <div className="container-luxe relative grid gap-12 py-20 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div>
           <Logo dark className="mb-5" />
+          <p className="specimen-index mb-4 text-[10px] uppercase tracking-widest2 text-cream/40">
+            Specimen Catalogue · Est. Accra
+          </p>
           <p className="max-w-xs text-sm leading-relaxed text-cream/60">
             A curated fragrance boutique in Accra — authentic decants and full bottles,
             hand-selected and personally followed up on, one enquiry at a time.

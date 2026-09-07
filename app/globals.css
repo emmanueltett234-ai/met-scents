@@ -4,32 +4,34 @@
 
 @layer base {
   :root {
-    --background: 42 38% 95%;
-    --foreground: 30 22% 8%;
+    /* Apothecary Laboratory — aged label paper + bottle-glass ink + amber tincture */
+    --background: 42 32% 92%;
+    --foreground: 150 22% 8%;
 
-    --card: 40 45% 99%;
-    --card-foreground: 30 22% 8%;
+    --card: 42 38% 97%;
+    --card-foreground: 150 22% 8%;
 
-    --primary: 30 22% 8%;
-    --primary-foreground: 42 38% 95%;
+    --primary: 150 22% 8%;
+    --primary-foreground: 42 32% 92%;
 
-    --secondary: 40 40% 88%;
-    --secondary-foreground: 30 22% 8%;
+    --secondary: 40 26% 84%;
+    --secondary-foreground: 150 22% 8%;
 
-    --muted: 40 30% 90%;
-    --muted-foreground: 30 8% 40%;
+    --muted: 40 20% 87%;
+    --muted-foreground: 145 8% 36%;
 
-    --accent: 9 52% 35%;
-    --accent-foreground: 42 38% 95%;
+    --accent: 28 60% 42%;
+    --accent-foreground: 42 32% 92%;
 
-    --destructive: 4 55% 40%;
-    --destructive-foreground: 42 38% 95%;
+    --destructive: 8 48% 38%;
+    --destructive-foreground: 42 32% 92%;
 
-    --border: 38 32% 84%;
-    --input: 38 30% 80%;
-    --ring: 9 52% 35%;
+    --border: 40 20% 78%;
+    --input: 40 18% 74%;
+    --ring: 28 60% 42%;
 
-    --radius: 0.125rem;
+    /* Sharp, printed-label edges rather than soft rounded corners. */
+    --radius: 0rem;
   }
 }
 
@@ -60,8 +62,9 @@
   .text-balance {
     text-wrap: balance;
   }
+  /* Micro-labels read like specimen ledger entries — set in mono, not prose. */
   .kicker {
-    @apply text-[11px] font-medium uppercase tracking-widest2 text-accent-dark;
+    @apply font-mono text-[11px] font-medium uppercase tracking-widest2 text-accent-dark;
   }
   .container-luxe {
     @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
@@ -82,5 +85,23 @@
   }
   .link-underline:hover {
     background-size: 100% 1px;
+  }
+  /* Graph-paper / lab-bench dot field. Pair with a `text-*` colour utility —
+     the dots pick up `currentColor`, so opacity/tint is controlled there. */
+  .lab-grid {
+    background-image: radial-gradient(currentColor 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  /* A rubber-stamped, slightly imprecise mark — used sparingly for New /
+     Best Seller / Limited callouts so it reads like it was actually
+     stamped onto the label rather than printed. */
+  .stamp-mark {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-dashed;
+    transform: rotate(-7deg);
+  }
+  /* Fixed-width specimen index numbers ("N°014") — tabular figures so the
+     digits never jitter in width as they change. */
+  .specimen-index {
+    @apply font-mono tabular-nums tracking-wider;
   }
 }

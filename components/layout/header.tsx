@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, Search, ShoppingBag, MessageCircle, X } from "lucide-react";
+import { Menu, Search, FlaskConical, MessageCircle, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { useSelectionStore } from "@/lib/store/selection";
@@ -149,9 +149,9 @@ export function Header({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
           )}
 
           <Link href="/selection" aria-label="My Selection" className="relative flex h-11 w-11 items-center justify-center hover:opacity-70">
-            <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
+            <FlaskConical className="h-[18px] w-[18px]" strokeWidth={1.5} />
             {mounted && count > 0 && (
-              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-medium text-cream">
+              <span className="specimen-index absolute right-0 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-medium text-cream">
                 {count}
               </span>
             )}

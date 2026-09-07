@@ -9,7 +9,7 @@ import { useSelectionStore } from "@/lib/store/selection";
 import { GENDER_LABELS, type Product } from "@/types";
 import { useState, useEffect } from "react";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, index }: { product: Product; index?: number }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -39,16 +39,23 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         )}
         {(product.new_arrival || product.best_seller) && product.availability === "available" && (
-          <div className="absolute left-3 top-3">
-            <span className="bg-ink px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest2 text-cream">
-              {product.new_arrival ? "New" : "Best Seller"}
+          <div className="absolute right-3 top-3">
+            <span className="stamp-mark h-14 w-14 whitespace-pre-line border-stamp bg-cream/90 p-1 text-center text-[9px] font-medium uppercase leading-tight tracking-wider text-stamp">
+              {product.new_arrival ? "New\nStock" : "Best\nSeller"}
             </span>
           </div>
         )}
       </Link>
 
       <div className="flex flex-1 flex-col pt-4">
-        <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
+          {typeof index === "number" && (
+            <p className="specimen-index shrink-0 text-[10px] text-muted-foreground/70">
+              N°{String(index).padStart(3, "0")}
+            </p>
+          )}
+        </div>
         <Link href={`/products/${product.slug}`}>
           <h3 className="mt-0.5 font-serif text-lg leading-tight text-ink transition-colors group-hover:text-accent-dark">
             {product.name}
@@ -66,7 +73,7 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-          <p className="font-serif text-base text-ink">
+          <p className="font-mono text-sm text-ink">
             {cheapest ? (
               <>
                 {variants.length > 1 && <span className="text-xs text-muted-foreground">from </span>}

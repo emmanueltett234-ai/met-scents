@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, ShoppingBag, ArrowLeft } from "lucide-react";
+import { X, FlaskConical, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductImage } from "@/components/products/product-image";
+import { CornerTicks } from "@/components/ui/corner-ticks";
 import { EnquiryForm } from "@/components/selection/enquiry-form";
 import { useSelectionStore } from "@/lib/store/selection";
 import { formatGHS } from "@/lib/currency";
@@ -22,7 +23,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
   if (items.length === 0) {
     return (
       <div className="container-luxe flex flex-col items-center gap-4 py-32 text-center">
-        <ShoppingBag className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
+        <FlaskConical className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
         <h1 className="font-serif text-3xl">Your Selection is Empty</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           Browse the catalogue and tap the <span className="font-medium text-ink">+</span> on any
@@ -63,7 +64,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
                   </Link>
                   <p className="text-sm text-muted-foreground">{item.size}</p>
                 </div>
-                <p className="font-serif text-base">{formatGHS(item.price)}</p>
+                <p className="font-mono text-base">{formatGHS(item.price)}</p>
                 <button
                   aria-label={`Remove ${item.name}`}
                   onClick={() => remove(item.variantId)}
@@ -79,7 +80,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
             <span className="text-sm uppercase tracking-widest2 text-muted-foreground">
               Estimated Total
             </span>
-            <span className="font-serif text-2xl">{formatGHS(total)}</span>
+            <span className="font-mono text-2xl">{formatGHS(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">
             Final pricing is confirmed by the shop owner when they follow up — this total reflects
@@ -95,7 +96,8 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
         </div>
 
         <div className="lg:col-span-2">
-          <div className="border border-border bg-white p-6 lg:sticky lg:top-28">
+          <div className="relative border border-border bg-white p-6 lg:sticky lg:top-28">
+            <CornerTicks className="text-border" />
             <h2 className="mb-1 font-serif text-xl">Your Details</h2>
             <p className="mb-6 text-sm text-muted-foreground">
               We&apos;ll use these to confirm availability and arrange your order.

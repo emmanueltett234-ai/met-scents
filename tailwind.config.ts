@@ -16,28 +16,37 @@ const config: Config = {
     extend: {
       colors: {
         // ---------------------------------------------------------------
-        // Brand palette — built from the logo, which is pure black linework
-        // on a light ground with no inherent colour of its own. Rather than
-        // default to a generic "perfume = black & gold" cliché, the accent
-        // is a deep terracotta/oxblood drawn from raw perfume oil and amber
-        // glass — used sparingly, the way a real fragrance house would.
+        // Brand palette — "Apothecary Laboratory". Deliberately not another
+        // black-and-gold perfume boutique: this reads like a fragrance
+        // chemist's specimen room. `ink` is bottle-glass green-black,
+        // `cream`/`parchment` are aged label paper, and the accent is an
+        // amber tincture drawn straight from a dropper bottle. A small
+        // `lab` (bench-glass green) and `stamp` (rubber-stamp red) round
+        // out the two colours that only ever appear as accents, never as
+        // a base.
         // ---------------------------------------------------------------
-        ink: "#17130F",
-        cream: "#FAF5EC",
-        parchment: "#EFE3CB",
+        ink: "#0F1C15",
+        cream: "#F3EEDF",
+        parchment: "#E8DCC0",
         accent: {
-          DEFAULT: "#8A3A29",
-          light: "#C9836A",
-          dark: "#5E2719",
+          DEFAULT: "#B8672A",
+          light: "#D99456",
+          dark: "#7A3F16",
           foreground: "hsl(var(--accent-foreground))",
         },
         // Kept as an alias so nothing that already references `gold-*`
-        // breaks — it now resolves to the same terracotta accent above.
+        // breaks — it now resolves to the amber tincture accent above.
         gold: {
-          DEFAULT: "#8A3A29",
-          light: "#C9836A",
-          dark: "#5E2719",
+          DEFAULT: "#B8672A",
+          light: "#D99456",
+          dark: "#7A3F16",
         },
+        lab: {
+          DEFAULT: "#2F4A3C",
+          light: "#4C6B57",
+          dark: "#182B21",
+        },
+        stamp: "#9C3B2E",
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -67,6 +76,7 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       letterSpacing: {
         widest2: "0.28em",
@@ -75,6 +85,12 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        "lab-grid": "radial-gradient(currentColor 1px, transparent 1px)",
+      },
+      backgroundSize: {
+        "lab-grid": "18px 18px",
       },
       keyframes: {
         "fade-up": {

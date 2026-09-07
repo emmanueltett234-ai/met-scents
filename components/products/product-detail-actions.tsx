@@ -62,7 +62,7 @@ export function ProductDetailActions({
               }`}
             >
               <span className="text-sm">{v.size}</span>
-              <span className="font-serif text-base">{formatGHS(v.price)}</span>
+              <span className="font-mono text-base">{formatGHS(v.price)}</span>
             </button>
           ))}
         </div>
