@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -72,8 +73,13 @@ export default async function AdminEnquiriesPage({
             {enquiries.map((e) => (
               <TableRow key={e.id} className="cursor-pointer">
                 <TableCell>
-                  <Link href={`/admin/enquiries/${e.id}`} className="font-medium hover:text-gold-dark">
+                  <Link href={`/admin/enquiries/${e.id}`} className="flex items-center gap-2 font-medium hover:text-accent-dark">
                     {e.customer_name}
+                    {(e.whatsapp_status === "failed" || e.email_status === "failed") && (
+                      <span title="A notification failed to send — the enquiry itself was saved">
+                        <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                      </span>
+                    )}
                   </Link>
                 </TableCell>
                 <TableCell className="text-sm">{e.whatsapp_number}</TableCell>

@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost } from "next/font/google";
+import { Fraunces, Archivo } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
+import { getSettings } from "@/lib/data/settings";
 import "./globals.css";
 
-const serif = Cormorant_Garamond({
+// Fraunces — a soft, editorial display serif for headings; its optical-size
+// axis gives large type real character without feeling like a default
+// "elegant serif" pick.
+const serif = Fraunces({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
 });
 
-const sans = Jost({
+// Archivo — a confident, slightly grotesque sans for body copy and UI,
+// steering clear of the Inter-everywhere "AI template" look.
+const sans = Archivo({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -37,11 +44,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSettings();
+
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body className="font-sans">
-        <SiteChrome>{children}</SiteChrome>
+        <SiteChrome ownerWhatsappNumber={settings.owner_whatsapp_number}>{children}</SiteChrome>
         <Toaster position="bottom-center" richColors closeButton />
       </body>
     </html>

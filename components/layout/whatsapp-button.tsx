@@ -3,13 +3,12 @@
 import { MessageCircle } from "lucide-react";
 import { buildGeneralWhatsappLink } from "@/lib/notifications/whatsapp";
 
-export function WhatsappButton() {
-  const ownerNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP || "";
-  if (!ownerNumber) return null;
+export function WhatsappButton({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | null }) {
+  if (!ownerWhatsappNumber) return null;
 
   return (
     <a
-      href={buildGeneralWhatsappLink(ownerNumber)}
+      href={buildGeneralWhatsappLink(ownerWhatsappNumber)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

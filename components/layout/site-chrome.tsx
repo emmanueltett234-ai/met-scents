@@ -10,7 +10,13 @@ import { WhatsappButton } from "@/components/layout/whatsapp-button";
  * and shouldn't show the customer-facing header, footer or floating WhatsApp
  * button — this wrapper hides them for any /admin route.
  */
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({
+  children,
+  ownerWhatsappNumber,
+}: {
+  children: React.ReactNode;
+  ownerWhatsappNumber: string | null;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -18,10 +24,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header />
+      <Header ownerWhatsappNumber={ownerWhatsappNumber} />
       <main className="min-h-[60vh]">{children}</main>
-      <Footer />
-      <WhatsappButton />
+      <Footer ownerWhatsappNumber={ownerWhatsappNumber} />
+      <WhatsappButton ownerWhatsappNumber={ownerWhatsappNumber} />
     </>
   );
 }

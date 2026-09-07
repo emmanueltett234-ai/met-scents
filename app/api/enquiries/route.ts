@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { enquirySubmissionSchema } from "@/lib/validation";
 import { sendOwnerEnquiryEmail } from "@/lib/notifications/email";
+import { buildOwnerEnquiryWhatsappMessage } from "@/lib/notifications/whatsapp";
+import { isWhatsappApiConfigured, sendOwnerWhatsappNotification } from "@/lib/notifications/whatsapp-api";
 
 export const dynamic = "force-dynamic";
 
@@ -165,22 +167,85 @@ export async function POST(req: NextRequest) {
     // is silently lost; the admin dashboard will show the row with no items.
   }
 
-  // --- Notifications (best-effort, never blocks the response) ---------------
-  sendOwnerEnquiryEmail({
-    customerName: input.customer_name,
-    whatsappNumber: input.whatsapp_number,
-    email: input.email,
-    location: input.location,
-    message: input.message,
-    items: lineItems,
-    estimatedTotal,
-  }).catch((err) => console.error("Email notification failed:", err));
+  // --- Notifications ----------------------------------------------------
+  // The enquiry is already saved at this point — nothing below can ever
+  // cause it to be lost, and the customer is never told a notification
+  // "sent" when it didn't. Every outcome is written back onto the enquiry
+  // row so /admin/enquiries always shows the truth.
+  const { data: settings } = await supabase.from("settings").select("*").eq("id", "default").maybeSingle();
+
+  const ownerWhatsappNumber = settings?.owner_whatsapp_number || process.env.NEXT_PUBLIC_OWNER_WHATSAPP || "";
+  const ownerEmail = settings?.owner_notification_email || process.env.OWNER_NOTIFICATION_EMAIL || "";
+  const whatsappEnabled = settings?.whatsapp_notifications_enabled ?? true;
+  const emailEnabled = settings?.email_notifications_enabled ?? true;
+
+  let whatsappStatus: "not_configured" | "sent" | "failed" = "not_configured";
+  let whatsappError: string | null = null;
+
+  if (whatsappEnabled && ownerWhatsappNumber) {
+    if (isWhatsappApiConfigured()) {
+      const message = buildOwnerEnquiryWhatsappMessage({
+        customerName: input.customer_name,
+        whatsappNumber: input.whatsapp_number,
+        items: lineItems,
+        estimatedTotal,
+        message: input.message,
+      });
+      const result = await sendOwnerWhatsappNotification({ toNumber: ownerWhatsappNumber, message });
+      if (result.ok) {
+        whatsappStatus = "sent";
+      } else {
+        whatsappStatus = "failed";
+        whatsappError = result.error;
+        console.error("WhatsApp API notification failed:", result.error);
+      }
+    }
+    // If the API isn't configured, whatsappStatus stays "not_configured" —
+    // that's expected, not an error: the customer-initiated wa.me fallback
+    // (always shown on the confirmation screen) is the primary channel
+    // until a WhatsApp Business API is set up.
+  }
+
+  let emailStatus: "not_configured" | "sent" | "failed" = "not_configured";
+  let emailError: string | null = null;
+
+  if (emailEnabled && ownerEmail) {
+    const result = await sendOwnerEnquiryEmail({
+      customerName: input.customer_name,
+      whatsappNumber: input.whatsapp_number,
+      email: input.email,
+      location: input.location,
+      message: input.message,
+      items: lineItems,
+      estimatedTotal,
+    }).catch((err) => ({ sent: false as const, reason: err instanceof Error ? err.message : "Unknown error" }));
+
+    if (result.sent) {
+      emailStatus = "sent";
+    } else if (result.reason !== "Email notifications not configured") {
+      emailStatus = "failed";
+      emailError = result.reason ?? null;
+    }
+  }
+
+  await supabase
+    .from("enquiries")
+    .update({
+      whatsapp_status: whatsappStatus,
+      whatsapp_error: whatsappError,
+      email_status: emailStatus,
+      email_error: emailError,
+    })
+    .eq("id", enquiry.id);
 
   return NextResponse.json({
     enquiry: {
       id: enquiry.id,
       estimated_total: estimatedTotal,
       items: lineItems,
+      whatsapp_status: whatsappStatus,
+      email_status: emailStatus,
     },
+    ownerWhatsappNumber,
   });
 }

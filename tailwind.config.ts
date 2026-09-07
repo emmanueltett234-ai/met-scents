@@ -15,13 +15,28 @@ const config: Config = {
     },
     extend: {
       colors: {
-        ink: "#141110",
-        cream: "#F7F3EC",
-        parchment: "#EFE7D8",
+        // ---------------------------------------------------------------
+        // Brand palette — built from the logo, which is pure black linework
+        // on a light ground with no inherent colour of its own. Rather than
+        // default to a generic "perfume = black & gold" cliché, the accent
+        // is a deep terracotta/oxblood drawn from raw perfume oil and amber
+        // glass — used sparingly, the way a real fragrance house would.
+        // ---------------------------------------------------------------
+        ink: "#17130F",
+        cream: "#FAF5EC",
+        parchment: "#EFE3CB",
+        accent: {
+          DEFAULT: "#8A3A29",
+          light: "#C9836A",
+          dark: "#5E2719",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        // Kept as an alias so nothing that already references `gold-*`
+        // breaks — it now resolves to the same terracotta accent above.
         gold: {
-          DEFAULT: "#B8935A",
-          light: "#D6B98A",
-          dark: "#8C6B3B",
+          DEFAULT: "#8A3A29",
+          light: "#C9836A",
+          dark: "#5E2719",
         },
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
@@ -37,10 +52,6 @@ const config: Config = {
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

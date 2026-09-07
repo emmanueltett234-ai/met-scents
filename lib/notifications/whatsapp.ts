@@ -12,47 +12,96 @@ export function buildGeneralWhatsappLink(ownerNumber: string): string {
   return `https://wa.me/${normalizeWhatsappNumber(ownerNumber)}?text=${encodeURIComponent(message)}`;
 }
 
+type EnquiryLineItem = Pick<EnquiryItem, "product_name" | "brand" | "size" | "price">;
+
 /**
- * Builds the pre-filled WhatsApp message the OWNER receives when an enquiry
- * comes in — used both server-side (for the admin dashboard "open in
- * WhatsApp" action) and to give the customer a "send via WhatsApp too"
- * option on the confirmation screen.
+ * The OWNER notification message — sent two ways:
+ *  1. Automatically via the WhatsApp Business API, if configured
+ *     (lib/notifications/whatsapp-api.ts).
+ *  2. Always available as a `wa.me` link the CUSTOMER can tap to send it
+ *     themselves — this is the reliable fallback that works with zero setup.
  */
-export function buildEnquiryWhatsappMessage(params: {
+export function buildOwnerEnquiryWhatsappMessage(params: {
   customerName: string;
   whatsappNumber: string;
-  items: Array<Pick<EnquiryItem, "product_name" | "brand" | "size" | "price">>;
+  items: EnquiryLineItem[];
   estimatedTotal: number;
   message?: string | null;
 }): string {
   const lines = [
-    "New fragrance enquiry",
-    `Customer: ${params.customerName}`,
-    `WhatsApp: ${params.whatsappNumber}`,
+    "NEW FRAGRANCE ENQUIRY",
+    "",
+    "Customer:",
+    params.customerName,
+    "WhatsApp:",
+    params.whatsappNumber,
     "",
     "Selected fragrances:",
+    "",
+    ...params.items.flatMap((item, i) => [
+      `${i + 1}. ${item.brand ? `${item.brand} ` : ""}${item.product_name}`,
+      item.size,
+      formatGHS(item.price),
+      "",
+    ]),
+    "Estimated Total:",
+    formatGHS(params.estimatedTotal),
+  ];
+
+  if (params.message) {
+    lines.push("", "Customer message:", `"${params.message}"`);
+  }
+
+  return lines.join("\n").replace(/\n{3,}/g, "\n\n");
+}
+
+/** Link that opens WhatsApp — pre-addressed to the OWNER, enquiry pre-filled. */
+export function buildOwnerEnquiryWhatsappLink(
+  ownerNumber: string,
+  params: Parameters<typeof buildOwnerEnquiryWhatsappMessage>[0]
+): string {
+  const message = buildOwnerEnquiryWhatsappMessage(params);
+  return `https://wa.me/${normalizeWhatsappNumber(ownerNumber)}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * The CUSTOMER-facing message — used by the "Send Enquiry on WhatsApp"
+ * button on the My Selection page, and as the fallback offered anywhere an
+ * enquiry might not have gone through cleanly. Written in the customer's own
+ * voice, addressed to the shop.
+ */
+export function buildCustomerEnquiryWhatsappMessage(params: {
+  items: EnquiryLineItem[];
+  estimatedTotal: number;
+  customerName?: string;
+  location?: string;
+  message?: string | null;
+}): string {
+  const lines = [
+    "Hello, I'm interested in these fragrances:",
+    "",
     ...params.items.map(
       (item, i) =>
-        `${i + 1}. ${item.brand ? `${item.brand} — ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`
+        `${i + 1}. ${item.brand ? `${item.brand} ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`
     ),
     "",
     `Estimated total: ${formatGHS(params.estimatedTotal)}`,
   ];
 
-  if (params.message) {
-    lines.push("", `Message: ${params.message}`);
-  }
+  if (params.customerName) lines.push(`Name: ${params.customerName}`);
+  if (params.location) lines.push(`Location: ${params.location}`);
+  lines.push(params.message ? params.message : "Please let me know about availability.");
 
   return lines.join("\n");
 }
 
-/** Link that opens WhatsApp to the OWNER with the enquiry pre-filled. */
-export function buildOwnerEnquiryWhatsappLink(
-  ownerNumber: string,
-  params: Parameters<typeof buildEnquiryWhatsappMessage>[0]
+/** Link that opens WhatsApp — pre-addressed to the SHOP, from the customer. */
+export function buildCustomerEnquiryWhatsappLink(
+  shopNumber: string,
+  params: Parameters<typeof buildCustomerEnquiryWhatsappMessage>[0]
 ): string {
-  const message = buildEnquiryWhatsappMessage(params);
-  return `https://wa.me/${normalizeWhatsappNumber(ownerNumber)}?text=${encodeURIComponent(message)}`;
+  const message = buildCustomerEnquiryWhatsappMessage(params);
+  return `https://wa.me/${normalizeWhatsappNumber(shopNumber)}?text=${encodeURIComponent(message)}`;
 }
 
 /**
@@ -63,7 +112,7 @@ export function buildOwnerEnquiryWhatsappLink(
 export function buildCustomerReplyWhatsappLink(params: {
   customerWhatsapp: string;
   customerName: string;
-  items: Array<Pick<EnquiryItem, "product_name" | "brand" | "size" | "price">>;
+  items: EnquiryLineItem[];
   estimatedTotal: number;
 }): string {
   const lines = [

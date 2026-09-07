@@ -78,3 +78,20 @@ export const categoryInputSchema = z.object({
 export const enquiryStatusSchema = z.object({
   status: z.enum(["new", "contacted", "pending", "completed", "cancelled"]),
 });
+
+export const settingsInputSchema = z.object({
+  owner_whatsapp_number: z
+    .string()
+    .trim()
+    .regex(whatsappRegex, "Please enter a valid WhatsApp number")
+    .optional()
+    .or(z.literal("")),
+  owner_notification_email: z
+    .string()
+    .trim()
+    .email("Please enter a valid email")
+    .optional()
+    .or(z.literal("")),
+  whatsapp_notifications_enabled: z.boolean(),
+  email_notifications_enabled: z.boolean(),
+});

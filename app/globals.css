@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    --background: 40 33% 97%;
-    --foreground: 20 14% 8%;
+    --background: 42 38% 95%;
+    --foreground: 30 22% 8%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 20 14% 8%;
+    --card: 40 45% 99%;
+    --card-foreground: 30 22% 8%;
 
-    --primary: 20 14% 8%;
-    --primary-foreground: 40 33% 97%;
+    --primary: 30 22% 8%;
+    --primary-foreground: 42 38% 95%;
 
-    --secondary: 38 24% 91%;
-    --secondary-foreground: 20 14% 8%;
+    --secondary: 40 40% 88%;
+    --secondary-foreground: 30 22% 8%;
 
-    --muted: 38 24% 91%;
-    --muted-foreground: 20 8% 38%;
+    --muted: 40 30% 90%;
+    --muted-foreground: 30 8% 40%;
 
-    --accent: 33 38% 52%;
-    --accent-foreground: 20 14% 8%;
+    --accent: 9 52% 35%;
+    --accent-foreground: 42 38% 95%;
 
-    --destructive: 4 60% 45%;
-    --destructive-foreground: 40 33% 97%;
+    --destructive: 4 55% 40%;
+    --destructive-foreground: 42 38% 95%;
 
-    --border: 30 20% 87%;
-    --input: 30 20% 85%;
-    --ring: 33 38% 52%;
+    --border: 38 32% 84%;
+    --input: 38 30% 80%;
+    --ring: 9 52% 35%;
 
-    --radius: 0.25rem;
+    --radius: 0.125rem;
   }
 }
 
@@ -45,17 +45,42 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
   .kicker {
-    @apply text-[11px] font-medium uppercase tracking-widest2 text-gold-dark;
+    @apply text-[11px] font-medium uppercase tracking-widest2 text-accent-dark;
   }
   .container-luxe {
-    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-10;
+    @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
   }
   .divider-gold {
-    @apply h-px w-16 bg-gold;
+    @apply h-px w-16 bg-accent;
+  }
+  .hairline {
+    @apply border border-border;
+  }
+  /* Elegant, restrained underline reveal for inline text links. */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size 0.35s ease;
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
   }
 }

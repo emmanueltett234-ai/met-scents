@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutGrid, Package, Tags, Inbox, Settings, LogOut } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -28,8 +29,8 @@ export function AdminSidebar({ email }: { email?: string }) {
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col border-r border-border bg-white">
       <div className="border-b border-border px-6 py-6">
-        <p className="font-serif text-lg">Met Scents</p>
-        <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">Admin</p>
+        <Logo className="pointer-events-none" />
+        <p className="mt-1 text-[11px] uppercase tracking-widest2 text-muted-foreground">Admin</p>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">

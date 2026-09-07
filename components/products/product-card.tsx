@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Check, Plus } from "lucide-react";
 import { ProductImage } from "@/components/products/product-image";
 import { AvailabilityBadge } from "@/components/products/availability-badge";
-import { Button } from "@/components/ui/button";
 import { formatGHS } from "@/lib/currency";
 import { useSelectionStore } from "@/lib/store/selection";
 import { GENDER_LABELS, type Product } from "@/types";
@@ -27,31 +26,36 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="group flex flex-col">
-      <Link href={`/products/${product.slug}`} className="block">
+      <Link href={`/products/${product.slug}`} className="relative block overflow-hidden border border-transparent transition-colors group-hover:border-border">
         <ProductImage
           src={product.image_url}
           brand={product.brand}
           name={product.name}
           className="aspect-[4/5] w-full"
         />
+        {product.availability !== "available" && (
+          <div className="absolute left-3 top-3">
+            <AvailabilityBadge status={product.availability} />
+          </div>
+        )}
+        {(product.new_arrival || product.best_seller) && product.availability === "available" && (
+          <div className="absolute left-3 top-3">
+            <span className="bg-ink px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest2 text-cream">
+              {product.new_arrival ? "New" : "Best Seller"}
+            </span>
+          </div>
+        )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-2 pt-4">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">
-              {product.brand}
-            </p>
-            <Link href={`/products/${product.slug}`}>
-              <h3 className="font-serif text-lg leading-tight text-ink hover:text-gold-dark">
-                {product.name}
-              </h3>
-            </Link>
-          </div>
-          <AvailabilityBadge status={product.availability} />
-        </div>
+      <div className="flex flex-1 flex-col pt-4">
+        <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
+        <Link href={`/products/${product.slug}`}>
+          <h3 className="mt-0.5 font-serif text-lg leading-tight text-ink transition-colors group-hover:text-accent-dark">
+            {product.name}
+          </h3>
+        </Link>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{GENDER_LABELS[product.gender]}</span>
           {defaultVariant && (
             <>
@@ -61,25 +65,21 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        <p className="font-serif text-base text-ink">
-          {cheapest ? (
-            <>
-              {variants.length > 1 && <span className="text-xs text-muted-foreground">from </span>}
-              {formatGHS(cheapest.price)}
-            </>
-          ) : (
-            "Price on request"
-          )}
-        </p>
+        <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+          <p className="font-serif text-base text-ink">
+            {cheapest ? (
+              <>
+                {variants.length > 1 && <span className="text-xs text-muted-foreground">from </span>}
+                {formatGHS(cheapest.price)}
+              </>
+            ) : (
+              <span className="text-sm text-muted-foreground">Price on request</span>
+            )}
+          </p>
 
-        <div className="mt-auto flex items-center gap-2 pt-3">
-          <Button asChild variant="outline" size="sm" className="flex-1">
-            <Link href={`/products/${product.slug}`}>View Details</Link>
-          </Button>
-          <Button
-            variant={alreadyAdded ? "ghost" : "gold"}
-            size="sm"
-            className="flex-1"
+          <button
+            type="button"
+            aria-label={alreadyAdded ? "Added to selection" : "Add to selection"}
             disabled={!isOrderable || alreadyAdded}
             onClick={() => {
               if (!defaultVariant) return;
@@ -94,19 +94,10 @@ export function ProductCard({ product }: { product: Product }) {
                 imageUrl: product.image_url,
               });
             }}
+            className="flex h-9 w-9 items-center justify-center border border-ink text-ink transition-colors hover:bg-ink hover:text-cream disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
           >
-            {alreadyAdded ? (
-              <>
-                <Check className="h-3.5 w-3.5" /> Added
-              </>
-            ) : isOrderable ? (
-              <>
-                <Plus className="h-3.5 w-3.5" /> Enquire
-              </>
-            ) : (
-              "Unavailable"
-            )}
-          </Button>
+            {alreadyAdded ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          </button>
         </div>
       </div>
     </div>

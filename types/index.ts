@@ -4,6 +4,17 @@ export type Availability = "available" | "low_stock" | "out_of_stock" | "coming_
 
 export type EnquiryStatus = "new" | "contacted" | "pending" | "completed" | "cancelled";
 
+export type NotificationStatus = "not_configured" | "sent" | "failed";
+
+export interface StoreSettings {
+  id: string;
+  owner_whatsapp_number: string | null;
+  owner_notification_email: string | null;
+  whatsapp_notifications_enabled: boolean;
+  email_notifications_enabled: boolean;
+  updated_at: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -67,6 +78,10 @@ export interface Enquiry {
   message: string | null;
   estimated_total: number;
   status: EnquiryStatus;
+  whatsapp_status: NotificationStatus;
+  whatsapp_error: string | null;
+  email_status: NotificationStatus;
+  email_error: string | null;
   created_at: string;
   updated_at: string;
   enquiry_items?: EnquiryItem[];

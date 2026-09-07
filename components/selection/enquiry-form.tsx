@@ -9,12 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useSelectionStore } from "@/lib/store/selection";
-import { buildOwnerEnquiryWhatsappLink } from "@/lib/notifications/whatsapp";
+import { useLastEnquiryStore } from "@/lib/store/last-enquiry";
+import { buildCustomerEnquiryWhatsappLink } from "@/lib/notifications/whatsapp";
 
-export function EnquiryForm() {
+export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | null }) {
   const router = useRouter();
   const items = useSelectionStore((s) => s.items);
   const clear = useSelectionStore((s) => s.clear);
+  const setLastEnquiry = useLastEnquiryStore((s) => s.set);
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -26,10 +28,22 @@ export function EnquiryForm() {
   });
   const [submitting, setSubmitting] = useState<"save" | "whatsapp" | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   function update(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
   }
+
+  const localWhatsappFallback =
+    items.length > 0 && ownerWhatsappNumber
+      ? buildCustomerEnquiryWhatsappLink(ownerWhatsappNumber, {
+          items: items.map((i) => ({ product_name: i.name, brand: i.brand, size: i.size, price: i.price })),
+          estimatedTotal: items.reduce((sum, i) => sum + i.price, 0),
+          customerName: form.customer_name || undefined,
+          location: form.location || undefined,
+          message: form.message || undefined,
+        })
+      : null;
 
   async function submit(via: "save" | "whatsapp") {
     if (items.length === 0) {
@@ -38,6 +52,7 @@ export function EnquiryForm() {
     }
     setSubmitting(via);
     setErrors({});
+    setSubmitError(null);
 
     try {
       const res = await fetch("/api/enquiries", {
@@ -53,28 +68,39 @@ export function EnquiryForm() {
 
       if (!res.ok) {
         if (data.fieldErrors) setErrors(data.fieldErrors);
-        toast.error(data.error || "Something went wrong. Please try again.");
+        setSubmitError(
+          data.error ||
+            "We couldn't submit your enquiry. Please try again or contact us directly on WhatsApp."
+        );
         return;
       }
 
-      if (via === "whatsapp") {
-        const ownerNumber = process.env.NEXT_PUBLIC_OWNER_WHATSAPP || "";
-        if (ownerNumber) {
-          const link = buildOwnerEnquiryWhatsappLink(ownerNumber, {
-            customerName: form.customer_name,
-            whatsappNumber: form.whatsapp_number,
-            items: data.enquiry.items,
-            estimatedTotal: data.enquiry.estimated_total,
-            message: form.message,
-          });
-          window.open(link, "_blank", "noopener,noreferrer");
-        }
+      setLastEnquiry({
+        customerName: form.customer_name,
+        whatsappNumber: form.whatsapp_number,
+        items: data.enquiry.items,
+        estimatedTotal: data.enquiry.estimated_total,
+        whatsappStatus: data.enquiry.whatsapp_status,
+        ownerWhatsappNumber: data.ownerWhatsappNumber || ownerWhatsappNumber,
+      });
+
+      if (via === "whatsapp" && ownerWhatsappNumber) {
+        const link = buildCustomerEnquiryWhatsappLink(ownerWhatsappNumber, {
+          items: data.enquiry.items,
+          estimatedTotal: data.enquiry.estimated_total,
+          customerName: form.customer_name,
+          location: form.location,
+          message: form.message,
+        });
+        window.open(link, "_blank", "noopener,noreferrer");
       }
 
       clear();
       router.push("/enquiry/thank-you");
-    } catch (err) {
-      toast.error("Network error — please check your connection and try again.");
+    } catch {
+      setSubmitError(
+        "We couldn't submit your enquiry. Please try again or contact us directly on WhatsApp."
+      );
     } finally {
       setSubmitting(null);
     }
@@ -84,7 +110,7 @@ export function EnquiryForm() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        submit("save");
+        submit(ownerWhatsappNumber ? "whatsapp" : "save");
       }}
       className="space-y-5"
     >
@@ -160,27 +186,64 @@ export function EnquiryForm() {
         />
       </div>
 
-      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-        <Button type="submit" size="lg" variant="gold" disabled={submitting !== null} className="flex-1">
-          {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          Send My Selection
-        </Button>
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          disabled={submitting !== null}
-          onClick={() => submit("whatsapp")}
-          className="flex-1 border-[#25D366]/50 text-[#128C7E] hover:bg-[#25D366] hover:text-white"
-        >
-          {submitting === "whatsapp" ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <MessageCircle className="h-4 w-4" />
+      {submitError && (
+        <div className="border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          <p>{submitError}</p>
+          {localWhatsappFallback && (
+            <a
+              href={localWhatsappFallback}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest2 underline"
+            >
+              <MessageCircle className="h-3.5 w-3.5" /> Contact us on WhatsApp instead
+            </a>
           )}
-          Send via WhatsApp
-        </Button>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+        {ownerWhatsappNumber ? (
+          <>
+            <Button
+              type="submit"
+              size="lg"
+              variant="gold"
+              disabled={submitting !== null}
+              className="flex-1 bg-[#128C7E] text-white hover:bg-[#0f6f63]"
+            >
+              {submitting === "whatsapp" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <MessageCircle className="h-4 w-4" />
+              )}
+              Send Enquiry on WhatsApp
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              disabled={submitting !== null}
+              onClick={() => submit("save")}
+              className="flex-1"
+            >
+              {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Save Enquiry Only
+            </Button>
+          </>
+        ) : (
+          <Button type="submit" size="lg" variant="gold" disabled={submitting !== null} className="flex-1">
+            {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            Send Enquiry
+          </Button>
+        )}
       </div>
+      {ownerWhatsappNumber && (
+        <p className="text-xs text-muted-foreground">
+          &ldquo;Send Enquiry on WhatsApp&rdquo; saves your enquiry and opens WhatsApp with everything
+          pre-filled — the fastest way to reach us.
+        </p>
+      )}
     </form>
   );
 }

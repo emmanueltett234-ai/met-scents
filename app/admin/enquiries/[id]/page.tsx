@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageCircle, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, MessageCircle, Mail, MapPin, AlertTriangle, CheckCircle2, MinusCircle } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { EnquiryStatusSelect } from "@/components/admin/enquiry-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,6 +98,20 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader><CardTitle>Notifications</CardTitle></CardHeader>
+            <CardContent className="space-y-3 pt-0 text-sm">
+              <NotificationRow label="WhatsApp" status={enquiry.whatsapp_status} error={enquiry.whatsapp_error} />
+              <NotificationRow label="Email" status={enquiry.email_status} error={enquiry.email_error} />
+              {(enquiry.whatsapp_status === "failed" || enquiry.email_status === "failed") && (
+                <p className="text-xs text-muted-foreground">
+                  The enquiry itself was saved successfully — only the automatic notification
+                  failed. Use &ldquo;Message on WhatsApp&rdquo; below to follow up directly.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
           <Button asChild variant="gold" size="lg" className="w-full">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="h-4 w-4" /> Message on WhatsApp
@@ -106,5 +120,35 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
         </div>
       </div>
     </AdminShell>
+  );
+}
+
+function NotificationRow({
+  label,
+  status,
+  error,
+}: {
+  label: string;
+  status: string;
+  error: string | null;
+}) {
+  const config = {
+    sent: { icon: CheckCircle2, text: "Sent", className: "text-emerald-700" },
+    failed: { icon: AlertTriangle, text: "Failed", className: "text-destructive" },
+    not_configured: { icon: MinusCircle, text: "Not sent automatically", className: "text-muted-foreground" },
+  }[status] ?? { icon: MinusCircle, text: status, className: "text-muted-foreground" };
+
+  const Icon = config.icon;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <span className="text-muted-foreground">{label}</span>
+        <span className={`flex items-center gap-1.5 font-medium ${config.className}`}>
+          <Icon className="h-3.5 w-3.5" /> {config.text}
+        </span>
+      </div>
+      {error && <p className="mt-1 text-xs text-destructive/80">{error}</p>}
+    </div>
   );
 }

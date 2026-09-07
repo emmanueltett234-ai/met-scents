@@ -2,14 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Check, Plus } from "lucide-react";
+import { Check, MessageCircle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AvailabilityBadge } from "@/components/products/availability-badge";
 import { formatGHS } from "@/lib/currency";
 import { useSelectionStore } from "@/lib/store/selection";
+import { buildCustomerEnquiryWhatsappLink } from "@/lib/notifications/whatsapp";
 import type { Product } from "@/types";
 
-export function ProductDetailActions({ product }: { product: Product }) {
+export function ProductDetailActions({
+  product,
+  ownerWhatsappNumber,
+}: {
+  product: Product;
+  ownerWhatsappNumber: string | null;
+}) {
   const variants = product.product_variants ?? [];
   const [selectedId, setSelectedId] = useState(variants[0]?.id);
   const [mounted, setMounted] = useState(false);
@@ -27,11 +34,19 @@ export function ProductDetailActions({ product }: { product: Product }) {
     return <p className="text-sm text-muted-foreground">Pricing coming soon — please check back.</p>;
   }
 
+  const whatsappLink =
+    selected && ownerWhatsappNumber
+      ? buildCustomerEnquiryWhatsappLink(ownerWhatsappNumber, {
+          items: [{ product_name: product.name, brand: product.brand, size: selected.size, price: selected.price }],
+          estimatedTotal: selected.price,
+        })
+      : null;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div>
         <p className="mb-3 text-[11px] font-medium uppercase tracking-widest2 text-muted-foreground">
-          Select Size
+          Available Sizes
         </p>
         <div className="flex flex-wrap gap-3">
           {variants.map((v) => (
@@ -86,18 +101,27 @@ export function ProductDetailActions({ product }: { product: Product }) {
             </>
           ) : isOrderable ? (
             <>
-              <Plus className="h-4 w-4" /> Add to Enquiry
+              <Plus className="h-4 w-4" /> Add to My Selection
             </>
           ) : (
             "Currently Unavailable"
           )}
         </Button>
-        {alreadyAdded && (
+
+        {isOrderable && whatsappLink && (
           <Button asChild size="lg" variant="outline" className="flex-1">
-            <Link href="/selection">View My Selection</Link>
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="h-4 w-4" /> Enquire on WhatsApp
+            </a>
           </Button>
         )}
       </div>
+
+      {alreadyAdded && (
+        <Link href="/selection" className="link-underline block text-xs font-medium uppercase tracking-widest2 text-accent-dark">
+          View My Selection →
+        </Link>
+      )}
     </div>
   );
 }
