@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         </div>
 
-        <div className="lg:pt-4">
+        <div className="min-w-0 lg:pt-4">
           <div className="mb-5 flex flex-wrap gap-2">
             {product.new_arrival && <Badge variant="outline">New Arrival</Badge>}
             {product.best_seller && <Badge variant="outline">Best Seller</Badge>}

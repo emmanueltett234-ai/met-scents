@@ -75,6 +75,14 @@ export function ProductDetailActions({
         </div>
       )}
 
+      {/*
+        min-w-0 lets each button shrink below its text's natural width
+        instead of forcing the row wider than this column (the default flex
+        min-width is `auto`, i.e. content size, which is what let these
+        overflow past the card before); whitespace-normal on the label lets
+        long labels wrap to a second line rather than clip or push past the
+        edge on the narrower end of the desktop range.
+      */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           size="lg"
@@ -93,15 +101,15 @@ export function ProductDetailActions({
               imageUrl: product.image_url,
             });
           }}
-          className="flex-1"
+          className="min-w-0 flex-1 whitespace-normal"
         >
           {alreadyAdded ? (
             <>
-              <Check className="h-4 w-4" /> Added to Selection
+              <Check className="h-4 w-4 shrink-0" /> Added to Selection
             </>
           ) : isOrderable ? (
             <>
-              <Plus className="h-4 w-4" /> Add to My Selection
+              <Plus className="h-4 w-4 shrink-0" /> Add to My Selection
             </>
           ) : (
             "Currently Unavailable"
@@ -109,9 +117,9 @@ export function ProductDetailActions({
         </Button>
 
         {isOrderable && whatsappLink && (
-          <Button asChild size="lg" variant="outline" className="flex-1">
+          <Button asChild size="lg" variant="outline" className="min-w-0 flex-1 whitespace-normal">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-4 w-4" /> Enquire via WhatsApp
+              <MessageCircle className="h-4 w-4 shrink-0" /> Enquire via WhatsApp
             </a>
           </Button>
         )}

@@ -234,7 +234,19 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
         </div>
       )}
 
-      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+      {/*
+        This card is a narrow sidebar column from `lg` upward (2/5 of a
+        5-column grid inside a 1320px-capped container — roughly 360px of
+        inner width, and that never grows no matter how wide the screen
+        gets, since the container has a max-width). Two full-length button
+        labels genuinely cannot share a single line in that width at any
+        desktop size, so the row goes side-by-side only in the middle range
+        (`sm` to just below `lg`) where this card is still the full,
+        un-split container width — and stacks again from `lg` up, where the
+        card is permanently narrow. `min-w-0` keeps each button from ever
+        forcing the row wider than its parent in between.
+      */}
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row lg:flex-col">
         {ownerWhatsappNumber ? (
           <>
             <Button
@@ -242,7 +254,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
               size="lg"
               variant="gold"
               disabled={submitting !== null}
-              className="flex-1 bg-[#128C7E] text-white hover:bg-[#0f6f63]"
+              className="min-w-0 flex-1 bg-[#128C7E] text-white hover:bg-[#0f6f63]"
             >
               {submitting === "whatsapp" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -257,14 +269,14 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
               variant="outline"
               disabled={submitting !== null}
               onClick={() => submit("save")}
-              className="flex-1"
+              className="min-w-0 flex-1"
             >
               {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               Send Enquiry
             </Button>
           </>
         ) : (
-          <Button type="submit" size="lg" variant="default" disabled={submitting !== null} className="flex-1">
+          <Button type="submit" size="lg" variant="default" disabled={submitting !== null} className="min-w-0 flex-1">
             {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Send Enquiry
           </Button>

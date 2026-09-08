@@ -25,7 +25,7 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
   const isOrderable = product.availability !== "out_of_stock" && defaultVariant && defaultVariant.availability !== "out_of_stock";
 
   return (
-    <div className="group flex flex-col">
+    <div className="group flex min-w-0 flex-col">
       <Link href={`/products/${product.slug}`} className="relative block overflow-hidden border border-transparent transition-colors group-hover:border-border">
         <ProductImage
           src={product.image_url}
