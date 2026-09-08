@@ -47,12 +47,12 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       <section className="relative -mt-20 overflow-hidden bg-ink text-cream lg:-mt-24">
         <div
-          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.2] blur-3xl"
-          style={{ background: "radial-gradient(circle, #8C7752 0%, transparent 70%)" }}
+          className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.14] blur-3xl"
+          style={{ background: "radial-gradient(circle, #F6F3EC 0%, transparent 70%)" }}
         />
         <div
-          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full opacity-[0.12] blur-3xl"
-          style={{ background: "radial-gradient(circle, #B9A97E 0%, transparent 70%)" }}
+          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full opacity-[0.1] blur-3xl"
+          style={{ background: "radial-gradient(circle, #8A8478 0%, transparent 70%)" }}
         />
         <Image
           src="/logo.png"
@@ -65,14 +65,14 @@ export default async function HomePage() {
 
         <div className="container-luxe relative flex min-h-[88vh] flex-col justify-center py-32">
           <div className="relative max-w-3xl py-8 pl-8 sm:pl-10">
-            <CornerTicks className="text-accent-light/60" />
-            <p className="kicker mb-7 flex items-center gap-2 text-accent-light animate-fade-up">
-              <span className="h-px w-8 bg-accent-light" /> Met Scents · Accra, Ghana
+            <CornerTicks className="text-cream/25" />
+            <p className="mb-7 flex items-center gap-2 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-400 animate-fade-up">
+              <span className="h-px w-8 bg-stone-500/60" /> Met Scents · Accra, Ghana
             </p>
-            <h1 className="font-serif text-[13vw] font-medium leading-[0.98] text-balance sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
+            <h1 className="font-serif text-[13vw] font-medium leading-[0.98] text-balance text-cream sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
               Find a Scent
               <br />
-              That Becomes <span className="italic text-accent-light">Yours.</span>
+              That Becomes <span className="italic">Yours.</span>
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-cream/70 animate-fade-up [animation-delay:220ms]">
               Discover carefully selected fragrances and premium decants, curated for people who
@@ -80,7 +80,12 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-11 flex flex-wrap gap-4 animate-fade-up [animation-delay:340ms]">
-              <Button asChild variant="gold" size="lg">
+              <Button
+                asChild
+                variant="gold"
+                size="lg"
+                className="bg-cream text-ink hover:bg-cream/85 hover:text-ink"
+              >
                 <Link href="/catalogue">
                   Explore Fragrances <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -106,7 +111,7 @@ export default async function HomePage() {
           <p className="max-w-lg font-serif text-xl italic leading-snug text-ink/90 sm:text-2xl">
             &ldquo;Scent is personal — we help you find the one that&apos;s actually yours.&rdquo;
           </p>
-          <Link href="/#about" className="link-underline shrink-0 text-xs font-medium uppercase tracking-widest2 text-accent-dark">
+          <Link href="/#about" className="link-underline shrink-0 text-xs font-medium uppercase tracking-widest2 text-stone-500">
             Our approach →
           </Link>
         </div>
@@ -119,7 +124,9 @@ export default async function HomePage() {
         <section className="container-luxe py-24 sm:py-28">
           <div className="mb-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="kicker mb-3">Curated Selection</p>
+              <p className="mb-3 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500">
+                Curated Selection
+              </p>
               <h2 className="font-serif text-3xl sm:text-4xl">Featured Fragrances</h2>
             </div>
             <Link
@@ -148,7 +155,9 @@ export default async function HomePage() {
           href="/catalogue?view=decants"
           className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-ink p-10 text-cream sm:p-14"
         >
-          <span className="kicker mb-4 text-accent-light">Try First</span>
+          <span className="mb-4 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-400">
+            Try First
+          </span>
           <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Decants</h3>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
             Try the scent before committing to the bottle — full-strength fragrance, portioned for
@@ -162,13 +171,15 @@ export default async function HomePage() {
           href="/catalogue?view=full-bottles"
           className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-parchment p-10 text-ink sm:p-14"
         >
-          <span className="kicker mb-4">Commit</span>
+          <span className="mb-4 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500">
+            Commit
+          </span>
           <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Full Bottles</h3>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/70">
             Your signature scent, in its full expression — for the fragrance you already know you
             love.
           </p>
-          <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2 text-accent-dark">
+          <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
             Shop Full Bottles <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </span>
         </Link>
@@ -179,7 +190,9 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       <section className="container-luxe py-24 sm:py-28">
         <div className="mb-14 flex flex-col items-center text-center">
-          <p className="kicker mb-3">Shop By</p>
+          <p className="mb-3 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500">
+            Shop By
+          </p>
           <h2 className="font-serif text-3xl sm:text-4xl">Fragrance, By Category</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -189,10 +202,10 @@ export default async function HomePage() {
               href={tile.href}
               className={`group flex h-56 flex-col justify-end p-8 transition-colors ${
                 tile.tone === "ink"
-                  ? "bg-ink text-cream hover:bg-accent-dark"
+                  ? "bg-ink text-cream hover:bg-stone-800"
                   : tile.tone === "parchment"
-                    ? "bg-parchment text-ink hover:bg-accent hover:text-cream"
-                    : "border border-border bg-cream text-ink hover:border-accent"
+                    ? "bg-parchment text-ink hover:bg-ink hover:text-cream"
+                    : "border border-border bg-cream text-ink hover:border-ink"
               }`}
             >
               <span className="font-serif text-3xl">{tile.label}</span>
@@ -211,12 +224,14 @@ export default async function HomePage() {
       <section id="about" className="border-y border-border bg-parchment/50">
         <div className="container-luxe grid gap-14 py-28 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="kicker mb-3">Our Approach</p>
+            <p className="mb-3 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500">
+              Our Approach
+            </p>
             <h2 className="font-serif text-3xl sm:text-4xl">
               We&apos;re not chasing trends —<br />
-              <span className="italic text-accent-dark">we&apos;re chasing the right scent for you.</span>
+              <span className="italic text-ink/80">we&apos;re chasing the right scent for you.</span>
             </h2>
-            <div className="divider-gold my-7" />
+            <div className="my-7 h-px w-16 bg-ink/15" />
             <p className="text-base leading-relaxed text-ink/75">
               Met Scents started because fragrance shopping in Ghana was either guesswork or
               overpriced. We decant and sell what we&apos;d wear ourselves — real houses, real
@@ -237,7 +252,7 @@ export default async function HomePage() {
             ].map(([stat, label]) => (
               <div key={label} className="relative border border-border bg-cream p-8 text-center">
                 <CornerTicks className="text-border" />
-                <p className="font-accent text-4xl italic text-accent-dark">{stat}</p>
+                <p className="font-accent text-4xl italic text-ink">{stat}</p>
                 <p className="mt-2 text-xs uppercase tracking-widest2 text-muted-foreground">{label}</p>
               </div>
             ))}
@@ -250,13 +265,15 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       <section className="container-luxe py-24 sm:py-28">
         <div className="mb-14 flex flex-col items-center text-center">
-          <p className="kicker mb-3">Why Met Scents</p>
+          <p className="mb-3 font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500">
+            Why Met Scents
+          </p>
           <h2 className="font-serif text-3xl sm:text-4xl">Built On Trust, Not Just Transactions</h2>
         </div>
         <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {REASONS.map((reason) => (
             <div key={reason.title} className="flex flex-col items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center border border-accent/30 text-accent-dark">
+              <div className="flex h-12 w-12 items-center justify-center border border-ink/15 text-ink/70">
                 <reason.icon className="h-5 w-5" strokeWidth={1.5} />
               </div>
               <h3 className="font-serif text-lg">{reason.title}</h3>
@@ -271,8 +288,8 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-ink py-28 text-cream">
         <div
-          className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.16] blur-3xl"
-          style={{ background: "radial-gradient(circle, #8C7752 0%, transparent 70%)" }}
+          className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.12] blur-3xl"
+          style={{ background: "radial-gradient(circle, #F6F3EC 0%, transparent 70%)" }}
         />
         <div className="container-luxe relative flex flex-col items-center gap-6 text-center">
           <h2 className="max-w-xl font-serif text-3xl sm:text-4xl">
@@ -283,7 +300,12 @@ export default async function HomePage() {
             request — we&apos;ll take it from there.
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-4">
-            <Button asChild variant="gold" size="lg">
+            <Button
+              asChild
+              variant="gold"
+              size="lg"
+              className="bg-cream text-ink hover:bg-cream/85 hover:text-ink"
+            >
               <Link href="/catalogue">
                 Browse Collection <ArrowRight className="h-4 w-4" />
               </Link>

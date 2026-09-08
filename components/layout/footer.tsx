@@ -20,7 +20,9 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
         </div>
 
         <div>
-          <h4 className="kicker mb-5 text-cream/40">Shop</h4>
+          <h4 className="mb-5 font-sans text-[11px] font-medium uppercase tracking-widest2 text-cream/40">
+            Shop
+          </h4>
           <ul className="space-y-3 text-sm text-cream/75">
             <li><Link href="/catalogue" className="link-underline">All Fragrances</Link></li>
             <li><Link href="/catalogue?gender=men" className="link-underline">Men&apos;s Fragrances</Link></li>
@@ -31,7 +33,9 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
         </div>
 
         <div>
-          <h4 className="kicker mb-5 text-cream/40">Discover</h4>
+          <h4 className="mb-5 font-sans text-[11px] font-medium uppercase tracking-widest2 text-cream/40">
+            Discover
+          </h4>
           <ul className="space-y-3 text-sm text-cream/75">
             <li><Link href="/catalogue?view=new-arrivals" className="link-underline">New Arrivals</Link></li>
             <li><Link href="/catalogue?view=best-sellers" className="link-underline">Best Sellers</Link></li>
@@ -41,7 +45,9 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
         </div>
 
         <div>
-          <h4 className="kicker mb-5 text-cream/40">Get In Touch</h4>
+          <h4 className="mb-5 font-sans text-[11px] font-medium uppercase tracking-widest2 text-cream/40">
+            Get In Touch
+          </h4>
           <p className="text-sm leading-relaxed text-cream/75">
             Browse the collection, build your selection, and send it our way — we&apos;ll confirm
             availability and arrange delivery personally.
@@ -51,7 +57,7 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
               href={buildGeneralWhatsappLink(ownerWhatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-light link-underline"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cream link-underline"
             >
               <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
             </a>
