@@ -43,9 +43,9 @@ export function ProductDetailActions({
       : null;
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-8">
       <div>
-        <p className="mb-3 text-[11px] font-medium uppercase tracking-widest2 text-muted-foreground">
+        <p className="mb-4 text-[11px] font-medium uppercase tracking-widest2 text-muted-foreground">
           Available Sizes
         </p>
         <div className="flex flex-wrap gap-3">
@@ -55,7 +55,7 @@ export function ProductDetailActions({
               type="button"
               disabled={v.availability === "out_of_stock"}
               onClick={() => setSelectedId(v.id)}
-              className={`flex cursor-pointer flex-col items-start border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`flex cursor-pointer flex-col items-start gap-1 border px-5 py-3.5 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 selected?.id === v.id
                   ? "border-ink bg-ink text-cream"
                   : "border-border bg-white hover:border-ink"

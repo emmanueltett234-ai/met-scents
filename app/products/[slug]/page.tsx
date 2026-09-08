@@ -55,21 +55,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <div className="lg:pt-4">
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-5 flex flex-wrap gap-2">
             {product.new_arrival && <Badge variant="gold">New Arrival</Badge>}
             {product.best_seller && <Badge variant="gold">Best Seller</Badge>}
             <Badge variant="outline">{GENDER_LABELS[product.gender]}</Badge>
           </div>
 
           <p className="text-xs uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
-          <h1 className="mt-2 font-serif text-4xl leading-[1.05] sm:text-5xl">{product.name}</h1>
+          <h1 className="mt-3 font-serif text-4xl leading-[1.05] sm:text-5xl">{product.name}</h1>
 
           {product.fragrance_type && (
             <p className="mt-3 text-sm italic text-accent-dark">{product.fragrance_type}</p>
           )}
 
           {product.description && (
-            <p className="mt-7 max-w-lg text-base leading-relaxed text-ink/75">{product.description}</p>
+            <p className="mt-6 max-w-lg pr-14 text-base leading-relaxed text-ink/75 sm:mt-7 sm:pr-0">
+              {product.description}
+            </p>
           )}
 
           {notes.length > 0 && (
@@ -88,7 +90,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           )}
 
-          <div className="my-9 h-px w-full bg-border" />
+          <div className="my-8 h-px w-full bg-border sm:my-9" />
 
           <ProductDetailActions product={product} ownerWhatsappNumber={settings.owner_whatsapp_number} />
         </div>
