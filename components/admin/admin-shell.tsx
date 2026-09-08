@@ -31,12 +31,16 @@ export async function AdminShell({
         </div>
 
         {title && (
-          <div className="flex flex-col gap-3 border-b border-border bg-white px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-8 sm:py-6">
+          <div className="flex flex-col gap-3 border-b border-border bg-white px-4 py-5 sm:px-8 sm:py-6 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between">
             <div className="min-w-0">
               <h1 className="font-serif text-2xl">{title}</h1>
               {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
             </div>
-            {action && <div className="min-w-0 shrink-0">{action}</div>}
+            {/* flex-wrap on the row (not shrink) is what keeps a wide action
+                like the date-range selector from squeezing the title down to
+                one word per line at in-between widths — it drops to its own
+                line instead. */}
+            {action && <div className="min-w-0">{action}</div>}
           </div>
         )}
         <div className="min-w-0 p-4 sm:p-6 lg:p-8">{children}</div>
