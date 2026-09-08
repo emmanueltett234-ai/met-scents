@@ -18,7 +18,7 @@ const REASONS = [
   {
     icon: ShieldCheck,
     title: "Verified Authentic",
-    body: "Every fragrance is sourced from trusted suppliers — no imitations, ever.",
+    body: "Every fragrance is sourced from trusted suppliers. No imitations, ever.",
   },
   {
     icon: MessageCircle,
@@ -33,7 +33,7 @@ const REASONS = [
   {
     icon: Truck,
     title: "Honest Pricing, GHS",
-    body: "Transparent Cedi pricing on every size — no hidden mark-ups.",
+    body: "Transparent Cedi pricing on every size, with no hidden markups.",
   },
 ];
 
@@ -72,7 +72,7 @@ export default async function HomePage() {
             <h1 className="font-serif text-[13vw] font-medium leading-[0.98] text-balance text-cream sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
               Find a Scent
               <br />
-              That Becomes <span className="italic">Yours.</span>
+              That Becomes <span className="font-semibold">Yours.</span>
             </h1>
             <p className="mt-8 max-w-md text-base leading-relaxed text-cream/70 animate-fade-up [animation-delay:220ms]">
               Discover carefully selected fragrances and premium decants, curated for people who
@@ -109,7 +109,7 @@ export default async function HomePage() {
       <section className="border-b border-border bg-parchment">
         <div className="container-luxe flex flex-col items-center gap-3 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
           <p className="max-w-lg font-serif text-xl italic leading-snug text-ink/90 sm:text-2xl">
-            &ldquo;Scent is personal — we help you find the one that&apos;s actually yours.&rdquo;
+            &ldquo;Scent is personal. We help you find the one that&apos;s actually yours.&rdquo;
           </p>
           <Link href="/#about" className="link-underline shrink-0 text-xs font-medium uppercase tracking-widest2 text-stone-500">
             Our approach →
@@ -160,7 +160,7 @@ export default async function HomePage() {
           </span>
           <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Decants</h3>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
-            Try the scent before committing to the bottle — full-strength fragrance, portioned for
+            Try the scent before committing to the bottle: full-strength fragrance, portioned for
             discovery.
           </p>
           <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
@@ -176,7 +176,7 @@ export default async function HomePage() {
           </span>
           <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Full Bottles</h3>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/70">
-            Your signature scent, in its full expression — for the fragrance you already know you
+            Your signature scent, in its full expression, for the fragrance you already know you
             love.
           </p>
           <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
@@ -228,18 +228,18 @@ export default async function HomePage() {
               Our Approach
             </p>
             <h2 className="font-serif text-3xl sm:text-4xl">
-              We&apos;re not chasing trends —<br />
+              We&apos;re not chasing trends:<br />
               <span className="italic text-ink/80">we&apos;re chasing the right scent for you.</span>
             </h2>
             <div className="my-7 h-px w-16 bg-ink/15" />
             <p className="text-base leading-relaxed text-ink/75">
               Met Scents started because fragrance shopping in Ghana was either guesswork or
-              overpriced. We decant and sell what we&apos;d wear ourselves — real houses, real
+              overpriced. We decant and sell what we&apos;d wear ourselves: real houses, real
               batches, no imitations dressed up as designer. If a scent isn&apos;t right for you,
               we&apos;d rather tell you before you buy the full bottle than after.
             </p>
             <p className="mt-4 text-base leading-relaxed text-ink/75">
-              Every enquiry gets a real reply from a real person — usually within the hour, on
+              Every enquiry gets a real reply from a real person, usually within the hour, on
               WhatsApp.
             </p>
           </div>
@@ -297,7 +297,7 @@ export default async function HomePage() {
           </h2>
           <p className="max-w-md text-cream/70">
             Browse the full collection, add your favourites to My Selection, and send us your
-            request — we&apos;ll take it from there.
+            request. We&apos;ll take it from there.
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-4">
             <Button

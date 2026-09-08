@@ -14,7 +14,7 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
             Curated Fragrance House · Accra, Ghana
           </p>
           <p className="max-w-xs text-sm leading-relaxed text-cream/60">
-            A curated fragrance boutique in Accra — authentic decants and full bottles,
+            A curated fragrance boutique in Accra: authentic decants and full bottles,
             hand-selected and personally followed up on, one enquiry at a time.
           </p>
         </div>
@@ -49,7 +49,7 @@ export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
             Get In Touch
           </h4>
           <p className="text-sm leading-relaxed text-cream/75">
-            Browse the collection, build your selection, and send it our way — we&apos;ll confirm
+            Browse the collection, build your selection, and send it our way. We&apos;ll confirm
             availability and arrange delivery personally.
           </p>
           {ownerWhatsappNumber && (

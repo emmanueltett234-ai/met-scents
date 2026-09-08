@@ -31,7 +31,7 @@ export function ProductDetailActions({
     product.availability !== "out_of_stock" && selected && selected.availability !== "out_of_stock";
 
   if (variants.length === 0) {
-    return <p className="text-sm text-muted-foreground">Pricing coming soon — please check back.</p>;
+    return <p className="text-sm text-muted-foreground">Pricing coming soon. Please check back.</p>;
   }
 
   const whatsappLink =

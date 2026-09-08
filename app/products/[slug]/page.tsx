@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   if (!product) return {};
   return {
     title: `${product.brand} ${product.name}`,
-    description: product.description ?? `${product.brand} ${product.name} — available now at Met Scents.`,
+    description: product.description ?? `${product.brand} ${product.name}, available now at Met Scents.`,
   };
 }
 

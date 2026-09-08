@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Catalogue",
-  description: "Browse the full Met Scents fragrance catalogue — men's, women's and unisex perfumes, decants and full bottles.",
+  description: "Browse the full Met Scents fragrance catalogue: men's, women's and unisex perfumes, decants and full bottles.",
 };
 
 interface CataloguePageProps {

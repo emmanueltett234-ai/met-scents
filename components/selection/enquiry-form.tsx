@@ -247,7 +247,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
       {ownerWhatsappNumber && (
         <p className="text-xs text-muted-foreground">
           Your enquiry is saved either way. &ldquo;Send via WhatsApp&rdquo; also opens WhatsApp with
-          your selection pre-filled — you just press Send.
+          your selection pre-filled, so you just press Send.
         </p>
       )}
     </form>

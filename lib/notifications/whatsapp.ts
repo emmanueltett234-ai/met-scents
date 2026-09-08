@@ -17,7 +17,7 @@ type EnquiryLineItem = Pick<EnquiryItem, "product_name" | "brand" | "size" | "pr
 
 function formatLineItem(item: EnquiryLineItem): string {
   const qty = item.quantity ?? 1;
-  const unit = `${item.brand ? `${item.brand} ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`;
+  const unit = `${item.brand ? `${item.brand} ` : ""}${item.product_name} · ${item.size} · ${formatGHS(item.price)}`;
   return qty > 1 ? `${unit} × ${qty} = ${formatGHS(item.price * qty)}` : unit;
 }
 
@@ -125,7 +125,7 @@ export function buildCustomerReplyWhatsappLink(params: {
     "",
     `Estimated total: ${formatGHS(params.estimatedTotal)}`,
     "",
-    "Confirming availability now — I'll follow up shortly to arrange your order.",
+    "Confirming availability now. I'll follow up shortly to arrange your order.",
   ];
   return `https://wa.me/${normalizeWhatsappNumber(params.customerWhatsapp)}?text=${encodeURIComponent(lines.join("\n"))}`;
 }

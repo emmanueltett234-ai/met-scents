@@ -66,15 +66,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Italiana — a thin, wide-set Didone used across fashion and
-        // fragrance branding for exactly the reason it suits the Met
-        // Scents crest: elegant, high-contrast strokes with real presence
-        // at display sizes.
+        // Fraunces — moderate-contrast, warm-natured serif carrying every
+        // headline, product name and (via italic) price/quote accent.
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
-        // Cormorant — a delicate old-style serif with true italics, used
-        // for prices, quotes and softer accent moments the all-caps
-        // Italiana isn't suited to.
-        accent: ["var(--font-accent)", "ui-serif", "Georgia", "serif"],
+        // `accent` is the same family, kept as its own token only so the
+        // many existing `font-accent italic` call sites (prices, quotes)
+        // don't need touching — both resolve to Fraunces.
+        accent: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       letterSpacing: {

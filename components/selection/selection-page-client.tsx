@@ -110,7 +110,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
             <span className="font-accent text-2xl italic">{formatGHS(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Final pricing is confirmed by the shop owner when they follow up — this total reflects
+            Final pricing is confirmed by the shop owner when they follow up. This total reflects
             current listed prices for your selected sizes.
           </p>
 
