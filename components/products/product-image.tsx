@@ -5,11 +5,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * Renders the product photo, or — until the owner uploads one, or if the
- * stored URL ever fails to load — a deliberate branded placeholder so the
- * catalogue never shows a blank grey box. This is a client component only
- * because of the `onError` fallback below; everything else about it is
- * static.
+ * Renders the product photo. There is deliberately no branded "coming
+ * soon" placeholder here — if a product has no image yet, or a stored URL
+ * ever fails to load, this quietly degrades to a plain neutral fill with
+ * no text or graphic, rather than a designed placeholder card. The real
+ * fix for a missing photo is uploading one in /admin/products.
  */
 export function ProductImage({
   src,
@@ -44,17 +44,5 @@ export function ProductImage({
     );
   }
 
-  return (
-    <div
-      className={cn(
-        "relative flex flex-col items-center justify-center gap-2 overflow-hidden border border-border bg-parchment/40",
-        className
-      )}
-    >
-      <span className="font-serif text-sm uppercase tracking-[0.2em] text-ink/50">Met Scents</span>
-      <span className="text-[11px] uppercase tracking-widest2 text-muted-foreground">
-        Image Coming Soon
-      </span>
-    </div>
-  );
+  return <div className={cn("bg-secondary", className)} />;
 }

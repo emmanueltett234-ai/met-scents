@@ -45,7 +45,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       {/* Hero                                                              */}
       {/* ---------------------------------------------------------------- */}
-      <section className="relative overflow-hidden bg-ink text-cream">
+      <section className="relative -mt-20 overflow-hidden bg-ink text-cream lg:-mt-24">
         <div
           className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.2] blur-3xl"
           style={{ background: "radial-gradient(circle, #8C7752 0%, transparent 70%)" }}

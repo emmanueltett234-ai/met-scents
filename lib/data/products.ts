@@ -97,6 +97,13 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return data as Product | null;
 }
 
+// The homepage's "Featured Fragrances" grid is visually designed around a
+// full row (4 across on desktop) — if the shop owner has only flagged a
+// couple of products as Featured, top up the row with other in-stock
+// products (best sellers first, then newest) rather than showing a mostly
+// empty grid with two products stranded on the left.
+const MIN_FEATURED_ROW = 4;
+
 export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -109,7 +116,28 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
     console.error("getFeaturedProducts error:", error.message);
     return [];
   }
-  return (data ?? []) as Product[];
+
+  const featured = (data ?? []) as Product[];
+  if (featured.length >= Math.min(MIN_FEATURED_ROW, limit)) return featured;
+
+  const excludeIds = featured.map((p) => p.id);
+  const { data: fallback, error: fallbackError } = await supabase
+    .from("products")
+    .select(PRODUCT_SELECT)
+    .neq("availability", "out_of_stock")
+    .order("best_seller", { ascending: false })
+    .order("new_arrival", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (fallbackError || !fallback) return featured;
+
+  const padded = [
+    ...featured,
+    ...(fallback as Product[]).filter((p) => !excludeIds.includes(p.id)),
+  ].slice(0, limit);
+
+  return padded;
 }
 
 export async function getAllBrands(): Promise<string[]> {
