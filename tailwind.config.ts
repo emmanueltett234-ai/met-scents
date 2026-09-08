@@ -78,7 +78,10 @@ const config: Config = {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       letterSpacing: {
-        widest2: "0.28em",
+        // Deliberately restrained — enough to read as a considered editorial
+        // choice on nav/labels without tipping into the "everything is
+        // spaced-out uppercase" template look.
+        widest2: "0.1em",
       },
       borderRadius: {
         lg: "var(--radius)",

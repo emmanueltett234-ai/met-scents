@@ -111,7 +111,7 @@ export function ProductDetailActions({
         {isOrderable && whatsappLink && (
           <Button asChild size="lg" variant="outline" className="flex-1">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-4 w-4" /> Enquire on WhatsApp
+              <MessageCircle className="h-4 w-4" /> Enquire via WhatsApp
             </a>
           </Button>
         )}

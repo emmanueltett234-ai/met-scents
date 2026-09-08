@@ -1,10 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * Renders the product photo, or — until the owner uploads one from
- * /admin/products — an elegant monogram placeholder so the catalogue never
- * looks broken.
+ * Renders the product photo, or — until the owner uploads one, or if the
+ * stored URL ever fails to load — a deliberate branded placeholder so the
+ * catalogue never shows a blank grey box. This is a client component only
+ * because of the `onError` fallback below; everything else about it is
+ * static.
  */
 export function ProductImage({
   src,
@@ -21,7 +26,9 @@ export function ProductImage({
   sizes?: string;
   priority?: boolean;
 }) {
-  if (src) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
     return (
       <div className={cn("relative overflow-hidden bg-secondary", className)}>
         <Image
@@ -31,22 +38,23 @@ export function ProductImage({
           sizes={sizes ?? "(min-width: 1024px) 25vw, 50vw"}
           priority={priority}
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          onError={() => setFailed(true)}
         />
       </div>
     );
   }
 
-  const initial = (brand || name || "M").trim().charAt(0).toUpperCase();
-
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-parchment via-cream to-secondary",
+        "relative flex flex-col items-center justify-center gap-2 overflow-hidden border border-border bg-parchment/40",
         className
       )}
     >
-      <span className="font-serif text-5xl text-gold/70">{initial}</span>
-      <div className="absolute inset-0 border border-gold/10" />
+      <span className="font-serif text-sm uppercase tracking-[0.2em] text-ink/50">Met Scents</span>
+      <span className="text-[11px] uppercase tracking-widest2 text-muted-foreground">
+        Image Coming Soon
+      </span>
     </div>
   );
 }

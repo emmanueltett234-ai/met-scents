@@ -40,22 +40,20 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
         )}
         {(product.new_arrival || product.best_seller) && product.availability === "available" && (
           <div className="absolute right-3 top-3">
-            <span className="seal-mark h-14 w-14 whitespace-pre-line border-accent bg-cream/90 p-1 text-center text-[9px] font-medium uppercase leading-tight tracking-wider text-accent-dark">
-              {product.new_arrival ? "New\nArrival" : "Best\nSeller"}
+            <span className="border border-ink/70 bg-cream/95 px-2 py-1 text-[9px] font-medium uppercase tracking-wider text-ink">
+              {product.new_arrival ? "New Arrival" : "Best Seller"}
             </span>
           </div>
         )}
       </Link>
 
       <div className="flex flex-1 flex-col pt-4">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
-          {typeof index === "number" && (
-            <p className="index-tag shrink-0 text-[10px] text-muted-foreground/70">
-              No. {String(index).padStart(2, "0")}
-            </p>
-          )}
-        </div>
+        {typeof index === "number" && (
+          <p className="index-tag mb-1 text-[10px] text-muted-foreground/70">
+            N°{String(index).padStart(3, "0")}
+          </p>
+        )}
+        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{product.brand}</p>
         <Link href={`/products/${product.slug}`}>
           <h3 className="mt-0.5 font-serif text-lg leading-tight text-ink transition-colors group-hover:text-accent-dark">
             {product.name}

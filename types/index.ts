@@ -97,6 +97,7 @@ export interface SelectionItem {
   size: string;
   price: number;
   imageUrl: string | null;
+  quantity: number;
 }
 
 export const GENDER_LABELS: Record<Gender, string> = {

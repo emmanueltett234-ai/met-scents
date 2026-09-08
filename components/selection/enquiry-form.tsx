@@ -37,8 +37,14 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
   const localWhatsappFallback =
     items.length > 0 && ownerWhatsappNumber
       ? buildCustomerEnquiryWhatsappLink(ownerWhatsappNumber, {
-          items: items.map((i) => ({ product_name: i.name, brand: i.brand, size: i.size, price: i.price })),
-          estimatedTotal: items.reduce((sum, i) => sum + i.price, 0),
+          items: items.map((i) => ({
+            product_name: i.name,
+            brand: i.brand,
+            size: i.size,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+          estimatedTotal: items.reduce((sum, i) => sum + i.price * i.quantity, 0),
           customerName: form.customer_name || undefined,
           location: form.location || undefined,
           message: form.message || undefined,
@@ -60,7 +66,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          items: items.map((i) => ({ product_id: i.productId, variant_id: i.variantId })),
+          items: items.map((i) => ({ product_id: i.productId, variant_id: i.variantId, quantity: i.quantity })),
         }),
       });
 
@@ -217,7 +223,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
               ) : (
                 <MessageCircle className="h-4 w-4" />
               )}
-              Send Enquiry on WhatsApp
+              Send via WhatsApp
             </Button>
             <Button
               type="button"
@@ -228,7 +234,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
               className="flex-1"
             >
               {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Save Enquiry Only
+              Send Enquiry
             </Button>
           </>
         ) : (
@@ -240,8 +246,8 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
       </div>
       {ownerWhatsappNumber && (
         <p className="text-xs text-muted-foreground">
-          &ldquo;Send Enquiry on WhatsApp&rdquo; saves your enquiry and opens WhatsApp with everything
-          pre-filled — the fastest way to reach us.
+          Your enquiry is saved either way. &ldquo;Send via WhatsApp&rdquo; also opens WhatsApp with
+          your selection pre-filled — you just press Send.
         </p>
       )}
     </form>

@@ -8,18 +8,23 @@ export function normalizeWhatsappNumber(raw: string): string {
 
 /** General "chat with us" link — used by the persistent WhatsApp button. */
 export function buildGeneralWhatsappLink(ownerNumber: string): string {
-  const message = "Hello, I'm interested in some fragrances from your catalogue.";
+  const message = "Hello, I'm interested in your fragrances and would like some assistance.";
   return `https://wa.me/${normalizeWhatsappNumber(ownerNumber)}?text=${encodeURIComponent(message)}`;
 }
 
-type EnquiryLineItem = Pick<EnquiryItem, "product_name" | "brand" | "size" | "price">;
+type EnquiryLineItem = Pick<EnquiryItem, "product_name" | "brand" | "size" | "price"> &
+  Partial<Pick<EnquiryItem, "quantity">>;
+
+function formatLineItem(item: EnquiryLineItem): string {
+  const qty = item.quantity ?? 1;
+  const unit = `${item.brand ? `${item.brand} ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`;
+  return qty > 1 ? `${unit} × ${qty} = ${formatGHS(item.price * qty)}` : unit;
+}
 
 /**
- * The OWNER notification message — sent two ways:
- *  1. Automatically via the WhatsApp Business API, if configured
- *     (lib/notifications/whatsapp-api.ts).
- *  2. Always available as a `wa.me` link the CUSTOMER can tap to send it
- *     themselves — this is the reliable fallback that works with zero setup.
+ * The OWNER-facing enquiry message. WhatsApp here is click-to-chat only —
+ * this string is opened in a `wa.me` link for a human (customer or admin) to
+ * review and press Send; nothing is ever transmitted automatically.
  */
 export function buildOwnerEnquiryWhatsappMessage(params: {
   customerName: string;
@@ -40,8 +45,8 @@ export function buildOwnerEnquiryWhatsappMessage(params: {
     "",
     ...params.items.flatMap((item, i) => [
       `${i + 1}. ${item.brand ? `${item.brand} ` : ""}${item.product_name}`,
-      item.size,
-      formatGHS(item.price),
+      `${item.size}${(item.quantity ?? 1) > 1 ? ` × ${item.quantity}` : ""}`,
+      (item.quantity ?? 1) > 1 ? formatGHS(item.price * (item.quantity ?? 1)) : formatGHS(item.price),
       "",
     ]),
     "Estimated Total:",
@@ -80,10 +85,7 @@ export function buildCustomerEnquiryWhatsappMessage(params: {
   const lines = [
     "Hello, I'm interested in these fragrances:",
     "",
-    ...params.items.map(
-      (item, i) =>
-        `${i + 1}. ${item.brand ? `${item.brand} ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`
-    ),
+    ...params.items.map((item, i) => `${i + 1}. ${formatLineItem(item)}`),
     "",
     `Estimated total: ${formatGHS(params.estimatedTotal)}`,
   ];
@@ -119,10 +121,7 @@ export function buildCustomerReplyWhatsappLink(params: {
     `Hi ${params.customerName}, thank you for your fragrance enquiry with Met Scents!`,
     "",
     "You selected:",
-    ...params.items.map(
-      (item, i) =>
-        `${i + 1}. ${item.brand ? `${item.brand} — ` : ""}${item.product_name} — ${item.size} — ${formatGHS(item.price)}`
-    ),
+    ...params.items.map((item, i) => `${i + 1}. ${formatLineItem(item)}`),
     "",
     `Estimated total: ${formatGHS(params.estimatedTotal)}`,
     "",

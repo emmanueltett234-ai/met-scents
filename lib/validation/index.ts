@@ -8,6 +8,7 @@ const whatsappRegex = /^[+]?[\d\s-]{9,16}$/;
 export const enquiryItemSchema = z.object({
   product_id: uuid,
   variant_id: uuid,
+  quantity: z.coerce.number().int().min(1).max(20).optional().default(1),
 });
 
 export const enquirySubmissionSchema = z.object({
@@ -92,6 +93,9 @@ export const settingsInputSchema = z.object({
     .email("Please enter a valid email")
     .optional()
     .or(z.literal("")),
-  whatsapp_notifications_enabled: z.boolean(),
+  // Kept for backward compatibility with the existing `settings` row — no
+  // longer surfaced in the admin UI since WhatsApp has no server-side
+  // integration to toggle. Always defaults to true if omitted.
+  whatsapp_notifications_enabled: z.boolean().optional().default(true),
   email_notifications_enabled: z.boolean(),
 });

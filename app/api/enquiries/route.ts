@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { enquirySubmissionSchema } from "@/lib/validation";
 import { sendOwnerEnquiryEmail } from "@/lib/notifications/email";
-import { buildOwnerEnquiryWhatsappMessage } from "@/lib/notifications/whatsapp";
-import { isWhatsappApiConfigured, sendOwnerWhatsappNotification } from "@/lib/notifications/whatsapp-api";
 
 export const dynamic = "force-dynamic";
 
@@ -119,7 +117,7 @@ export async function POST(req: NextRequest) {
       brand: product.brand,
       size: variant.size,
       price: Number(variant.price),
-      quantity: 1,
+      quantity: requested.quantity ?? 1,
     });
   }
 
@@ -172,39 +170,20 @@ export async function POST(req: NextRequest) {
   // cause it to be lost, and the customer is never told a notification
   // "sent" when it didn't. Every outcome is written back onto the enquiry
   // row so /admin/enquiries always shows the truth.
+  //
+  // WhatsApp is intentionally click-to-chat only — there is no server-side
+  // WhatsApp API integration. The customer's own "Send on WhatsApp" button
+  // (built client-side in lib/notifications/whatsapp.ts) is the real
+  // delivery channel; whatsapp_status here just stays "not_configured" since
+  // nothing is ever sent automatically from the server.
   const { data: settings } = await supabase.from("settings").select("*").eq("id", "default").maybeSingle();
 
   const ownerWhatsappNumber = settings?.owner_whatsapp_number || process.env.NEXT_PUBLIC_OWNER_WHATSAPP || "";
   const ownerEmail = settings?.owner_notification_email || process.env.OWNER_NOTIFICATION_EMAIL || "";
-  const whatsappEnabled = settings?.whatsapp_notifications_enabled ?? true;
   const emailEnabled = settings?.email_notifications_enabled ?? true;
 
-  let whatsappStatus: "not_configured" | "sent" | "failed" = "not_configured";
-  let whatsappError: string | null = null;
-
-  if (whatsappEnabled && ownerWhatsappNumber) {
-    if (isWhatsappApiConfigured()) {
-      const message = buildOwnerEnquiryWhatsappMessage({
-        customerName: input.customer_name,
-        whatsappNumber: input.whatsapp_number,
-        items: lineItems,
-        estimatedTotal,
-        message: input.message,
-      });
-      const result = await sendOwnerWhatsappNotification({ toNumber: ownerWhatsappNumber, message });
-      if (result.ok) {
-        whatsappStatus = "sent";
-      } else {
-        whatsappStatus = "failed";
-        whatsappError = result.error;
-        console.error("WhatsApp API notification failed:", result.error);
-      }
-    }
-    // If the API isn't configured, whatsappStatus stays "not_configured" —
-    // that's expected, not an error: the customer-initiated wa.me fallback
-    // (always shown on the confirmation screen) is the primary channel
-    // until a WhatsApp Business API is set up.
-  }
+  const whatsappStatus: "not_configured" | "sent" | "failed" = "not_configured";
+  const whatsappError: string | null = null;
 
   let emailStatus: "not_configured" | "sent" | "failed" = "not_configured";
   let emailError: string | null = null;

@@ -18,10 +18,10 @@ manually via WhatsApp or email to confirm availability and complete the sale.
   inbox with status tracking (New → Contacted → Pending → Completed/Cancelled).
 - Supabase Postgres schema with Row Level Security, so the public can only ever *read* the
   catalogue and the admin dashboard is the only way to write to it.
-- WhatsApp deep links (persistent "chat with us" button, "Send Enquiry on WhatsApp" on My
+- WhatsApp click-to-chat links (persistent "chat with us" button, "Send Enquiry on WhatsApp" on My
   Selection, quick per-product enquiry, and a one-tap customer reply link in the admin enquiry
-  view) plus an optional real WhatsApp Business API hook for fully automatic owner notifications,
-  and optional email notifications via Resend.
+  view) — no WhatsApp Business API, tokens, or webhooks; the customer's own WhatsApp opens with the
+  message pre-filled and they press Send. Optional email notifications via Resend.
 - A `settings` table (edit at `/admin/settings`) is the source of truth for the shop's WhatsApp
   number and notification preferences — nothing is hard-coded in the frontend.
 - Every enquiry records whether its WhatsApp/email notification actually succeeded
@@ -111,26 +111,18 @@ in with the account you created in step 3.5.
 
 ## 7a. WhatsApp: how it actually works
 
-A plain WhatsApp link (`wa.me/...`) can only *open* WhatsApp for a human to press send — it can
-never make the website itself send a message. So there are two distinct things happening:
+Met Scents uses WhatsApp **click-to-chat only** — deliberately, not as a placeholder for something
+more automated. A `wa.me` link *opens* WhatsApp for a human to press send; it cannot send on its
+own, and this app never claims otherwise.
 
-1. **Customer → Shop (always on, zero setup)**: every enquiry surface has a "Send Enquiry on
-   WhatsApp" / "Enquire on WhatsApp" button that opens the customer's own WhatsApp, pre-addressed
-   to the shop's number, with the full enquiry pre-filled. This is the reliable channel and needs
-   nothing configured — it works the moment `/admin/settings` has a WhatsApp number saved.
-2. **Website → Owner, fully automatic (optional)**: to have the *website itself* push a WhatsApp
-   message to the owner the instant an enquiry lands — with no customer action required — you
-   need the official Meta WhatsApp Cloud API:
-   - Create a Meta for Developers app, add the WhatsApp product, and get a phone number ID + access
-     token (Meta's WhatsApp Cloud API quick-start walks through this).
-   - Add `WHATSAPP_CLOUD_API_TOKEN` and `WHATSAPP_CLOUD_API_PHONE_NUMBER_ID` as environment
-     variables (server-only, never exposed to the browser).
-   - Note: Meta requires an approved message template for business-initiated messages outside a
-     customer-started 24h chat window. Until a template is approved, automatic sends will fail
-     gracefully — the enquiry is still saved, and channel 1 above still gets it to you.
+Every enquiry surface — the floating chat button, "Enquire on WhatsApp" on a product, "Send
+Enquiry on WhatsApp" on My Selection, and the admin's one-tap customer reply — opens WhatsApp
+pre-addressed with the full message already typed out. The customer (or owner, for replies) presses
+Send themselves. This needs zero setup beyond saving a number at `/admin/settings`, has no API,
+token, or webhook to configure, and never breaks because a third-party integration went down.
 
-Either way, every enquiry is always saved to `/admin/enquiries` first — nothing depends on
-WhatsApp working to avoid losing an enquiry.
+Every enquiry is always saved to `/admin/enquiries` first — nothing depends on WhatsApp to avoid
+losing an enquiry.
 
 ## 8. Project structure
 

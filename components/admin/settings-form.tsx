@@ -14,7 +14,6 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
   const router = useRouter();
   const [whatsappNumber, setWhatsappNumber] = useState(settings.owner_whatsapp_number ?? "");
   const [email, setEmail] = useState(settings.owner_notification_email ?? "");
-  const [whatsappEnabled, setWhatsappEnabled] = useState(settings.whatsapp_notifications_enabled);
   const [emailEnabled, setEmailEnabled] = useState(settings.email_notifications_enabled);
   const [saving, setSaving] = useState(false);
 
@@ -28,7 +27,6 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
         body: JSON.stringify({
           owner_whatsapp_number: whatsappNumber,
           owner_notification_email: email,
-          whatsapp_notifications_enabled: whatsappEnabled,
           email_notifications_enabled: emailEnabled,
         }),
       });
@@ -55,20 +53,10 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           placeholder="233 24 123 4567"
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          Include the country code. Used for the site-wide WhatsApp button and every enquiry
-          message — customers and the catalogue never see a hard-coded number.
+          Include the country code. Every WhatsApp button on the site — the floating chat button,
+          per-product enquiries, and "Send on WhatsApp" — opens addressed to this number, pre-filled.
+          Customers still press Send themselves; nothing is sent automatically.
         </p>
-      </div>
-
-      <div className="flex items-center justify-between border-t border-border pt-4">
-        <div>
-          <p className="text-sm font-medium">WhatsApp Notifications</p>
-          <p className="text-xs text-muted-foreground">
-            Attempt to notify this number automatically via the WhatsApp Business API (if
-            configured below) when a new enquiry comes in.
-          </p>
-        </div>
-        <Switch checked={whatsappEnabled} onCheckedChange={setWhatsappEnabled} />
       </div>
 
       <div>

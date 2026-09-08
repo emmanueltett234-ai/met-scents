@@ -17,9 +17,6 @@ function StatusRow({ label, configured }: { label: string; configured: boolean }
 
 export default async function AdminSettingsPage() {
   const settings = await getSettings();
-  const whatsappApiConfigured = Boolean(
-    process.env.WHATSAPP_CLOUD_API_TOKEN && process.env.WHATSAPP_CLOUD_API_PHONE_NUMBER_ID
-  );
   const emailConfigured = Boolean(process.env.RESEND_API_KEY);
 
   return (
@@ -40,12 +37,16 @@ export default async function AdminSettingsPage() {
               <CardTitle>Notification Channels</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <StatusRow label="WhatsApp Business API" configured={whatsappApiConfigured} />
+              <div className="flex items-center justify-between border-b border-border py-3 text-sm">
+                <span className="text-muted-foreground">WhatsApp (click-to-chat)</span>
+                <Badge variant="success">Always on</Badge>
+              </div>
               <StatusRow label="Email (Resend)" configured={emailConfigured} />
               <p className="pt-4 text-xs leading-relaxed text-muted-foreground">
-                {whatsappApiConfigured
-                  ? "Automatic WhatsApp notifications to the owner number above are active."
-                  : "Automatic WhatsApp isn't set up yet — every enquiry still reaches you reliably: it's saved here in Enquiries, and the customer is offered a one-tap \"Send on WhatsApp\" that opens their WhatsApp addressed to your number with the enquiry pre-filled. To enable fully automatic notifications instead, add WHATSAPP_CLOUD_API_TOKEN and WHATSAPP_CLOUD_API_PHONE_NUMBER_ID from a Meta WhatsApp Business API app as environment variables."}
+                Every enquiry is saved here in Enquiries first. WhatsApp works by opening the
+                customer&apos;s own WhatsApp app with the enquiry pre-filled to your number above —
+                they press Send themselves. There&apos;s no WhatsApp API, token, or setup required;
+                it works as soon as a number is saved.
               </p>
             </CardContent>
           </Card>

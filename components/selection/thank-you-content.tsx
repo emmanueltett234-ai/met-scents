@@ -12,10 +12,9 @@ export function ThankYouContent() {
   useEffect(() => setMounted(true), []);
   const data = useLastEnquiryStore((s) => s.data);
 
-  // Only worth offering the WhatsApp nudge if it wasn't already sent
-  // automatically via the Business API and the customer didn't already use
-  // the "Send on WhatsApp" button themselves (we can't tell the latter for
-  // certain, so this stays a gentle, optional offer either way).
+  // WhatsApp is click-to-chat only, so we can't know for certain the
+  // customer already pressed Send on the selection page — this stays a
+  // gentle, optional nudge either way rather than an assumption.
   const showWhatsappNudge = mounted && data && data.whatsappStatus !== "sent" && data.ownerWhatsappNumber;
 
   const whatsappLink =
@@ -28,7 +27,7 @@ export function ThankYouContent() {
       : null;
 
   return (
-    <div className="container-luxe flex flex-col items-center gap-5 py-32 text-center">
+    <div className="container-luxe flex flex-col items-center gap-5 py-20 text-center">
       <CheckCircle2 className="h-12 w-12 text-accent-dark" strokeWidth={1.2} />
       <h1 className="font-serif text-3xl sm:text-4xl">Thank You!</h1>
       <p className="max-w-md text-base leading-relaxed text-muted-foreground">
