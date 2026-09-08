@@ -1,7 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { CHART_COLORS } from "@/components/admin/charts/chart-colors";
+import { colorForKey } from "@/components/admin/charts/chart-colors";
 import { formatGHS } from "@/lib/currency";
 import type { BreakdownSlice } from "@/lib/analytics/queries";
 
@@ -35,7 +35,7 @@ export function DonutChart({
           strokeWidth={0}
         >
           {data.map((entry, i) => (
-            <Cell key={entry.key} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+            <Cell key={entry.key} fill={colorForKey(entry.key, i)} />
           ))}
         </Pie>
         <Tooltip

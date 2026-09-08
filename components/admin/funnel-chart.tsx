@@ -5,11 +5,11 @@ import type { FunnelData } from "@/lib/analytics/queries";
 // the period — it does not claim every customer moves through these stages
 // in this exact order.
 export function FunnelChart({ funnel }: { funnel: FunnelData }) {
-  const stages: { label: string; value: number }[] = [
-    { label: "Enquiries", value: funnel.enquiries },
-    { label: "WhatsApp Opened", value: funnel.whatsappOpened },
-    { label: "Contacted", value: funnel.contacted },
-    { label: "Sale Completed", value: funnel.saleCompleted },
+  const stages: { label: string; value: number; color: string }[] = [
+    { label: "Enquiries", value: funnel.enquiries, color: "#2563EB" },
+    { label: "WhatsApp Opened", value: funnel.whatsappOpened, color: "#128C7E" },
+    { label: "Contacted", value: funnel.contacted, color: "#7C3AED" },
+    { label: "Sale Completed", value: funnel.saleCompleted, color: "#16A34A" },
   ];
   const max = Math.max(1, stages[0].value);
 
@@ -27,8 +27,8 @@ export function FunnelChart({ funnel }: { funnel: FunnelData }) {
           </div>
           <div className="h-2.5 w-full bg-secondary">
             <div
-              className="h-full bg-accent-dark"
-              style={{ width: `${Math.max(2, (stage.value / max) * 100)}%` }}
+              className="h-full"
+              style={{ width: `${Math.max(2, (stage.value / max) * 100)}%`, backgroundColor: stage.color }}
             />
           </div>
         </div>

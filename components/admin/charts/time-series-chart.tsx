@@ -22,13 +22,17 @@ export function TimeSeriesChart({
     );
   }
 
+  // Sales (currency) trend in green — real revenue; enquiries trend in blue
+  // — demand, not yet revenue. Keeps the two trend lines tellable apart at a glance.
+  const lineColor = currency ? "#16A34A" : "#2563EB";
+
   return (
     <ResponsiveContainer width="100%" height={260}>
       <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="tsFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8C7752" stopOpacity={0.28} />
-            <stop offset="100%" stopColor="#8C7752" stopOpacity={0.02} />
+            <stop offset="0%" stopColor={lineColor} stopOpacity={0.28} />
+            <stop offset="100%" stopColor={lineColor} stopOpacity={0.02} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke={CHART_GRID} />
@@ -50,7 +54,7 @@ export function TimeSeriesChart({
           formatter={(value: number) => [currency ? formatGHS(value) : value, currency ? "Sales" : "Enquiries"]}
           contentStyle={{ border: "1px solid #E6E2D8", borderRadius: 0, fontSize: 12 }}
         />
-        <Area type="monotone" dataKey="value" stroke="#5E4E33" strokeWidth={1.75} fill="url(#tsFill)" />
+        <Area type="monotone" dataKey="value" stroke={lineColor} strokeWidth={1.75} fill="url(#tsFill)" />
       </AreaChart>
     </ResponsiveContainer>
   );

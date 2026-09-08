@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer } from "recharts";
-import { CHART_COLORS, CHART_GRID, CHART_MUTED_TEXT } from "@/components/admin/charts/chart-colors";
+import { colorForKey, CHART_GRID, CHART_MUTED_TEXT } from "@/components/admin/charts/chart-colors";
 import { formatGHS } from "@/lib/currency";
 import type { BreakdownSlice } from "@/lib/analytics/queries";
 
@@ -47,7 +47,7 @@ export function BarBreakdownChart({
         />
         <Bar dataKey="value" radius={[0, 2, 2, 0]} barSize={18}>
           {data.map((entry, i) => (
-            <Cell key={entry.key} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+            <Cell key={entry.key} fill={colorForKey(entry.key, i)} />
           ))}
         </Bar>
       </BarChart>

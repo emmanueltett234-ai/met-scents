@@ -1,14 +1,36 @@
-// Chart palette drawn from the same brand tokens as the rest of the admin
-// (tailwind.config.ts) — muted ink/brass/stone, deliberately not a bright
-// SaaS-dashboard palette.
-export const CHART_COLORS = [
-  "#5E4E33", // accent-dark
-  "#8C7752", // accent
-  "#B9A97E", // accent-light
-  "#17140F", // ink
-  "#9C9782", // muted taupe
-  "#6B7561", // muted sage
-];
+// The admin is a working tool the shop owner scans quickly, not a
+// customer-facing brand surface — so unlike the storefront's restrained
+// ink/brass palette, charts here use real, distinguishable color so data
+// reads at a glance: each category has a fixed, semantic color regardless
+// of chart type, plus a vivid fallback sequence for anything unmapped.
+export const KEY_COLORS: Record<string, string> = {
+  // enquiry / sale source
+  website: "#2563EB", // blue
+  whatsapp: "#128C7E", // the same WhatsApp green used on every WhatsApp button site-wide
+  unknown: "#94A3B8", // slate
+  instagram: "#DB2777", // pink
+  walk_in: "#F59E0B", // amber
+  referral: "#7C3AED", // violet
+  other: "#64748B", // slate
 
-export const CHART_GRID = "#E6E2D8"; // parchment
+  // enquiry status
+  new: "#F59E0B",
+  contacted: "#2563EB",
+  pending: "#7C3AED",
+  completed: "#16A34A",
+  cancelled: "#DC2626",
+
+  // payment method
+  cash: "#F59E0B",
+  mobile_money: "#16A34A",
+  bank_transfer: "#2563EB",
+};
+
+export const FALLBACK_COLORS = ["#2563EB", "#16A34A", "#F59E0B", "#DB2777", "#7C3AED", "#0891B2"];
+
+export function colorForKey(key: string, index: number): string {
+  return KEY_COLORS[key] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+}
+
+export const CHART_GRID = "#E6E2D8"; // parchment — kept neutral so the colored data stays what draws the eye
 export const CHART_MUTED_TEXT = "#8A8272";

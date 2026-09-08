@@ -101,6 +101,7 @@ export default async function AdminDashboardPage({
                 helpText="Actual revenue — the only figure that is"
                 icon={Wallet}
                 hero
+                accent="revenue"
               />
             </div>
             <MetricCard
@@ -108,6 +109,7 @@ export default async function AdminDashboardPage({
               value={metrics.completedSales}
               changePercent={percentChange(metrics.completedSales, metrics.previous.completedSales)}
               icon={Receipt}
+              accent="revenue"
             />
             <MetricCard
               label="Average Sale Value"
@@ -115,6 +117,7 @@ export default async function AdminDashboardPage({
               currency
               changePercent={percentChange(metrics.averageSaleValue, metrics.previous.averageSaleValue)}
               icon={TrendingUp}
+              accent="revenue"
             />
           </div>
 
@@ -125,18 +128,21 @@ export default async function AdminDashboardPage({
               changePercent={percentChange(metrics.newEnquiries, metrics.previous.newEnquiries)}
               helpText={`${metrics.totalEnquiries.toLocaleString("en-GH")} all-time`}
               icon={Inbox}
+              accent="enquiry"
             />
             <MetricCard
               label="WhatsApp Opened"
               value={metrics.whatsappOpened}
               changePercent={percentChange(metrics.whatsappOpened, metrics.previous.whatsappOpened)}
               icon={MessageCircleMore}
+              accent="whatsapp"
             />
             <MetricCard
               label="Website Enquiries"
               value={metrics.websiteEnquiries}
               changePercent={percentChange(metrics.websiteEnquiries, metrics.previous.websiteEnquiries)}
               icon={Globe}
+              accent="enquiry"
             />
             <MetricCard
               label="Estimated Enquiry Value"
@@ -145,6 +151,7 @@ export default async function AdminDashboardPage({
               changePercent={percentChange(metrics.estimatedEnquiryValue, metrics.previous.estimatedEnquiryValue)}
               helpText="Requested, not revenue"
               icon={Sparkles}
+              accent="caution"
             />
           </div>
         </section>
