@@ -43,6 +43,19 @@ export function ThankYouContent() {
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            // Fire-and-forget: this only records that WhatsApp was opened
+            // from this page (never that a message was sent), and must never
+            // delay or block the wa.me navigation the href above already
+            // started synchronously.
+            if (data?.enquiryId) {
+              fetch(`/api/enquiries/${data.enquiryId}/whatsapp-opened`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ via: "thank_you_page" }),
+              }).catch(() => {});
+            }
+          }}
           className="mt-2 flex items-center gap-2 border border-[#128C7E]/40 bg-[#128C7E]/5 px-6 py-3 text-sm font-medium text-[#0f6f63] transition-colors hover:bg-[#128C7E] hover:text-white"
         >
           <MessageCircle className="h-4 w-4" /> Also send this on WhatsApp for the fastest reply

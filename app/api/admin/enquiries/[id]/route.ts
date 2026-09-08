@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/supabase/route-auth";
 import { enquiryStatusSchema } from "@/lib/validation";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { response: authError } = await requireAdmin();
+  const { user, response: authError } = await requireAdmin();
   if (authError) return authError;
 
   const body = await req.json().catch(() => null);
@@ -14,6 +14,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   const supabase = createClient();
+  const { data: existing } = await supabase.from("enquiries").select("status").eq("id", params.id).maybeSingle();
+
   const { data, error } = await supabase
     .from("enquiries")
     .update({ status: parsed.data.status })
@@ -22,5 +24,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (existing && existing.status !== parsed.data.status) {
+    await supabase.from("enquiry_activities").insert({
+      enquiry_id: params.id,
+      event_type: "status_changed",
+      metadata: { from: existing.status, to: parsed.data.status },
+      created_by: user!.email,
+    });
+  }
+
   return NextResponse.json({ enquiry: data });
 }

@@ -69,6 +69,12 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
         body: JSON.stringify({
           ...form,
           items: items.map((i) => ({ product_id: i.productId, variant_id: i.variantId, quantity: i.quantity })),
+          // Tells the server WhatsApp was already opened on this device for
+          // this submission (see the synchronous window.open below) so it
+          // can record enquiry_source/whatsapp_opened accurately at creation
+          // time, instead of a separate follow-up call racing an id that
+          // doesn't exist yet.
+          whatsapp_opened: via === "whatsapp",
         }),
       });
 
@@ -84,6 +90,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
       }
 
       setLastEnquiry({
+        enquiryId: data.enquiry.id,
         customerName: form.customer_name,
         whatsappNumber: form.whatsapp_number,
         email: form.email || undefined,

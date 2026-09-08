@@ -13,6 +13,7 @@ import type { NotificationStatus } from "@/types";
  */
 interface LastEnquiryState {
   data: {
+    enquiryId: string;
     customerName: string;
     whatsappNumber: string;
     email?: string;

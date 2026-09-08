@@ -31,6 +31,15 @@ manually via WhatsApp or email to confirm availability and complete the sale.
 > **Upgrading an existing deployment?** Run `supabase/migration_002_settings_and_notifications.sql`
 > in the SQL editor after `schema.sql`/`seed.sql` — it adds the `settings` table and the
 > notification-status columns without touching any existing data.
+>
+> **Upgrading to the business management admin (sales, analytics, activity timeline)?** Run
+> `supabase/migration_003_sales_and_analytics.sql` in the SQL editor after migration_002 — it adds
+> the `sales`, `sale_items`, `enquiry_activities`, and `enquiry_notes` tables plus new columns on
+> `enquiries` (`enquiry_source`, `whatsapp_opened`, `whatsapp_opened_at`, `outcome`, `contacted_at`,
+> `completed_at`). **Run this migration BEFORE deploying this version of the code** — the enquiry
+> submission API now writes to those new columns on every enquiry, so deploying first will break
+> "Send Enquiry" / "Send via WhatsApp" for customers until the migration has run. Existing enquiries
+> are left untouched (new columns default to `unknown` / `false` / `no_decision`, never guessed).
 
 ## 2. Prerequisites
 

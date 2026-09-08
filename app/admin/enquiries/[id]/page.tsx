@@ -1,23 +1,33 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageCircle, Mail, MapPin, AlertTriangle, CheckCircle2, MinusCircle } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, AlertTriangle, CheckCircle2, MinusCircle, ReceiptText, Plus, MessageCircle } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { EnquiryStatusSelect } from "@/components/admin/enquiry-status-select";
+import { EnquiryOutcomeSelect } from "@/components/admin/enquiries/enquiry-outcome-select";
+import { EnquiryNotes } from "@/components/admin/enquiries/enquiry-notes";
+import { EnquiryTimeline } from "@/components/admin/enquiries/enquiry-timeline";
+import { WhatsappMessageButton } from "@/components/admin/enquiries/whatsapp-message-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 import { formatGHS } from "@/lib/currency";
 import { buildCustomerReplyWhatsappLink } from "@/lib/notifications/whatsapp";
-import type { EnquiryStatus } from "@/types";
+import type { EnquiryStatus, EnquiryOutcome, EnquirySource } from "@/types";
+import { ENQUIRY_SOURCE_LABELS } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function EnquiryDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
-  const [{ data: enquiry }, { data: items }] = await Promise.all([
-    supabase.from("enquiries").select("*").eq("id", params.id).maybeSingle(),
-    supabase.from("enquiry_items").select("*").eq("enquiry_id", params.id),
-  ]);
+  const [{ data: enquiry }, { data: items }, { data: activities }, { data: notes }, { data: linkedSales }] =
+    await Promise.all([
+      supabase.from("enquiries").select("*").eq("id", params.id).maybeSingle(),
+      supabase.from("enquiry_items").select("*").eq("enquiry_id", params.id),
+      supabase.from("enquiry_activities").select("*").eq("enquiry_id", params.id).order("created_at", { ascending: false }),
+      supabase.from("enquiry_notes").select("*").eq("enquiry_id", params.id).order("created_at", { ascending: false }),
+      supabase.from("sales").select("*").eq("enquiry_id", params.id).order("sale_date", { ascending: false }),
+    ]);
 
   if (!enquiry) notFound();
 
@@ -56,6 +66,10 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
                 <span className="text-sm uppercase tracking-widest2 text-muted-foreground">Estimated Total</span>
                 <span className="font-serif text-xl">{formatGHS(Number(enquiry.estimated_total))}</span>
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Prices shown are frozen at the time of this enquiry — later catalogue price changes never alter this
+                total.
+              </p>
             </CardContent>
           </Card>
 
@@ -65,6 +79,56 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
               <CardContent className="pt-0 text-sm text-ink/80">{enquiry.message}</CardContent>
             </Card>
           )}
+
+          <Card>
+            <CardHeader className="flex-row items-center justify-between space-y-0">
+              <CardTitle>Linked Sales</CardTitle>
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/admin/sales/new?enquiry_id=${enquiry.id}`}>
+                  <Plus className="h-3.5 w-3.5" /> Record Sale
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {!linkedSales || linkedSales.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No sales recorded against this enquiry yet. A sale is only recorded here once you explicitly link
+                  it — an enquiry is never treated as a sale on its own.
+                </p>
+              ) : (
+                <div className="divide-y divide-border">
+                  {linkedSales.map((s) => (
+                    <Link
+                      key={s.id}
+                      href={`/admin/sales/${s.id}`}
+                      className="flex items-center justify-between gap-3 py-3 text-sm hover:text-accent-dark"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ReceiptText className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>{new Date(s.sale_date).toLocaleDateString("en-GH", { dateStyle: "medium" })}</span>
+                        <Badge variant="outline" className="capitalize">{s.source.replace("_", " ")}</Badge>
+                      </div>
+                      <span className="font-medium">{formatGHS(Number(s.sale_amount))}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Activity Timeline</CardTitle></CardHeader>
+            <CardContent className="pt-0">
+              <EnquiryTimeline activities={activities ?? []} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Admin Notes</CardTitle></CardHeader>
+            <CardContent className="pt-0">
+              <EnquiryNotes enquiryId={enquiry.id} initialNotes={notes ?? []} />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -99,6 +163,42 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
           </Card>
 
           <Card>
+            <CardHeader><CardTitle>Outcome</CardTitle></CardHeader>
+            <CardContent className="space-y-2 pt-0">
+              <EnquiryOutcomeSelect id={enquiry.id} outcome={enquiry.outcome as EnquiryOutcome} />
+              <p className="text-xs text-muted-foreground">
+                Always set manually — recording a sale never changes this automatically.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Communication</CardTitle></CardHeader>
+            <CardContent className="space-y-3 pt-0 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Enquiry Source</span>
+                <Badge variant="outline">{ENQUIRY_SOURCE_LABELS[enquiry.enquiry_source as EnquirySource]}</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">WhatsApp Opened</span>
+                <span className="font-medium">{enquiry.whatsapp_opened ? "Yes" : "Not yet"}</span>
+              </div>
+              {enquiry.whatsapp_opened_at && (
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">WhatsApp Opened At</span>
+                  <span className="text-xs">
+                    {new Date(enquiry.whatsapp_opened_at).toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })}
+                  </span>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                &ldquo;Opened&rdquo; means the WhatsApp chat was launched, not that a message was sent — the customer
+                or admin still has to press Send.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
             <CardHeader><CardTitle>Notifications</CardTitle></CardHeader>
             <CardContent className="space-y-3 pt-0 text-sm">
               <NotificationRow label="WhatsApp" status={enquiry.whatsapp_status} error={enquiry.whatsapp_error} />
@@ -112,11 +212,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
             </CardContent>
           </Card>
 
-          <Button asChild variant="gold" size="lg" className="w-full">
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-4 w-4" /> Message on WhatsApp
-            </a>
-          </Button>
+          <WhatsappMessageButton enquiryId={enquiry.id} href={whatsappLink} />
         </div>
       </div>
     </AdminShell>

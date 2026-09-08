@@ -127,6 +127,12 @@ export async function POST(req: NextRequest) {
 
   const estimatedTotal = lineItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
+  // WhatsApp is click-to-chat only: `whatsapp_opened` just means wa.me was
+  // opened on the customer's device (set by the client when it used the
+  // "Send via WhatsApp" button), never that a message was actually sent.
+  const whatsappOpened = input.whatsapp_opened === true;
+  const nowIso = new Date().toISOString();
+
   // --- Persist ---------------------------------------------------------------
   const { data: enquiry, error: enquiryError } = await supabase
     .from("enquiries")
@@ -138,6 +144,11 @@ export async function POST(req: NextRequest) {
       message: input.message ?? null,
       estimated_total: estimatedTotal,
       status: "new",
+      // Every enquiry this route creates came from the website submission
+      // form, so this is a known fact, not a guess.
+      enquiry_source: "website",
+      whatsapp_opened: whatsappOpened,
+      whatsapp_opened_at: whatsappOpened ? nowIso : null,
     })
     .select()
     .single();
@@ -145,6 +156,18 @@ export async function POST(req: NextRequest) {
   if (enquiryError || !enquiry) {
     console.error("Failed to create enquiry:", enquiryError?.message);
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
+
+  // Activity timeline — best-effort, never blocks the enquiry from saving.
+  const activityRows = [
+    { enquiry_id: enquiry.id, event_type: "enquiry_created", metadata: { source: "website" } },
+    ...(whatsappOpened
+      ? [{ enquiry_id: enquiry.id, event_type: "whatsapp_opened", metadata: { via: "selection_page" } }]
+      : []),
+  ];
+  const { error: activityError } = await supabase.from("enquiry_activities").insert(activityRows);
+  if (activityError) {
+    console.error("Failed to log enquiry activity:", activityError.message);
   }
 
   const { error: itemsError } = await supabase.from("enquiry_items").insert(
@@ -224,6 +247,9 @@ export async function POST(req: NextRequest) {
       items: lineItems,
       whatsapp_status: whatsappStatus,
       email_status: emailStatus,
+      enquiry_source: "website",
+      whatsapp_opened: whatsappOpened,
+      whatsapp_opened_at: whatsappOpened ? nowIso : null,
     },
     ownerWhatsappNumber,
   });

@@ -27,6 +27,11 @@ export const enquirySubmissionSchema = z.object({
   location: z.string().trim().max(200).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
   message: z.string().trim().max(1000).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
   items: z.array(enquiryItemSchema).min(1, "Select at least one fragrance before submitting"),
+  // True only when the client already opened wa.me for this submission (the
+  // "Send via WhatsApp" button on My Selection). This means WhatsApp OPENED
+  // on the customer's device — never that a message was actually sent, since
+  // the customer still has to press Send themselves inside WhatsApp.
+  whatsapp_opened: z.boolean().optional().default(false),
   // honeypot field — real users never fill this in
   website: z.string().max(0).optional().or(z.literal("")),
 });
@@ -79,6 +84,47 @@ export const categoryInputSchema = z.object({
 export const enquiryStatusSchema = z.object({
   status: z.enum(["new", "contacted", "pending", "completed", "cancelled"]),
 });
+
+// ----------------------------------------------------------------------------
+// Admin: enquiry outcome, notes, activities
+// ----------------------------------------------------------------------------
+export const enquiryOutcomeSchema = z.object({
+  outcome: z.enum(["no_decision", "contacted", "sale_completed", "no_sale", "cancelled"]),
+});
+
+export const enquiryNoteInputSchema = z.object({
+  note: z.string().trim().min(1, "Note can't be empty").max(2000),
+});
+
+// ----------------------------------------------------------------------------
+// Admin: sales & sale items
+// ----------------------------------------------------------------------------
+const saleSourceEnum = z.enum(["website", "whatsapp", "instagram", "walk_in", "referral", "other"]);
+const paymentMethodEnum = z.enum(["cash", "mobile_money", "bank_transfer", "other"]);
+
+export const saleItemInputSchema = z.object({
+  id: uuid.optional(),
+  product_id: uuid.nullable().optional(),
+  product_name_snapshot: z.string().trim().min(1, "Product name is required").max(200),
+  brand_snapshot: z.string().trim().max(100).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
+  size_snapshot: z.string().trim().min(1, "Size is required").max(60),
+  quantity: z.coerce.number().int().min(1).max(999).default(1),
+  unit_price: z.coerce.number().min(0, "Unit price must be zero or more"),
+});
+
+export const saleInputSchema = z.object({
+  enquiry_id: uuid.nullable().optional(),
+  customer_name: z.string().trim().min(1, "Customer name is required").max(120),
+  whatsapp_number: z.string().trim().max(30).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
+  sale_date: z.coerce.date().optional(),
+  source: saleSourceEnum,
+  payment_method: paymentMethodEnum,
+  sale_amount: z.coerce.number().min(0, "Sale amount must be zero or more"),
+  notes: z.string().trim().max(2000).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
+  items: z.array(saleItemInputSchema).optional().default([]),
+});
+
+export type SaleInput = z.infer<typeof saleInputSchema>;
 
 export const settingsInputSchema = z.object({
   owner_whatsapp_number: z
