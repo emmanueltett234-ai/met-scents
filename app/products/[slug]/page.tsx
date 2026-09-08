@@ -56,8 +56,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="lg:pt-4">
           <div className="mb-5 flex flex-wrap gap-2">
-            {product.new_arrival && <Badge variant="gold">New Arrival</Badge>}
-            {product.best_seller && <Badge variant="gold">Best Seller</Badge>}
+            {product.new_arrival && <Badge variant="outline">New Arrival</Badge>}
+            {product.best_seller && <Badge variant="outline">Best Seller</Badge>}
             <Badge variant="outline">{GENDER_LABELS[product.gender]}</Badge>
           </div>
 
@@ -65,7 +65,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <h1 className="mt-3 font-serif text-4xl leading-[1.05] sm:text-5xl">{product.name}</h1>
 
           {product.fragrance_type && (
-            <p className="mt-3 text-sm italic text-accent-dark">{product.fragrance_type}</p>
+            <p className="mt-3 text-sm italic text-ink/70">{product.fragrance_type}</p>
           )}
 
           {product.description && (

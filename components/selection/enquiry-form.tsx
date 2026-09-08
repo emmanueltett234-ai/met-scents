@@ -238,7 +238,7 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
             </Button>
           </>
         ) : (
-          <Button type="submit" size="lg" variant="gold" disabled={submitting !== null} className="flex-1">
+          <Button type="submit" size="lg" variant="default" disabled={submitting !== null} className="flex-1">
             {submitting === "save" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             Send Enquiry
           </Button>

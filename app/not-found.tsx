@@ -11,7 +11,7 @@ export default function NotFound() {
       <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
         The page you&apos;re looking for doesn&apos;t exist, or may have moved.
       </p>
-      <Button asChild variant="gold" size="lg" className="mt-9">
+      <Button asChild variant="default" size="lg" className="mt-9">
         <Link href="/catalogue">Back to Collection</Link>
       </Button>
     </div>

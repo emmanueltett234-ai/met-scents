@@ -28,7 +28,7 @@ export function ThankYouContent() {
 
   return (
     <div className="container-luxe flex flex-col items-center gap-5 py-20 text-center">
-      <CheckCircle2 className="h-12 w-12 text-accent-dark" strokeWidth={1.2} />
+      <CheckCircle2 className="h-12 w-12 text-ink/80" strokeWidth={1.2} />
       <h1 className="font-serif text-3xl sm:text-4xl">Thank You!</h1>
       <p className="max-w-md text-base leading-relaxed text-muted-foreground">
         We&apos;ve received your fragrance selection. We&apos;ll contact you shortly to confirm
@@ -47,7 +47,7 @@ export function ThankYouContent() {
       )}
 
       <div className="mt-4 flex flex-wrap justify-center gap-4">
-        <Button asChild variant="gold" size="lg">
+        <Button asChild variant="default" size="lg">
           <Link href="/catalogue">Continue Browsing</Link>
         </Button>
         <Button asChild variant="outline" size="lg">

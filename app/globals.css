@@ -66,13 +66,13 @@
   /* Micro-labels echo the widely tracked small-caps wordmark under the
      monogram — sans, uppercase, generously spaced. */
   .kicker {
-    @apply font-sans text-[11px] font-medium uppercase tracking-widest2 text-accent-dark;
+    @apply font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500;
   }
   .container-luxe {
     @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
   }
   .divider-gold {
-    @apply h-px w-16 bg-accent;
+    @apply h-px w-16 bg-stone-400;
   }
   .hairline {
     @apply border border-border;

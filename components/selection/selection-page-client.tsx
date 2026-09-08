@@ -30,7 +30,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
           Browse the catalogue and tap the <span className="font-medium text-ink">+</span> on any
           fragrance to start building your selection.
         </p>
-        <Button asChild variant="gold" size="lg" className="mt-3">
+        <Button asChild variant="default" size="lg" className="mt-3">
           <Link href="/catalogue">Explore Fragrances</Link>
         </Button>
       </div>

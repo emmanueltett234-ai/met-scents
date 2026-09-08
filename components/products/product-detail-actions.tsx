@@ -78,7 +78,7 @@ export function ProductDetailActions({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           size="lg"
-          variant={alreadyAdded ? "ghost" : "gold"}
+          variant={alreadyAdded ? "ghost" : "default"}
           disabled={!isOrderable || alreadyAdded}
           onClick={() => {
             if (!selected) return;
@@ -118,7 +118,7 @@ export function ProductDetailActions({
       </div>
 
       {alreadyAdded && (
-        <Link href="/selection" className="link-underline block text-xs font-medium uppercase tracking-widest2 text-accent-dark">
+        <Link href="/selection" className="link-underline block text-xs font-medium uppercase tracking-widest2 text-stone-500">
           View My Selection →
         </Link>
       )}
