@@ -73,7 +73,7 @@ export function AdminNavContent({ email, onNavigate }: { email?: string; onNavig
   }
 
   return (
-    <div className="flex h-full min-w-0 flex-col">
+    <div className="flex min-w-0 flex-1 flex-col">
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
         {ADMIN_NAV.map((group, i) => (
           <div key={group.label ?? `group-${i}`}>
@@ -120,7 +120,13 @@ export function AdminNavContent({ email, onNavigate }: { email?: string; onNavig
 
 export function AdminSidebar({ email }: { email?: string }) {
   return (
-    <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-border bg-white lg:flex">
+    // No explicit height here on purpose: the parent row is a flex container
+    // with only min-h-screen (no fixed height), so a child's height:100%
+    // can't resolve against it reliably. Leaving height unset lets the
+    // default align-items:stretch do its job instead — the sidebar then
+    // always matches whichever column (itself or the page content) is
+    // taller, including on long, scrolling pages, not just the viewport.
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-white lg:flex">
       <div className="border-b border-border px-6 py-6">
         <Logo className="pointer-events-none" />
         <p className="mt-1 text-[11px] uppercase tracking-widest2 text-muted-foreground">Admin</p>
