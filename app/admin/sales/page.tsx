@@ -42,6 +42,14 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
     const q = searchParams.search.trim();
     const orClauses = [`customer_name.ilike.%${q}%`, `whatsapp_number.ilike.%${q}%`];
     if (uuidRegex.test(q)) orClauses.push(`id.eq.${q}`);
+
+    const { data: matchingItems } = await supabase
+      .from("sale_items")
+      .select("sale_id")
+      .ilike("product_name_snapshot", `%${q}%`);
+    const productMatchIds = Array.from(new Set((matchingItems ?? []).map((i) => i.sale_id)));
+    if (productMatchIds.length > 0) orClauses.push(`id.in.(${productMatchIds.join(",")})`);
+
     query = query.or(orClauses.join(","));
   }
 

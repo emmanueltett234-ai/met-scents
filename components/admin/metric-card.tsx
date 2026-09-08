@@ -20,6 +20,7 @@ export function MetricCard({
   label,
   value,
   currency,
+  percent,
   changePercent,
   helpText,
   icon: Icon,
@@ -29,6 +30,8 @@ export function MetricCard({
   label: string;
   value: number;
   currency?: boolean;
+  /** Value is already a percentage (0-100) — render with a % suffix instead of a bare number. */
+  percent?: boolean;
   changePercent?: number | null;
   helpText?: string;
   icon?: LucideIcon;
@@ -37,7 +40,7 @@ export function MetricCard({
   /** Domain color-coding: what kind of number this is, at a glance. */
   accent?: MetricAccent;
 }) {
-  const display = currency ? formatGHS(value) : value.toLocaleString("en-GH");
+  const display = currency ? formatGHS(value) : percent ? `${Math.round(value)}%` : value.toLocaleString("en-GH");
   const style = ACCENT_STYLES[accent];
 
   return (

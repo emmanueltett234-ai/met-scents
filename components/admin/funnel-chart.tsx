@@ -9,7 +9,7 @@ export function FunnelChart({ funnel }: { funnel: FunnelData }) {
     { label: "Enquiries", value: funnel.enquiries, color: "#2563EB" },
     { label: "WhatsApp Opened", value: funnel.whatsappOpened, color: "#128C7E" },
     { label: "Contacted", value: funnel.contacted, color: "#7C3AED" },
-    { label: "Sale Completed", value: funnel.saleCompleted, color: "#16A34A" },
+    { label: "Sale Recorded", value: funnel.saleCompleted, color: "#16A34A" },
   ];
   const max = Math.max(1, stages[0].value);
 

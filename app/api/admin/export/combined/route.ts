@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
     { label: "WhatsApp Opened", value: String(metrics.whatsappOpened) },
     { label: "Website Enquiries", value: String(metrics.websiteEnquiries) },
     { label: "Estimated Enquiry Value (not revenue)", value: formatGHS(metrics.estimatedEnquiryValue) },
-    { label: "Completed Sales", value: String(metrics.completedSales) },
+    { label: "Sales Recorded", value: String(metrics.completedSales) },
     { label: "Confirmed Sales Value (actual revenue)", value: formatGHS(metrics.confirmedSalesValue) },
     { label: "Average Sale Value", value: formatGHS(metrics.averageSaleValue) },
   ]);

@@ -40,7 +40,7 @@ export function SaleFilters() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search customer name, WhatsApp, or sale ID…"
+          placeholder="Search customer name, WhatsApp, product, or sale ID…"
           className="w-full border border-border bg-white py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ink"
         />
       </div>

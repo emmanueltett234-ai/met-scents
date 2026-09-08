@@ -46,12 +46,13 @@ export default async function SalesAnalyticsPage({
         </p>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          <MetricCard label="Completed Sales" value={metrics.completedSales} />
+          <MetricCard label="Sales Recorded" value={metrics.completedSales} />
           <MetricCard label="Confirmed Sales Value" value={metrics.confirmedSalesValue} currency />
           <MetricCard label="Average Sale Value" value={metrics.averageSaleValue} currency />
           <MetricCard
             label="Enquiry-to-Sale Conversion"
             value={conversion.rate ?? 0}
+            percent
             helpText={
               conversion.rate === null
                 ? "No enquiries in this period"

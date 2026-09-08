@@ -18,6 +18,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { DateRangeSelect } from "@/components/admin/date-range-select";
 import { MetricCard } from "@/components/admin/metric-card";
 import { SectionHeading } from "@/components/admin/section-heading";
+import { NeedsAttention } from "@/components/admin/needs-attention";
 import { FunnelChart } from "@/components/admin/funnel-chart";
 import { TimeSeriesChart } from "@/components/admin/charts/time-series-chart";
 import { DonutChart } from "@/components/admin/charts/donut-chart";
@@ -34,12 +35,23 @@ import {
   getSalesOverTime,
   getSalesBySource,
   getPaymentMethodBreakdown,
+  getConversionRate,
+  getNeedsAttention,
   getProductHealth,
 } from "@/lib/analytics/queries";
 import { formatGHS } from "@/lib/currency";
 import { ENQUIRY_STATUS_LABELS, type EnquiryStatus } from "@/types";
 
 export const dynamic = "force-dynamic";
+
+// Ghana runs on UTC year-round, so the server clock IS the shop owner's
+// local time — no timezone conversion needed for a time-of-day greeting.
+function greeting(): string {
+  const hour = new Date().getUTCHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 export default async function AdminDashboardPage({
   searchParams,
@@ -60,6 +72,8 @@ export default async function AdminDashboardPage({
     salesOverTime,
     salesBySource,
     paymentMethods,
+    conversion,
+    attention,
     productHealth,
     { data: recentEnquiries },
     { data: recentSales },
@@ -72,6 +86,8 @@ export default async function AdminDashboardPage({
     getSalesOverTime(supabase, range),
     getSalesBySource(supabase, range),
     getPaymentMethodBreakdown(supabase, range),
+    getConversionRate(supabase, range),
+    getNeedsAttention(supabase),
     getProductHealth(supabase),
     supabase.from("enquiries").select("*").order("created_at", { ascending: false }).limit(6),
     supabase.from("sales").select("*").order("sale_date", { ascending: false }).limit(6),
@@ -80,7 +96,11 @@ export default async function AdminDashboardPage({
   const exportSummaryHref = `/api/admin/export/combined?range=${range.key}&from=${searchParams.from ?? ""}&to=${searchParams.to ?? ""}`;
 
   return (
-    <AdminShell title="Dashboard" action={<DateRangeSelect current={range.key} />}>
+    <AdminShell
+      title={`${greeting()}.`}
+      description="Here's what's happening with Met Scents."
+      action={<DateRangeSelect current={range.key} />}
+    >
       <div className="space-y-14">
         {/* --- Overview: revenue first, interest second — the shape of the
             business, not a wall of equal boxes. -------------------------- */}
@@ -105,7 +125,7 @@ export default async function AdminDashboardPage({
               />
             </div>
             <MetricCard
-              label="Completed Sales"
+              label="Sales Recorded"
               value={metrics.completedSales}
               changePercent={percentChange(metrics.completedSales, metrics.previous.completedSales)}
               icon={Receipt}
@@ -153,6 +173,41 @@ export default async function AdminDashboardPage({
               icon={Sparkles}
               accent="caution"
             />
+            <MetricCard
+              label="Enquiry → Sale Conversion"
+              value={conversion.rate ?? 0}
+              percent
+              helpText={
+                conversion.rate === null
+                  ? "No enquiries in this period"
+                  : `${conversion.salesLinkedToEnquiry} of ${conversion.enquiriesInPeriod} enquiries`
+              }
+              icon={TrendingUp}
+              accent="enquiry"
+            />
+          </div>
+        </section>
+
+        {/* --- Needs Attention: actionable, sits right under the numbers —
+            this is what the owner should look at before anything else. --- */}
+        <section>
+          <SectionHeading eyebrow="Today" title="Needs Attention" />
+          <NeedsAttention items={attention} />
+        </section>
+
+        {/* --- Quick actions: a quiet utility strip, high enough to actually
+            get used rather than buried at the foot of the page. ------------ */}
+        <section>
+          <p className="kicker mb-3">Quick Actions</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <QuickLink href="/admin/products/new" icon={PackagePlus} label="Add Product" />
+            <QuickLink href="/admin/sales/new" icon={ReceiptText} label="Record Sale" />
+            <QuickLink href="/admin/enquiries" icon={Inbox} label="View Enquiries" />
+            <QuickLink href="/admin/categories" icon={Tags} label="Manage Categories" />
+            <QuickLink href="/api/admin/export/enquiries" icon={FileSpreadsheet} label="Export Enquiries" external />
+            <QuickLink href="/api/admin/export/sales" icon={FileSpreadsheet} label="Export Sales" external />
+            <QuickLink href={exportSummaryHref} icon={FileSpreadsheet} label="Export Summary" external />
+            <QuickLink href="/admin/settings" icon={SettingsIcon} label="Settings" />
           </div>
         </section>
 
@@ -294,21 +349,6 @@ export default async function AdminDashboardPage({
                 )}
               </CardContent>
             </Card>
-          </div>
-        </section>
-
-        {/* --- Quick actions: a quiet utility strip, not a wall of buttons. */}
-        <section className="border-t border-border pt-6">
-          <p className="kicker mb-3">Quick Actions</p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <QuickLink href="/admin/products/new" icon={PackagePlus} label="Add Product" />
-            <QuickLink href="/admin/sales/new" icon={ReceiptText} label="Record Sale" />
-            <QuickLink href="/admin/enquiries" icon={Inbox} label="View Enquiries" />
-            <QuickLink href="/admin/categories" icon={Tags} label="Manage Categories" />
-            <QuickLink href="/api/admin/export/enquiries" icon={FileSpreadsheet} label="Export Enquiries" external />
-            <QuickLink href="/api/admin/export/sales" icon={FileSpreadsheet} label="Export Sales" external />
-            <QuickLink href={exportSummaryHref} icon={FileSpreadsheet} label="Export Summary" external />
-            <QuickLink href="/admin/settings" icon={SettingsIcon} label="Settings" />
           </div>
         </section>
       </div>

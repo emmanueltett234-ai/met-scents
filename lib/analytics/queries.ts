@@ -307,6 +307,63 @@ export async function getConversionRate(supabase: Supabase, range: DateRange): P
   };
 }
 
+export interface AttentionItem {
+  key: string;
+  count: number;
+  label: string;
+  description: string;
+  href: string;
+}
+
+// Always reflects CURRENT state, not the selected date range — "what needs
+// my attention right now" doesn't care whether a stale enquiry arrived
+// yesterday or three weeks ago. Every count is a cheap head-only query.
+export async function getNeedsAttention(supabase: Supabase): Promise<AttentionItem[]> {
+  const [newEnquiries, pendingEnquiries, awaitingFollowUp, unavailableProducts] = await Promise.all([
+    supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    supabase
+      .from("enquiries")
+      .select("id", { count: "exact", head: true })
+      .eq("whatsapp_opened", true)
+      .eq("outcome", "no_decision"),
+    supabase.from("products").select("id", { count: "exact", head: true }).eq("availability", "out_of_stock"),
+  ]);
+
+  const items: AttentionItem[] = [
+    {
+      key: "new",
+      count: newEnquiries.count ?? 0,
+      label: "New Enquiries",
+      description: "Customers waiting for a response",
+      href: "/admin/enquiries?status=new",
+    },
+    {
+      key: "pending",
+      count: pendingEnquiries.count ?? 0,
+      label: "Pending Enquiries",
+      description: "Follow-up required",
+      href: "/admin/enquiries?status=pending",
+    },
+    {
+      key: "awaiting_followup",
+      count: awaitingFollowUp.count ?? 0,
+      label: "WhatsApp Opened, No Decision Yet",
+      description: "Chat was opened but nothing's been recorded since",
+      href: "/admin/enquiries?whatsapp_opened=true",
+    },
+    {
+      key: "unavailable",
+      count: unavailableProducts.count ?? 0,
+      label: "Unavailable Products",
+      description: "Review catalogue availability",
+      href: "/admin/products?availability=out_of_stock",
+    },
+  ];
+
+  return items.filter((i) => i.count > 0);
+}
+
 export interface ProductHealth {
   active: number;
   unavailable: number;

@@ -126,7 +126,7 @@ export default async function AdminEnquiriesPage({ searchParams }: { searchParam
                 <TableHead>WhatsApp</TableHead>
                 <TableHead>Estimated Total</TableHead>
                 <TableHead>Source</TableHead>
-                <TableHead>WhatsApp</TableHead>
+                <TableHead>WhatsApp Status</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
               </TableRow>
