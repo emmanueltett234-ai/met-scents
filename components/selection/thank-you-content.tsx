@@ -23,6 +23,9 @@ export function ThankYouContent() {
           items: data.items,
           estimatedTotal: data.estimatedTotal,
           customerName: data.customerName,
+          whatsappNumber: data.whatsappNumber || undefined,
+          email: data.email,
+          location: data.location,
         })
       : null;
 

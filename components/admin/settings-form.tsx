@@ -8,11 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { normalizeWhatsappNumber } from "@/lib/notifications/whatsapp";
 import type { StoreSettings } from "@/types";
 
 export function SettingsForm({ settings }: { settings: StoreSettings }) {
   const router = useRouter();
   const [whatsappNumber, setWhatsappNumber] = useState(settings.owner_whatsapp_number ?? "");
+  const normalizedPreview = normalizeWhatsappNumber(whatsappNumber);
   const [email, setEmail] = useState(settings.owner_notification_email ?? "");
   const [emailEnabled, setEmailEnabled] = useState(settings.email_notifications_enabled);
   const [saving, setSaving] = useState(false);
@@ -53,10 +55,25 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           placeholder="233 24 123 4567"
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          Include the country code. Every WhatsApp button on the site — the floating chat button,
-          per-product enquiries, and "Send on WhatsApp" — opens addressed to this number, pre-filled.
-          Customers still press Send themselves; nothing is sent automatically.
+          Include the country code, or a local Ghana number starting with 0 — either is normalized
+          automatically. Every WhatsApp button on the site — the floating chat button, per-product
+          enquiries, and "Send on WhatsApp" — opens addressed to this number, pre-filled. Customers
+          still press Send themselves; nothing is sent automatically.
         </p>
+        {whatsappNumber.trim() && (
+          <p className="mt-2 text-xs">
+            {normalizedPreview.length >= 11 ? (
+              <span className="text-muted-foreground">
+                WhatsApp links will open to{" "}
+                <span className="font-medium text-ink">wa.me/{normalizedPreview}</span>
+              </span>
+            ) : (
+              <span className="text-destructive">
+                This doesn&apos;t look like a complete number — double-check it before saving.
+              </span>
+            )}
+          </p>
+        )}
       </div>
 
       <div>

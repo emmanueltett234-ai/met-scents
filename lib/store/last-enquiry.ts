@@ -15,6 +15,8 @@ interface LastEnquiryState {
   data: {
     customerName: string;
     whatsappNumber: string;
+    email?: string;
+    location?: string;
     items: Array<{ product_name: string; brand: string; size: string; price: number }>;
     estimatedTotal: number;
     whatsappStatus: NotificationStatus;

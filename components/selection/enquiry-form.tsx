@@ -46,6 +46,8 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
           })),
           estimatedTotal: items.reduce((sum, i) => sum + i.price * i.quantity, 0),
           customerName: form.customer_name || undefined,
+          whatsappNumber: form.whatsapp_number || undefined,
+          email: form.email || undefined,
           location: form.location || undefined,
           message: form.message || undefined,
         })
@@ -84,22 +86,17 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
       setLastEnquiry({
         customerName: form.customer_name,
         whatsappNumber: form.whatsapp_number,
+        email: form.email || undefined,
+        location: form.location || undefined,
         items: data.enquiry.items,
         estimatedTotal: data.enquiry.estimated_total,
-        whatsappStatus: data.enquiry.whatsapp_status,
+        // WhatsApp itself was already opened (synchronously, from the click
+        // handler below) before this save even started, so from the
+        // customer's point of view it's "sent" the moment they chose that
+        // button — the Thank You page shouldn't nudge them to do it again.
+        whatsappStatus: via === "whatsapp" ? "sent" : data.enquiry.whatsapp_status,
         ownerWhatsappNumber: data.ownerWhatsappNumber || ownerWhatsappNumber,
       });
-
-      if (via === "whatsapp" && ownerWhatsappNumber) {
-        const link = buildCustomerEnquiryWhatsappLink(ownerWhatsappNumber, {
-          items: data.enquiry.items,
-          estimatedTotal: data.enquiry.estimated_total,
-          customerName: form.customer_name,
-          location: form.location,
-          message: form.message,
-        });
-        window.open(link, "_blank", "noopener,noreferrer");
-      }
 
       clear();
       router.push("/enquiry/thank-you");
@@ -116,7 +113,36 @@ export function EnquiryForm({ ownerWhatsappNumber }: { ownerWhatsappNumber: stri
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        submit(ownerWhatsappNumber ? "whatsapp" : "save");
+
+        if (ownerWhatsappNumber) {
+          if (items.length === 0) {
+            toast.error("Add at least one fragrance to your selection first.");
+            return;
+          }
+
+          // Open WhatsApp FIRST, synchronously, in the same tick as the
+          // click — this is what makes it reliable on mobile. Browsers
+          // (iOS Safari in particular) only honour window.open() as a
+          // direct, un-blocked navigation when it happens inside the same
+          // call stack as the user's tap, with no `await` in between. The
+          // previous version opened WhatsApp only after `await fetch(...)`
+          // resolved, which broke that gesture link and made the button
+          // silently do nothing on many phones.
+          //
+          // The pre-filled message uses the current selection as already
+          // held in the cart (each item's price came from the database at
+          // the moment it was added), so nothing here waits on the network.
+          if (localWhatsappFallback) {
+            window.open(localWhatsappFallback, "_blank", "noopener,noreferrer");
+          }
+
+          // Save the enquiry in the background. WhatsApp is already open by
+          // the time this resolves, so a slow network or a failed save can
+          // no longer prevent the customer from reaching WhatsApp.
+          submit("whatsapp");
+        } else {
+          submit("save");
+        }
       }}
       className="space-y-5"
     >
