@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Fraunces, Instrument_Sans } from "next/font/google";
+import { Source_Serif_4, Instrument_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getSettings } from "@/lib/data/settings";
 import "./globals.css";
 
-// Fraunces — a moderate-contrast serif with real, slightly wonky character:
-// warm rather than severe, readable at both display and small sizes, and
-// nowhere near the thin, wide-set Didone template register most "luxury"
-// fragrance sites default to. Carries headlines, product names and the
-// occasional italic accent (prices, pull-quotes) off a single family, so
-// the accent register stays a true relative of the display face instead of
-// a second, unrelated typeface.
-const serif = Fraunces({
+// Source Serif 4 — a genuine transitional serif (Adobe's book/editorial
+// companion to Source Sans): sturdy stems, moderate contrast, natural
+// proportions. Reads like an art book or print catalogue rather than a
+// fashion-template Didone, and it's quiet enough to carry a monogram-led
+// brand instead of competing with it. Carries headlines, product names and
+// the occasional italic accent (prices, pull-quotes) off one family.
+const serif = Source_Serif_4({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",

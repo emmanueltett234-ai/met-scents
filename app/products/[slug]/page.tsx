@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             src={product.image_url}
             brand={product.brand}
             name={product.name}
-            className="aspect-[4/5] w-full"
+            className="aspect-square w-full sm:aspect-[4/5]"
             sizes="(min-width: 1024px) 50vw, 100vw"
             priority
           />
