@@ -17,7 +17,7 @@ export function Logo({ className, dark }: { className?: string; dark?: boolean }
         className={cn("h-9 w-9 object-contain", dark && "invert")}
         priority
       />
-      <span className="font-serif text-lg tracking-wide">
+      <span className="font-serif text-base uppercase tracking-[0.25em]">
         Met <span className={dark ? "text-accent-light" : "text-accent-dark"}>Scents</span>
       </span>
     </Link>

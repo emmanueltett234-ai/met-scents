@@ -40,8 +40,8 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
         )}
         {(product.new_arrival || product.best_seller) && product.availability === "available" && (
           <div className="absolute right-3 top-3">
-            <span className="stamp-mark h-14 w-14 whitespace-pre-line border-stamp bg-cream/90 p-1 text-center text-[9px] font-medium uppercase leading-tight tracking-wider text-stamp">
-              {product.new_arrival ? "New\nStock" : "Best\nSeller"}
+            <span className="seal-mark h-14 w-14 whitespace-pre-line border-accent bg-cream/90 p-1 text-center text-[9px] font-medium uppercase leading-tight tracking-wider text-accent-dark">
+              {product.new_arrival ? "New\nArrival" : "Best\nSeller"}
             </span>
           </div>
         )}
@@ -51,8 +51,8 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
         <div className="flex items-baseline justify-between gap-2">
           <p className="text-[11px] uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
           {typeof index === "number" && (
-            <p className="specimen-index shrink-0 text-[10px] text-muted-foreground/70">
-              N°{String(index).padStart(3, "0")}
+            <p className="index-tag shrink-0 text-[10px] text-muted-foreground/70">
+              No. {String(index).padStart(2, "0")}
             </p>
           )}
         </div>
@@ -73,7 +73,7 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
         </div>
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-          <p className="font-mono text-sm text-ink">
+          <p className="font-accent text-base italic text-ink">
             {cheapest ? (
               <>
                 {variants.length > 1 && <span className="text-xs text-muted-foreground">from </span>}
@@ -101,7 +101,7 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
                 imageUrl: product.image_url,
               });
             }}
-            className="flex h-9 w-9 items-center justify-center border border-ink text-ink transition-colors hover:bg-ink hover:text-cream disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center border border-ink text-ink transition-colors hover:bg-ink hover:text-cream disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
           >
             {alreadyAdded ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           </button>

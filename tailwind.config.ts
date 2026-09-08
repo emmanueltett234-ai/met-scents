@@ -16,37 +16,29 @@ const config: Config = {
     extend: {
       colors: {
         // ---------------------------------------------------------------
-        // Brand palette — "Apothecary Laboratory". Deliberately not another
-        // black-and-gold perfume boutique: this reads like a fragrance
-        // chemist's specimen room. `ink` is bottle-glass green-black,
-        // `cream`/`parchment` are aged label paper, and the accent is an
-        // amber tincture drawn straight from a dropper bottle. A small
-        // `lab` (bench-glass green) and `stamp` (rubber-stamp red) round
-        // out the two colours that only ever appear as accents, never as
-        // a base.
+        // Brand palette — taken directly from the Met Scents monogram: a
+        // fine-line black-on-neutral-grey crest with a widely tracked
+        // small-caps wordmark. The logo itself carries no colour, so the
+        // site stays true to that — near-black ink, warm ivory/grey paper —
+        // with a single restrained accent: an aged brass/champagne, the
+        // tone of an engraved emblem plate, not a bright "perfume gold".
         // ---------------------------------------------------------------
-        ink: "#0F1C15",
-        cream: "#F3EEDF",
-        parchment: "#E8DCC0",
+        ink: "#17140F",
+        cream: "#F6F3EC",
+        parchment: "#E6E2D8",
         accent: {
-          DEFAULT: "#B8672A",
-          light: "#D99456",
-          dark: "#7A3F16",
+          DEFAULT: "#8C7752",
+          light: "#B9A97E",
+          dark: "#5E4E33",
           foreground: "hsl(var(--accent-foreground))",
         },
         // Kept as an alias so nothing that already references `gold-*`
-        // breaks — it now resolves to the amber tincture accent above.
+        // breaks — it now resolves to the brass accent above.
         gold: {
-          DEFAULT: "#B8672A",
-          light: "#D99456",
-          dark: "#7A3F16",
+          DEFAULT: "#8C7752",
+          light: "#B9A97E",
+          dark: "#5E4E33",
         },
-        lab: {
-          DEFAULT: "#2F4A3C",
-          light: "#4C6B57",
-          dark: "#182B21",
-        },
-        stamp: "#9C3B2E",
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -74,9 +66,16 @@ const config: Config = {
         },
       },
       fontFamily: {
+        // Italiana — a thin, wide-set Didone used across fashion and
+        // fragrance branding for exactly the reason it suits the Met
+        // Scents crest: elegant, high-contrast strokes with real presence
+        // at display sizes.
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+        // Cormorant — a delicate old-style serif with true italics, used
+        // for prices, quotes and softer accent moments the all-caps
+        // Italiana isn't suited to.
+        accent: ["var(--font-accent)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       letterSpacing: {
         widest2: "0.28em",
@@ -85,12 +84,6 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      backgroundImage: {
-        "lab-grid": "radial-gradient(currentColor 1px, transparent 1px)",
-      },
-      backgroundSize: {
-        "lab-grid": "18px 18px",
       },
       keyframes: {
         "fade-up": {

@@ -1,35 +1,36 @@
 import type { Metadata } from "next";
-import { Old_Standard_TT, IBM_Plex_Mono, Karla } from "next/font/google";
+import { Italiana, Cormorant, Jost } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getSettings } from "@/lib/data/settings";
 import "./globals.css";
 
-// Old Standard TT — a genuine early-1900s book/label serif, the kind of
-// face stamped on real apothecary bottles and pharmacy ledgers. Carries the
-// "specimen catalogue" concept in the headlines themselves, rather than a
-// generic "elegant" display serif.
-const serif = Old_Standard_TT({
+// Italiana — a thin, wide-set Didone display face, the same register as
+// the Met Scents monogram's fine linework. Carries the brand's actual
+// typographic voice into every large headline, rather than a generic
+// "elegant serif" pick.
+const serif = Italiana({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
+  weight: ["400"],
   variable: "--font-serif",
   display: "swap",
 });
 
-// IBM Plex Mono — the "data" voice of the site: prices, sizes, specimen
-// index numbers, and micro-labels all set in mono so they read like
-// measurements on a lab label rather than marketing copy.
-const mono = IBM_Plex_Mono({
+// Cormorant — a delicate old-style serif with genuine italics, used for
+// prices, pull-quotes and softer accent phrases the all-caps Italiana
+// can't carry on its own.
+const accentFont = Cormorant({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-mono",
+  style: ["normal", "italic"],
+  variable: "--font-accent",
   display: "swap",
 });
 
-// Karla — a warm, humanist sans for body copy; quiet enough to let the
-// serif headlines and mono data do the talking.
-const sans = Karla({
+// Jost — a geometric sans with the same wide, confident tracking as the
+// "METSCENTS" wordmark beneath the crest; used for body copy, nav, and
+// every uppercase micro-label.
+const sans = Jost({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-sans",
@@ -59,7 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await getSettings();
 
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={`${serif.variable} ${accentFont.variable} ${sans.variable}`}>
       <body className="font-sans">
         <SiteChrome ownerWhatsappNumber={settings.owner_whatsapp_number}>{children}</SiteChrome>
         <Toaster position="bottom-center" richColors closeButton />

@@ -55,14 +55,14 @@ export function ProductDetailActions({
               type="button"
               disabled={v.availability === "out_of_stock"}
               onClick={() => setSelectedId(v.id)}
-              className={`flex flex-col items-start border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`flex cursor-pointer flex-col items-start border px-4 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 selected?.id === v.id
                   ? "border-ink bg-ink text-cream"
                   : "border-border bg-white hover:border-ink"
               }`}
             >
               <span className="text-sm">{v.size}</span>
-              <span className="font-mono text-base">{formatGHS(v.price)}</span>
+              <span className="font-accent text-lg italic">{formatGHS(v.price)}</span>
             </button>
           ))}
         </div>

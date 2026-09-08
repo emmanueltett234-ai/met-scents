@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, FlaskConical, ArrowLeft } from "lucide-react";
+import { X, ShoppingBag, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductImage } from "@/components/products/product-image";
 import { CornerTicks } from "@/components/ui/corner-ticks";
@@ -23,7 +23,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
   if (items.length === 0) {
     return (
       <div className="container-luxe flex flex-col items-center gap-4 py-32 text-center">
-        <FlaskConical className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
+        <ShoppingBag className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
         <h1 className="font-serif text-3xl">Your Selection is Empty</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           Browse the catalogue and tap the <span className="font-medium text-ink">+</span> on any
@@ -64,11 +64,11 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
                   </Link>
                   <p className="text-sm text-muted-foreground">{item.size}</p>
                 </div>
-                <p className="font-mono text-base">{formatGHS(item.price)}</p>
+                <p className="font-accent text-lg italic">{formatGHS(item.price)}</p>
                 <button
                   aria-label={`Remove ${item.name}`}
                   onClick={() => remove(item.variantId)}
-                  className="ml-2 flex h-9 w-9 items-center justify-center text-muted-foreground hover:text-destructive"
+                  className="ml-2 flex h-9 w-9 cursor-pointer items-center justify-center text-muted-foreground hover:text-destructive"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -80,7 +80,7 @@ export function SelectionPageClient({ ownerWhatsappNumber }: { ownerWhatsappNumb
             <span className="text-sm uppercase tracking-widest2 text-muted-foreground">
               Estimated Total
             </span>
-            <span className="font-mono text-2xl">{formatGHS(total)}</span>
+            <span className="font-accent text-2xl italic">{formatGHS(total)}</span>
           </div>
           <p className="text-xs text-muted-foreground">
             Final pricing is confirmed by the shop owner when they follow up — this total reflects

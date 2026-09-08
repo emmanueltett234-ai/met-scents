@@ -46,14 +46,13 @@ export default async function HomePage() {
       {/* Hero                                                              */}
       {/* ---------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-ink text-cream">
-        <div className="lab-grid pointer-events-none absolute inset-0 text-cream/[0.05]" aria-hidden />
         <div
           className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-[0.2] blur-3xl"
-          style={{ background: "radial-gradient(circle, #B8672A 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #8C7752 0%, transparent 70%)" }}
         />
         <div
           className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full opacity-[0.12] blur-3xl"
-          style={{ background: "radial-gradient(circle, #D99456 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #B9A97E 0%, transparent 70%)" }}
         />
         <Image
           src="/logo.png"
@@ -68,7 +67,7 @@ export default async function HomePage() {
           <div className="relative max-w-3xl py-8 pl-8 sm:pl-10">
             <CornerTicks className="text-accent-light/60" />
             <p className="kicker mb-7 flex items-center gap-2 text-accent-light animate-fade-up">
-              <span className="h-px w-8 bg-accent-light" /> Met Scents · Specimen Catalogue Vol. I
+              <span className="h-px w-8 bg-accent-light" /> Met Scents · Accra, Ghana
             </p>
             <h1 className="font-serif text-[13vw] font-medium leading-[0.98] text-balance sm:text-6xl lg:text-[6.2rem] animate-fade-up [animation-delay:100ms]">
               Find a Scent
@@ -120,7 +119,7 @@ export default async function HomePage() {
         <section className="container-luxe py-24 sm:py-28">
           <div className="mb-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="kicker mb-3">Entry No. 01 — Curated Selection</p>
+              <p className="kicker mb-3">Curated Selection</p>
               <h2 className="font-serif text-3xl sm:text-4xl">Featured Fragrances</h2>
             </div>
             <Link
@@ -238,7 +237,7 @@ export default async function HomePage() {
             ].map(([stat, label]) => (
               <div key={label} className="relative border border-border bg-cream p-8 text-center">
                 <CornerTicks className="text-border" />
-                <p className="specimen-index text-4xl text-accent-dark">{stat}</p>
+                <p className="font-accent text-4xl italic text-accent-dark">{stat}</p>
                 <p className="mt-2 text-xs uppercase tracking-widest2 text-muted-foreground">{label}</p>
               </div>
             ))}
@@ -273,7 +272,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-ink py-28 text-cream">
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.16] blur-3xl"
-          style={{ background: "radial-gradient(circle, #8A3A29 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #8C7752 0%, transparent 70%)" }}
         />
         <div className="container-luxe relative flex flex-col items-center gap-6 text-center">
           <h2 className="max-w-xl font-serif text-3xl sm:text-4xl">

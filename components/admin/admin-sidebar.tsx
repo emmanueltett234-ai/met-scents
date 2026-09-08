@@ -57,7 +57,7 @@ export function AdminSidebar({ email }: { email?: string }) {
         {email && <p className="mb-3 truncate text-xs text-muted-foreground">{email}</p>}
         <button
           onClick={signOut}
-          className="flex items-center gap-2 text-xs uppercase tracking-widest2 text-muted-foreground hover:text-destructive"
+          className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-widest2 text-muted-foreground hover:text-destructive"
         >
           <LogOut className="h-3.5 w-3.5" /> Sign Out
         </button>

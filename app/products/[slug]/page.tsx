@@ -61,7 +61,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <Badge variant="outline">{GENDER_LABELS[product.gender]}</Badge>
           </div>
 
-          <p className="kicker mb-2 text-muted-foreground/70">Specimen Record</p>
           <p className="text-xs uppercase tracking-widest2 text-muted-foreground">{product.brand}</p>
           <h1 className="mt-2 font-serif text-4xl leading-[1.05] sm:text-5xl">{product.name}</h1>
 
