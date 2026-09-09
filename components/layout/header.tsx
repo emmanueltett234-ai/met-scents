@@ -75,7 +75,7 @@ export function Header({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
                 <Menu className="h-5 w-5" strokeWidth={1.5} />
               </button>
             </SheetTrigger>
-            <SheetContent className="max-w-xs">
+            <SheetContent className="max-w-none sm:max-w-sm">
               <div className="flex flex-col gap-1 px-6 py-8">
                 <Logo className="mb-8" />
                 {NAV_LINKS.map((link) => (
@@ -89,7 +89,7 @@ export function Header({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | 
                   </SheetClose>
                 ))}
                 <SheetClose asChild>
-                  <Link href="/selection" className="py-4 text-sm uppercase tracking-widest2 text-accent-dark">
+                  <Link href="/selection" className="border-b border-border py-4 text-sm uppercase tracking-widest2 text-accent-dark">
                     My Selection {mounted && count > 0 ? `(${count})` : ""}
                   </Link>
                 </SheetClose>
