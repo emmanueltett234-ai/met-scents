@@ -16,14 +16,12 @@ const GENDER_TILES = [
 ];
 
 // Ordered by how much it actually differentiates the shop — the WhatsApp
-// line is the real product mechanism, so it leads and reads larger, not an
-// equal fourth of an icon-tile grid.
+// line is the real product mechanism, so it leads the list.
 const REASONS = [
   {
     icon: MessageCircle,
     title: "A Real Person, On WhatsApp",
     body: "No call centres, no ticket queue. Message the shop directly and a real person replies, usually within the hour.",
-    lead: true,
   },
   {
     icon: Beaker,
@@ -282,21 +280,12 @@ export default async function HomePage() {
         </h2>
         <div className="divide-y divide-ink/10 border-t border-ink/10">
           {REASONS.map((reason) => (
-            <div
-              key={reason.title}
-              className={`flex flex-col gap-3 py-8 sm:flex-row sm:items-baseline sm:gap-10 ${
-                reason.lead ? "sm:py-10" : ""
-              }`}
-            >
-              <div className={`flex shrink-0 items-center gap-3 sm:w-[19rem] ${reason.lead ? "text-accent-dark" : "text-ink/70"}`}>
-                <reason.icon className={reason.lead ? "h-5 w-5" : "h-4 w-4"} strokeWidth={1.5} />
-                <h3 className={`font-serif ${reason.lead ? "text-2xl text-ink sm:text-3xl" : "text-lg text-ink"}`}>
-                  {reason.title}
-                </h3>
+            <div key={reason.title} className="flex flex-col gap-3 py-8 sm:flex-row sm:items-baseline sm:gap-10">
+              <div className="flex shrink-0 items-center gap-3 text-ink/70 sm:w-[19rem]">
+                <reason.icon className="h-4 w-4" strokeWidth={1.5} />
+                <h3 className="font-serif text-lg text-ink">{reason.title}</h3>
               </div>
-              <p className={`leading-relaxed text-muted-foreground ${reason.lead ? "max-w-md text-base" : "max-w-sm text-sm"}`}>
-                {reason.body}
-              </p>
+              <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{reason.body}</p>
             </div>
           ))}
         </div>
