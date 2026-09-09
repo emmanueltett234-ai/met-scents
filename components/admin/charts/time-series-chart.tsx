@@ -52,7 +52,7 @@ export function TimeSeriesChart({
         />
         <Tooltip
           formatter={(value: number) => [currency ? formatGHS(value) : value, currency ? "Sales" : "Enquiries"]}
-          contentStyle={{ border: "1px solid #E6E2D8", borderRadius: 0, fontSize: 12 }}
+          contentStyle={{ border: "1px solid #E2E5DB", borderRadius: 8, fontSize: 12 }}
         />
         <Area type="monotone" dataKey="value" stroke={lineColor} strokeWidth={1.75} fill="url(#tsFill)" />
       </AreaChart>

@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Archivo } from "next/font/google";
+import { Bodoni_Moda, Archivo } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getSettings } from "@/lib/data/settings";
 import "./globals.css";
 
-// Source Serif 4 — a genuine transitional serif (Adobe's book/editorial
-// companion to Source Sans): sturdy stems, moderate contrast, natural
-// proportions. Reads like an art book or print catalogue rather than a
-// fashion-template Didone, and it's quiet enough to carry a monogram-led
-// brand instead of competing with it. Carries headlines, product names and
-// the occasional italic accent (prices, pull-quotes) off one family.
-const serif = Source_Serif_4({
+// Bodoni Moda — a genuine high-contrast Didone, matched to the direct style
+// reference's headline character (thin hairlines against bold vertical
+// stems, the dramatic "fashion house" serif register the reference actually
+// uses, not a quiet book serif). Carries headlines, product names, and the
+// italic accent (prices, pull-quotes) off one family.
+const serif = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],

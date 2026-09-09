@@ -6,7 +6,7 @@ import { buildGeneralWhatsappLink } from "@/lib/notifications/whatsapp";
 export function Footer({ ownerWhatsappNumber }: { ownerWhatsappNumber: string | null }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-cream/10 bg-ink text-cream">
+    <footer className="border-t border-cream/10 bg-accent text-cream">
       <div className="container-luxe grid gap-12 py-20 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div>
           <Logo dark className="mb-5" />

@@ -61,9 +61,15 @@ not a cart.
 - Voice: direct, honest, unpretentious — "we decant and sell what we'd wear ourselves," transparent
   Cedi pricing, no hidden markups, tells a customer before they buy the full bottle if a scent
   isn't right for them.
-- Current (incumbent, about to be treated as anti-reference for this redesign) visual system:
-  near-black "ink" / warm "cream" & "parchment" neutrals, a single muted brass/champagne accent,
-  Fraunces serif headlines, sharp/engraved-plate detailing (corner ticks, seal marks).
+- Visual system is pinned to the direct style reference (see Evidence on Hand), not to any prior
+  build of this site. The first redesign pass treated the reference loosely and kept the site's
+  original warm ink/cream/parchment/brass identity underneath; the user rejected that outright
+  ("scrap the current color palette completely — it's not staying in any form") and asked for a
+  1:1 rebuild from pixel-sampled reference values instead. That rebuilt system — near-true-black,
+  true white, pale sage frame, one saturated olive accent, no gold/brass at all, Bodoni Moda
+  display serif, pill-shaped soft-rounded components — is now the standing brand system. See
+  `DESIGN.md` for the full token set and named rules; do not reintroduce brass/gold or the old
+  sharp-cornered system without the user explicitly asking.
 
 ## Evidence on Hand
 
@@ -73,10 +79,14 @@ not a cart.
   negative space rather than assuming lifestyle photography — product shots are treated as
   flat-lay objects.
 - One direct style reference on hand: `Inspo/original-77553b9cffbaac025edabc5b256ce677.webp` — a
-  Chanel "Coco Noir"-style template (noir/black sections, warm sage-green wrapper background, gold
-  accents, editorial hand/bottle photography, serif display headlines, pill CTAs with a circular
-  arrow). Treated as the primary — currently only — style reference; the user confirmed no
-  additional reference images are coming.
+  Chanel "Coco Noir"-style template. Pixel-sampled (not eyeballed) for the second design pass:
+  near-true-black noir sections, true-white light sections, a pale sage frame (`#D9E2C6`, ~5% of
+  canvas width on every edge), and one saturated olive accent (`#657950`, verified pixel-identical
+  on the header pill, hero circle badge, and footer) — no gold/brass anywhere in the reference's
+  UI chrome, only in its product photography. Editorial hand/bottle photography, high-contrast
+  Didone display headlines, pill CTAs with a circular arrow badge. Treated as the primary —
+  currently only — style reference; the user confirmed no additional reference images are coming
+  and, on the second pass, that this reference is the literal target, not loose inspiration.
 - 8 real starter fragrances seeded in Supabase (Vibrato, JPG Le Male Elixir Absolu, Erba Pura, Swy,
   Gucci Intense Oud, Bianco Latte, Gucci Guilty Elixir, YSL Myself Absolu) with real GHS pricing —
   not placeholder content.

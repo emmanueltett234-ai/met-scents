@@ -40,7 +40,7 @@ export function DonutChart({
         </Pie>
         <Tooltip
           formatter={(value: number) => (currency ? formatGHS(value) : value)}
-          contentStyle={{ border: "1px solid #E6E2D8", borderRadius: 0, fontSize: 12 }}
+          contentStyle={{ border: "1px solid #E2E5DB", borderRadius: 8, fontSize: 12 }}
         />
         <Legend
           iconType="circle"

@@ -4,35 +4,39 @@
 
 @layer base {
   :root {
-    /* Taken from the monogram: near-black ink, warm ivory/grey paper, a
-       single muted brass accent. */
-    --background: 40 16% 93%;
-    --foreground: 30 12% 9%;
+    /* Pixel-sampled from Inspo/original-77553b9cffbaac025edabc5b256ce677.webp:
+       cold near-true black, true white paper, one saturated olive accent
+       (the reference's only interactive color), pale sage as the secondary
+       surface tint. No warm cream, no brass — that family doesn't exist in
+       the reference and was fully replaced, not adjusted. */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
 
-    --card: 40 22% 97%;
-    --card-foreground: 30 12% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
 
-    --primary: 30 12% 9%;
-    --primary-foreground: 40 16% 93%;
+    --primary: 0 0% 4%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 14% 86%;
-    --secondary-foreground: 30 12% 9%;
+    --secondary: 77 36% 90%;
+    --secondary-foreground: 0 0% 4%;
 
-    --muted: 38 12% 88%;
-    --muted-foreground: 30 6% 38%;
+    --muted: 77 20% 94%;
+    --muted-foreground: 0 0% 30%;
 
-    --accent: 35 26% 40%;
-    --accent-foreground: 40 16% 93%;
+    --accent: 89 20% 39%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 4 45% 38%;
-    --destructive-foreground: 40 16% 93%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 38 12% 80%;
-    --input: 38 12% 76%;
-    --ring: 35 26% 40%;
+    --border: 76 17% 88%;
+    --input: 76 17% 84%;
+    --ring: 89 20% 39%;
 
-    /* A touch of softness on an otherwise sharp-edged, engraved feel. */
-    --radius: 0.125rem;
+    /* Soft-rounded cards and pill buttons, matching the reference — a
+       deliberate departure from the old sharp-edged 0.125rem system. */
+    --radius: 0.75rem;
   }
 }
 
@@ -67,7 +71,7 @@
     @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
   }
   .divider-gold {
-    @apply h-px w-16 bg-stone-400;
+    @apply h-px w-16 bg-accent/60;
   }
   .hairline {
     @apply border border-border;

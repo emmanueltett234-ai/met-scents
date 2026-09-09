@@ -16,39 +16,45 @@ const config: Config = {
     extend: {
       colors: {
         // ---------------------------------------------------------------
-        // Brand palette — taken directly from the Met Scents monogram: a
-        // fine-line black-on-neutral-grey crest with a widely tracked
-        // small-caps wordmark. The logo itself carries no colour, so the
-        // site stays true to that — near-black ink, warm ivory/grey paper —
-        // with a single restrained accent: an aged brass/champagne, the
-        // tone of an engraved emblem plate, not a bright "perfume gold".
+        // Brand palette — pixel-sampled directly from the direct style
+        // reference (Inspo/original-77553b9cffbaac025edabc5b256ce677.webp),
+        // not approximated. Four colors, no warm cream/brass family at all:
+        // a cold near-true black, true white, a pale sage mat, and one
+        // saturated olive that is the reference's ONLY interactive/accent
+        // color — verified identical (same hex) on its header pill button,
+        // its hero circle-arrow badge, and its full footer.
+        // Token NAMES kept from the prior system (ink/cream/parchment/
+        // accent/gold) so no call site needed touching — only the VALUES
+        // changed, so this is a values-only, no-file-hunt rebuild.
         // ---------------------------------------------------------------
-        ink: "#17140F",
-        cream: "#F6F3EC",
-        parchment: "#E6E2D8",
-        // The site's second identity color, pulled from the sage-olive mat
-        // the direct style reference wraps every section in. Used at
-        // committed, page-scale weight on the public storefront (the frame,
-        // hero, dark-section rules) — never as a decorative accent — while
-        // the admin dashboard borrows only `sage.DEFAULT` as its money/positive
-        // semantic color, replacing a stock emerald.
+        ink: "#0A0A0A", // was warm brown-black #17140F — now cold near-true-black, sampled from the noir sections
+        cream: "#FFFFFF", // was warm ivory #F6F3EC — now true white/paper, sampled from the light sections
+        parchment: "#EAEFDD", // secondary light tone: a pale tint of the sage mat, not a warm off-white — ties secondary sections to the frame color instead of inventing a family the reference doesn't have
+        // The pale sage mat/frame color — #D9E2C6, sampled from every edge
+        // of the reference at ~5% of canvas width. Frame and light "second
+        // surface" tint ONLY; never used for anything clickable — that's accent.
         sage: {
-          DEFAULT: "#7E886A",
-          light: "#C7CBAE",
-          dark: "#454A34",
+          DEFAULT: "#D9E2C6",
+          light: "#EAEFDD",
+          dark: "#B9C6A0",
         },
+        // The reference's one interactive color — #657950, sampled pixel-
+        // identical off its header "Login" pill, its hero circle-arrow
+        // badge, and its footer. Was a brass/champagne token before; no
+        // gold exists anywhere in the reference, so this replaces it wholesale.
         accent: {
-          DEFAULT: "#8C7752",
-          light: "#B9A97E",
-          dark: "#5E4E33",
+          DEFAULT: "#657950",
+          light: "#8A9B6D",
+          dark: "#4A5A3A",
           foreground: "hsl(var(--accent-foreground))",
         },
         // Kept as an alias so nothing that already references `gold-*`
-        // breaks — it now resolves to the brass accent above.
+        // breaks — it now resolves to the same sampled olive as `accent`,
+        // not a separate gold value (the reference has no gold UI color).
         gold: {
-          DEFAULT: "#8C7752",
-          light: "#B9A97E",
-          dark: "#5E4E33",
+          DEFAULT: "#657950",
+          light: "#8A9B6D",
+          dark: "#4A5A3A",
         },
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",

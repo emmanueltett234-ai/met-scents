@@ -1,8 +1,9 @@
 // The admin is a working tool the shop owner scans quickly, not a
 // customer-facing brand surface — so unlike the storefront's restrained
-// ink/brass palette, charts here use real, distinguishable color so data
-// reads at a glance: each category has a fixed, semantic color regardless
-// of chart type, plus a vivid fallback sequence for anything unmapped.
+// black/white/olive palette, charts here use real, distinguishable color so
+// data reads at a glance: each category has a fixed, semantic color
+// regardless of chart type, plus a vivid fallback sequence for anything
+// unmapped.
 export const KEY_COLORS: Record<string, string> = {
   // enquiry / sale source
   website: "#2563EB", // blue
@@ -32,5 +33,5 @@ export function colorForKey(key: string, index: number): string {
   return KEY_COLORS[key] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length];
 }
 
-export const CHART_GRID = "#E6E2D8"; // parchment — kept neutral so the colored data stays what draws the eye
-export const CHART_MUTED_TEXT = "#8A8272";
+export const CHART_GRID = "#E2E5DB"; // neutral border tone — kept quiet so the colored data stays what draws the eye
+export const CHART_MUTED_TEXT = "#4D4D4D";

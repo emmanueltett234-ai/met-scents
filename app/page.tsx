@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, MessageCircle, ShieldCheck, Beaker, Truck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowBadge } from "@/components/ui/arrow-badge";
 import { ProductGrid } from "@/components/products/product-grid";
 import { getFeaturedProducts } from "@/lib/data/products";
 
@@ -54,11 +56,11 @@ export default async function HomePage() {
       <section className="relative -mt-20 overflow-hidden bg-ink text-cream lg:-mt-24">
         <div
           className="pointer-events-none absolute -right-20 top-1/2 h-[720px] w-[720px] -translate-y-1/2 opacity-[0.22] blur-3xl"
-          style={{ background: "radial-gradient(circle, #B9A97E 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #8A9B6D 0%, transparent 70%)" }}
         />
         <div
           className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] opacity-[0.08] blur-3xl"
-          style={{ background: "radial-gradient(circle, #8A8478 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #D9E2C6 0%, transparent 70%)" }}
         />
 
         <div className="container-luxe relative grid min-h-[92vh] grid-cols-1 items-center gap-12 py-28 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:py-32">
@@ -73,17 +75,16 @@ export default async function HomePage() {
               and personally followed up on, one enquiry at a time.
             </p>
 
-            <div className="mt-11 flex flex-wrap gap-4 animate-fade-up [animation-delay:260ms]">
-              <Button
-                asChild
-                variant="gold"
-                size="lg"
-                className="bg-cream text-ink hover:bg-cream/85 hover:text-ink"
+            <div className="mt-11 flex flex-wrap items-center gap-4 animate-fade-up [animation-delay:260ms]">
+              <Link
+                href="/catalogue"
+                className="group flex items-center gap-3"
               >
-                <Link href="/catalogue">
-                  Explore Fragrances <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
+                <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full border-cream/40 text-cream group-hover:bg-cream group-hover:text-ink")}>
+                  Explore Fragrances
+                </span>
+                <ArrowBadge />
+              </Link>
               <Button
                 asChild
                 variant="outline"
@@ -99,15 +100,15 @@ export default async function HomePage() {
             <div className="relative mx-auto w-full max-w-sm animate-fade-in [animation-delay:200ms] lg:max-w-md lg:justify-self-end">
               <div
                 className="pointer-events-none absolute inset-0 scale-125 opacity-70 blur-3xl"
-                style={{ background: "radial-gradient(ellipse at 50% 55%, rgba(185,169,126,0.35) 0%, transparent 65%)" }}
+                style={{ background: "radial-gradient(ellipse at 50% 55%, rgba(101,121,80,0.35) 0%, transparent 65%)" }}
               />
               {/* The product photo's own studio-white background is real,
                   not an accident to hide: it's staged as a deliberate plate
-                  — a small gold-edged card floating on the noir ground,
-                  the same "product on a mounted card" device the reference
-                  uses for its own bottle shots. */}
-              <div className="relative border border-accent/40 bg-cream p-8 shadow-[0_50px_80px_-20px_rgba(0,0,0,0.6)] sm:p-10">
-                <div className="relative aspect-[4/5]">
+                  — a soft-rounded card floating on the noir ground, the same
+                  "product on a mounted card" device the reference uses for
+                  its own bottle shots. */}
+              <div className="relative rounded-2xl bg-cream p-8 shadow-[0_50px_80px_-20px_rgba(0,0,0,0.6)] sm:p-10">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
                   <Image
                     src={heroProduct.image_url}
                     alt={`${heroProduct.brand} ${heroProduct.name}`}
@@ -117,7 +118,7 @@ export default async function HomePage() {
                     className="object-contain"
                   />
                 </div>
-                <div className="mt-6 flex items-baseline justify-between border-t border-ink/10 pt-4">
+                <div className="mt-6 flex items-baseline justify-between border-t border-black/10 pt-4">
                   <p className="text-xs uppercase tracking-widest2 text-muted-foreground">{heroProduct.brand}</p>
                   <p className="font-accent text-sm italic text-ink">{heroProduct.name}</p>
                 </div>
@@ -150,18 +151,20 @@ export default async function HomePage() {
             <h2 className="font-serif text-3xl sm:text-4xl">Featured Fragrances</h2>
             <Link
               href="/catalogue"
-              className="link-underline hidden shrink-0 text-xs font-medium uppercase tracking-widest2 text-ink/70 sm:block"
+              className="group hidden shrink-0 items-center gap-3 sm:flex"
             >
-              View Full Catalogue →
+              <span className="link-underline text-xs font-medium uppercase tracking-widest2 text-ink/70">
+                View Full Catalogue
+              </span>
+              <ArrowBadge className="h-8 w-8" />
             </Link>
           </div>
           <ProductGrid products={featured} />
           <div className="mt-14 flex justify-center sm:hidden">
-            <Button asChild variant="outline" size="lg">
-              <Link href="/catalogue">
-                View Full Catalogue <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            <Link href="/catalogue" className="group flex items-center gap-3">
+              <span className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>View Full Catalogue</span>
+              <ArrowBadge />
+            </Link>
           </div>
         </section>
       )}
@@ -305,7 +308,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-ink py-28 text-cream">
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.12] blur-3xl"
-          style={{ background: "radial-gradient(circle, #F6F3EC 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #FFFFFF 0%, transparent 70%)" }}
         />
         <div className="container-luxe relative flex flex-col items-center gap-6 text-center">
           <h2 className="max-w-xl font-serif text-3xl sm:text-4xl">
@@ -315,17 +318,13 @@ export default async function HomePage() {
             Browse the full collection, add your favourites to My Selection, and send us your
             request. We&apos;ll take it from there.
           </p>
-          <div className="mt-2 flex flex-wrap justify-center gap-4">
-            <Button
-              asChild
-              variant="gold"
-              size="lg"
-              className="bg-cream text-ink hover:bg-cream/85 hover:text-ink"
-            >
-              <Link href="/catalogue">
-                Browse Collection <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
+            <Link href="/catalogue" className="group flex items-center gap-3">
+              <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full border-cream/40 text-cream group-hover:bg-cream group-hover:text-ink")}>
+                Browse Collection
+              </span>
+              <ArrowBadge />
+            </Link>
             <Button asChild variant="outline" size="lg" className="border-cream/30 text-cream hover:bg-cream hover:text-ink">
               <Link href="/selection">View My Selection</Link>
             </Button>
