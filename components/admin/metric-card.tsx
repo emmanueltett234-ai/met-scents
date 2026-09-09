@@ -5,14 +5,16 @@ import { cn } from "@/lib/utils";
 export type MetricAccent = "revenue" | "enquiry" | "whatsapp" | "caution" | "neutral";
 
 // Domain-coded accents so the admin can tell what kind of number a card is
-// showing before reading the label: green = confirmed money, blue = demand
-// in the pipeline, WhatsApp green = the specific channel, amber = a number
-// that looks like money but isn't revenue yet.
+// showing before reading the label: sage = confirmed money (the brand's own
+// second color, not a stock traffic-light green), accent gold = demand in
+// the pipeline, WhatsApp green = the specific channel (naming a real
+// external brand, not decorative), destructive = a number that looks like
+// money but isn't revenue yet.
 const ACCENT_STYLES: Record<MetricAccent, { rule: string; iconWrap: string; iconColor: string }> = {
-  revenue: { rule: "bg-emerald-500", iconWrap: "bg-emerald-50", iconColor: "text-emerald-600" },
-  enquiry: { rule: "bg-blue-500", iconWrap: "bg-blue-50", iconColor: "text-blue-600" },
+  revenue: { rule: "bg-sage", iconWrap: "bg-sage/10", iconColor: "text-sage-dark" },
+  enquiry: { rule: "bg-accent", iconWrap: "bg-accent/10", iconColor: "text-accent-dark" },
   whatsapp: { rule: "bg-[#128C7E]", iconWrap: "bg-[#128C7E]/10", iconColor: "text-[#128C7E]" },
-  caution: { rule: "bg-amber-500", iconWrap: "bg-amber-50", iconColor: "text-amber-600" },
+  caution: { rule: "bg-destructive", iconWrap: "bg-destructive/10", iconColor: "text-destructive" },
   neutral: { rule: "bg-accent", iconWrap: "bg-accent/10", iconColor: "text-ink/50" },
 };
 
@@ -86,7 +88,7 @@ export function MetricCard({
           <span
             className={cn(
               "flex items-center gap-0.5 text-xs font-medium",
-              changePercent >= 0 ? "text-emerald-700" : "text-destructive"
+              changePercent >= 0 ? "text-sage-dark" : "text-destructive"
             )}
           >
             {changePercent >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}

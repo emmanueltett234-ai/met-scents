@@ -63,11 +63,6 @@
   .text-balance {
     text-wrap: balance;
   }
-  /* Micro-labels echo the widely tracked small-caps wordmark under the
-     monogram — sans, uppercase, generously spaced. */
-  .kicker {
-    @apply font-sans text-[11px] font-medium uppercase tracking-widest2 text-stone-500;
-  }
   .container-luxe {
     @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-12;
   }

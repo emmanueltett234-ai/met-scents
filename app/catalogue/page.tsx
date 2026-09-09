@@ -39,7 +39,6 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
   return (
     <div className="container-luxe py-16">
       <div className="mb-10 text-center">
-        <p className="kicker mb-3">The Collection</p>
         <h1 className="font-serif text-4xl">Fragrance Catalogue</h1>
         <div className="divider-gold mx-auto mt-5" />
       </div>

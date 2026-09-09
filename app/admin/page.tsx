@@ -106,9 +106,8 @@ export default async function AdminDashboardPage({
             business, not a wall of equal boxes. -------------------------- */}
         <section>
           <SectionHeading
-            eyebrow={range.label}
             title="Overview"
-            description="Compared to the equal-length period immediately before it, where a comparison is meaningful."
+            description={`${range.label} — compared to the equal-length period immediately before it, where a comparison is meaningful.`}
           />
 
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -191,14 +190,13 @@ export default async function AdminDashboardPage({
         {/* --- Needs Attention: actionable, sits right under the numbers —
             this is what the owner should look at before anything else. --- */}
         <section>
-          <SectionHeading eyebrow="Today" title="Needs Attention" />
+          <SectionHeading title="Needs Attention" />
           <NeedsAttention items={attention} />
         </section>
 
         {/* --- Quick actions: a quiet utility strip, high enough to actually
             get used rather than buried at the foot of the page. ------------ */}
         <section>
-          <p className="kicker mb-3">Quick Actions</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <QuickLink href="/admin/products/new" icon={PackagePlus} label="Add Product" />
             <QuickLink href="/admin/sales/new" icon={ReceiptText} label="Record Sale" />
@@ -213,7 +211,7 @@ export default async function AdminDashboardPage({
 
         {/* --- Customer Journey ------------------------------------------- */}
         <section>
-          <SectionHeading eyebrow="Performance" title="Customer Journey" />
+          <SectionHeading title="Customer Journey" />
           <Card className="border-ink/10">
             <CardContent className="pt-5">
               <FunnelChart funnel={funnel} />
@@ -224,7 +222,7 @@ export default async function AdminDashboardPage({
         {/* --- Trends: intentionally asymmetric — the two "over time"
             charts carry more information, so they get more width. --------- */}
         <section>
-          <SectionHeading eyebrow="Trends" title="Enquiries & Sales" />
+          <SectionHeading title="Enquiries & Sales" />
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <CardHeader><CardTitle>Enquiries Over Time</CardTitle></CardHeader>
@@ -270,7 +268,7 @@ export default async function AdminDashboardPage({
         {/* --- Catalogue health: a slim printed-ledger strip, not five more
             cards competing with the metrics above. ------------------------ */}
         <section>
-          <SectionHeading eyebrow="Catalogue" title="Product Health" />
+          <SectionHeading title="Product Health" />
           <div className="flex flex-wrap divide-y divide-border border border-border bg-card sm:divide-x sm:divide-y-0">
             <HealthStat label="Active" value={productHealth.active} href="/admin/products?availability=active" />
             <HealthStat label="Unavailable" value={productHealth.unavailable} href="/admin/products?availability=out_of_stock" />
@@ -282,7 +280,7 @@ export default async function AdminDashboardPage({
 
         {/* --- Recent activity ---------------------------------------------- */}
         <section>
-          <SectionHeading eyebrow="Latest" title="Recent Activity" />
+          <SectionHeading title="Recent Activity" />
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader className="flex-row items-center justify-between space-y-0">

@@ -99,7 +99,7 @@ export function ProductCard({ product, index }: { product: Product; index?: numb
                 imageUrl: product.image_url,
               });
             }}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center border border-ink text-ink transition-colors hover:bg-ink hover:text-cream disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center border border-ink text-ink transition-colors hover:bg-ink hover:text-cream disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
           >
             {alreadyAdded ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           </button>

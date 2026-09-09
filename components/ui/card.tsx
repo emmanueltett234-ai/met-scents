@@ -2,8 +2,13 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("bg-card border border-border", className)} {...props} />
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn("relative overflow-hidden border border-border bg-card", className)} {...props}>
+      {/* Same fine top rule MetricCard uses, so a chart card and a metric
+          card read as one system rather than two competing templates. */}
+      <span className="absolute inset-x-0 top-0 h-px bg-accent/40" />
+      {children}
+    </div>
   )
 );
 Card.displayName = "Card";

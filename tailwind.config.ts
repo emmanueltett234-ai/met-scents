@@ -26,6 +26,17 @@ const config: Config = {
         ink: "#17140F",
         cream: "#F6F3EC",
         parchment: "#E6E2D8",
+        // The site's second identity color, pulled from the sage-olive mat
+        // the direct style reference wraps every section in. Used at
+        // committed, page-scale weight on the public storefront (the frame,
+        // hero, dark-section rules) — never as a decorative accent — while
+        // the admin dashboard borrows only `sage.DEFAULT` as its money/positive
+        // semantic color, replacing a stock emerald.
+        sage: {
+          DEFAULT: "#7E886A",
+          light: "#C7CBAE",
+          dark: "#454A34",
+        },
         accent: {
           DEFAULT: "#8C7752",
           light: "#B9A97E",

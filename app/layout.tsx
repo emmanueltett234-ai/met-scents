@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Instrument_Sans } from "next/font/google";
+import { Source_Serif_4, Archivo } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getSettings } from "@/lib/data/settings";
@@ -19,12 +19,13 @@ const serif = Source_Serif_4({
   display: "swap",
 });
 
-// Instrument Sans — a clean, contemporary grotesque with humanist warmth:
-// understated rather than trendy-geometric, so nav, prices, buttons and
-// labels read as considered typography rather than a SaaS interface font.
-const sans = Instrument_Sans({
+// Archivo — a confident, slightly industrial grotesque with real weight
+// contrast at its heavier cuts. Carries nav, prices, buttons and the tracked
+// small-caps labels with more presence than a default UI grotesque, closer
+// to a printed gallery label than a SaaS interface font.
+const sans = Archivo({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
 });
