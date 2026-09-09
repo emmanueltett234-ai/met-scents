@@ -174,7 +174,7 @@ export function SaleForm({
     <form onSubmit={handleSubmit} className="max-w-3xl space-y-8">
       {prefill && (
         <div className="border border-accent/30 bg-accent/5 p-4 text-sm text-accent-dark">
-          Linked to enquiry from {prefill.customerName || "this customer"} — the enquiry&apos;s requested items are
+          Linked to enquiry from {prefill.customerName || "this customer"}. The enquiry&apos;s requested items are
           pre-filled below, but you can add, remove, or change them to match what was actually sold.
         </div>
       )}
@@ -227,7 +227,7 @@ export function SaleForm({
           />
           {items.length > 0 && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Items total {formatGHS(computedTotal)} — override this field for discounts or adjustments.
+              Items total {formatGHS(computedTotal)}; override this field for discounts or adjustments.
             </p>
           )}
         </div>
@@ -243,7 +243,7 @@ export function SaleForm({
 
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No line items added — this sale will be recorded as a single lump amount with no per-product breakdown.
+            No line items added. This sale will be recorded as a single lump amount with no per-product breakdown.
           </p>
         ) : (
           <div className="space-y-3">
@@ -258,7 +258,7 @@ export function SaleForm({
                   >
                     <option value="">Custom item…</option>
                     {products.map((p) => (
-                      <option key={p.id} value={p.id}>{p.brand} — {p.name}</option>
+                      <option key={p.id} value={p.id}>{p.brand} - {p.name}</option>
                     ))}
                   </select>
                   {!item.product_id && (

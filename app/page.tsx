@@ -4,6 +4,7 @@ import { ArrowRight, MessageCircle, ShieldCheck, Beaker, Truck } from "lucide-re
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowBadge } from "@/components/ui/arrow-badge";
+import { Reveal } from "@/components/ui/reveal";
 import { ProductGrid } from "@/components/products/product-grid";
 import { getFeaturedProducts } from "@/lib/data/products";
 
@@ -61,9 +62,9 @@ export default async function HomePage() {
           style={{ background: "radial-gradient(circle, #D9E2C6 0%, transparent 70%)" }}
         />
 
-        <div className="container-luxe relative grid min-h-[92vh] grid-cols-1 items-center gap-12 py-28 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:py-32">
-          <div className="relative max-w-xl">
-            <h1 className="font-serif text-[3rem] font-medium leading-[0.98] text-balance text-cream sm:text-6xl lg:text-[5.4rem] animate-fade-up">
+        <div className="container-luxe relative grid min-h-[92dvh] grid-cols-1 items-center gap-12 py-28 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8 lg:py-32">
+          <div className="relative">
+            <h1 className="font-serif text-[2.75rem] font-medium leading-[1.05] text-balance text-cream sm:text-6xl lg:text-[4rem] animate-fade-up">
               Find a Scent
               <br />
               That Becomes <span className="font-semibold italic text-accent-light">Yours.</span>
@@ -130,14 +131,14 @@ export default async function HomePage() {
       {/* Brand strip                                                       */}
       {/* ---------------------------------------------------------------- */}
       <section className="border-b border-border bg-parchment">
-        <div className="container-luxe flex flex-col items-center gap-3 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
+        <Reveal className="container-luxe flex flex-col items-center gap-3 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
           <p className="max-w-lg font-serif text-xl italic leading-snug text-ink/90 sm:text-2xl">
             &ldquo;Scent is personal. We help you find the one that&apos;s actually yours.&rdquo;
           </p>
           <Link href="/#about" className="link-underline shrink-0 text-xs font-medium uppercase tracking-widest2 text-stone-500">
             Our approach →
           </Link>
-        </div>
+        </Reveal>
       </section>
 
       {/* ---------------------------------------------------------------- */}
@@ -145,7 +146,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       {featured.length > 0 && (
         <section className="container-luxe py-24 sm:py-28">
-          <div className="mb-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <Reveal className="mb-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <h2 className="font-serif text-3xl sm:text-4xl">Featured Fragrances</h2>
             <Link
               href="/catalogue"
@@ -156,8 +157,10 @@ export default async function HomePage() {
               </span>
               <ArrowBadge className="h-8 w-8" />
             </Link>
-          </div>
-          <ProductGrid products={featured} />
+          </Reveal>
+          <Reveal delay={100}>
+            <ProductGrid products={featured} />
+          </Reveal>
           <div className="mt-14 flex justify-center sm:hidden">
             <Link href="/catalogue" className="group flex items-center gap-3">
               <span className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>View Full Catalogue</span>
@@ -171,42 +174,46 @@ export default async function HomePage() {
       {/* Decant / Full bottle diptych                                      */}
       {/* ---------------------------------------------------------------- */}
       <section className="grid sm:grid-cols-2">
-        <Link
-          href="/catalogue?view=decants"
-          className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-ink p-10 text-cream sm:p-14"
-        >
-          <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Decants</h3>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
-            Try the scent before committing to the bottle: full-strength fragrance, portioned for
-            discovery.
-          </p>
-          <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
-            Shop Decants <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </Link>
-        <Link
-          href="/catalogue?view=full-bottles"
-          className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-parchment p-10 text-ink sm:p-14"
-        >
-          <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Full Bottles</h3>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/70">
-            Your signature scent, in its full expression, for the fragrance you already know you
-            love.
-          </p>
-          <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
-            Shop Full Bottles <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </span>
-        </Link>
+        <Reveal>
+          <Link
+            href="/catalogue?view=decants"
+            className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-ink p-10 text-cream sm:p-14"
+          >
+            <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Decants</h3>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
+              Try the scent before committing to the bottle: full-strength fragrance, portioned for
+              discovery.
+            </p>
+            <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
+              Shop Decants <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Link>
+        </Reveal>
+        <Reveal delay={100}>
+          <Link
+            href="/catalogue?view=full-bottles"
+            className="group relative flex min-h-[380px] flex-col justify-end overflow-hidden bg-parchment p-10 text-ink sm:p-14"
+          >
+            <h3 className="font-serif text-4xl leading-tight sm:text-5xl">Full Bottles</h3>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink/75">
+              Your signature scent, in its full expression, for the fragrance you already know you
+              love.
+            </p>
+            <span className="link-underline mt-6 inline-flex w-fit items-center gap-2 text-xs font-medium uppercase tracking-widest2">
+              Shop Full Bottles <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Link>
+        </Reveal>
       </section>
 
       {/* ---------------------------------------------------------------- */}
       {/* Shop by gender                                                    */}
       {/* ---------------------------------------------------------------- */}
       <section className="container-luxe py-24 sm:py-28">
-        <div className="mb-14 flex flex-col items-center text-center">
+        <Reveal className="mb-14 flex flex-col items-center text-center">
           <h2 className="font-serif text-3xl sm:text-4xl">Fragrance, By Category</h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+        </Reveal>
+        <Reveal delay={100} className="grid gap-4 sm:grid-cols-3">
           {GENDER_TILES.map((tile) => (
             <Link
               key={tile.label}
@@ -226,7 +233,7 @@ export default async function HomePage() {
               </span>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* ---------------------------------------------------------------- */}
@@ -234,7 +241,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       <section id="about" className="border-y border-border bg-parchment/50">
         <div className="container-luxe py-28">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <h2 className="font-serif text-3xl sm:text-4xl">
               We&apos;re not chasing trends:<br />
               <span className="italic text-ink/80">we&apos;re chasing the right scent for you.</span>
@@ -250,12 +257,12 @@ export default async function HomePage() {
               Every enquiry gets a real reply from a real person, usually within the hour, on
               WhatsApp.
             </p>
-          </div>
+          </Reveal>
 
           {/* A plain data strip, not a grid of matching stat cards — the
               numbers sit inside the same rule language as the rest of the
               page instead of their own boxed template. */}
-          <div className="mt-16 flex flex-wrap gap-x-12 gap-y-8 border-t border-ink/10 pt-10">
+          <Reveal delay={100} className="mt-16 flex flex-wrap gap-x-12 gap-y-8 border-t border-ink/10 pt-10">
             {[
               ["100%", "Authentic Stock"],
               ["8+", "Curated Houses"],
@@ -267,7 +274,7 @@ export default async function HomePage() {
                 <p className="mt-1.5 text-xs uppercase tracking-widest2 text-muted-foreground">{label}</p>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -275,10 +282,12 @@ export default async function HomePage() {
       {/* Why shop with us                                                  */}
       {/* ---------------------------------------------------------------- */}
       <section className="container-luxe py-24 sm:py-28">
-        <h2 className="mb-14 max-w-lg font-serif text-3xl sm:text-4xl">
-          Built On Trust, Not Just Transactions
-        </h2>
-        <div className="divide-y divide-ink/10 border-t border-ink/10">
+        <Reveal>
+          <h2 className="mb-14 max-w-lg font-serif text-3xl sm:text-4xl">
+            Built On Trust, Not Just Transactions
+          </h2>
+        </Reveal>
+        <Reveal delay={100} className="divide-y divide-ink/10 border-t border-ink/10">
           {REASONS.map((reason) => (
             <div key={reason.title} className="flex flex-col gap-3 py-8 sm:flex-row sm:items-baseline sm:gap-10">
               <div className="flex shrink-0 items-center gap-3 text-ink/70 sm:w-[19rem]">
@@ -288,7 +297,7 @@ export default async function HomePage() {
               <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{reason.body}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* ---------------------------------------------------------------- */}
@@ -299,7 +308,7 @@ export default async function HomePage() {
           className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-[0.12] blur-3xl"
           style={{ background: "radial-gradient(circle, #FFFFFF 0%, transparent 70%)" }}
         />
-        <div className="container-luxe relative flex flex-col items-center gap-6 text-center">
+        <Reveal className="container-luxe relative flex flex-col items-center gap-6 text-center">
           <h2 className="max-w-xl font-serif text-3xl sm:text-4xl">
             Ready to find your next signature scent?
           </h2>
@@ -310,7 +319,7 @@ export default async function HomePage() {
           <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
             <Link href="/catalogue" className="group flex items-center gap-3">
               <span className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full border-cream/40 text-cream group-hover:bg-cream group-hover:text-ink")}>
-                Browse Collection
+                Explore Fragrances
               </span>
               <ArrowBadge />
             </Link>
@@ -318,7 +327,7 @@ export default async function HomePage() {
               <Link href="/selection">View My Selection</Link>
             </Button>
           </div>
-        </div>
+        </Reveal>
       </section>
     </>
   );

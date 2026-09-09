@@ -65,7 +65,7 @@ export function ProductTable({ products }: { products: Product[] }) {
                   <p className="font-serif text-base">{p.name}</p>
                 </TableCell>
                 <TableCell className="text-sm">{GENDER_LABELS[p.gender]}</TableCell>
-                <TableCell className="text-sm">{min !== null ? `from ${formatGHS(min)}` : "—"}</TableCell>
+                <TableCell className="text-sm">{min !== null ? `from ${formatGHS(min)}` : "-"}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {p.featured && <Badge variant="gold">Featured</Badge>}
@@ -95,7 +95,7 @@ export function ProductTable({ products }: { products: Product[] }) {
           <DialogHeader>
             <DialogTitle>Delete {target?.name}?</DialogTitle>
             <DialogDescription>
-              This permanently removes the product and its sizes/prices. This can&apos;t be undone —
+              This permanently removes the product and its sizes/prices. This can&apos;t be undone;
               consider marking it &ldquo;Out of Stock&rdquo; instead if you just want to hide it
               temporarily.
             </DialogDescription>

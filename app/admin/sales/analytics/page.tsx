@@ -41,7 +41,7 @@ export default async function SalesAnalyticsPage({
     <AdminShell title="Sales Analytics" action={<DateRangeSelect current={range.key} />}>
       <div className="space-y-8">
         <p className="text-xs text-muted-foreground">
-          Every figure here comes from the sales ledger only — confirmed, admin-recorded sales. This is the only
+          Every figure here comes from the sales ledger only: confirmed, admin-recorded sales. This is the only
           source of revenue anywhere in this admin.
         </p>
 
@@ -95,7 +95,7 @@ export default async function SalesAnalyticsPage({
               emptyMessage="No sales recorded in this period yet."
               keyField={(r, i) => r.productId ?? `${r.productName}-${i}`}
               columns={[
-                { label: "Product", render: (r) => `${r.brand ? `${r.brand} — ` : ""}${r.productName}` },
+                { label: "Product", render: (r) => `${r.brand ? `${r.brand} - ` : ""}${r.productName}` },
                 { label: "Units Sold", render: (r) => r.unitsSold, align: "right" },
                 { label: "Number of Sales", render: (r) => r.numberOfSales, align: "right" },
                 { label: "Confirmed Sales Value", render: (r) => formatGHS(r.confirmedSalesValue), align: "right" },
@@ -133,7 +133,7 @@ export default async function SalesAnalyticsPage({
                   label: "Product",
                   render: (r) => (
                     <div>
-                      <p>{r.brand} — {r.name}</p>
+                      <p>{r.brand} - {r.name}</p>
                       <div className="mt-1 flex flex-wrap gap-1">
                         <Badge variant="outline">{AVAILABILITY_LABELS[r.availability as Availability]}</Badge>
                         {r.featured && <Badge variant="muted">Featured</Badge>}

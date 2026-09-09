@@ -35,7 +35,7 @@ export function FunnelChart({ funnel }: { funnel: FunnelData }) {
       ))}
       <p className="pt-1 text-xs text-muted-foreground">
         Each stage counts enquiries from this period only. WhatsApp Opened means the chat was opened, not that a
-        message was sent — customers still press Send themselves.
+        message was sent; customers still press Send themselves.
       </p>
     </div>
   );

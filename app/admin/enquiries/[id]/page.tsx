@@ -55,7 +55,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
                 {(items ?? []).map((item) => (
                   <div key={item.id} className="flex items-center justify-between py-3 text-sm">
                     <div>
-                      <p className="font-medium">{item.brand ? `${item.brand} — ` : ""}{item.product_name}</p>
+                      <p className="font-medium">{item.brand ? `${item.brand} - ` : ""}{item.product_name}</p>
                       <p className="text-xs text-muted-foreground">{item.size} × {item.quantity}</p>
                     </div>
                     <p>{formatGHS(Number(item.price) * item.quantity)}</p>
@@ -67,7 +67,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
                 <span className="font-serif text-xl">{formatGHS(Number(enquiry.estimated_total))}</span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                Prices shown are frozen at the time of this enquiry — later catalogue price changes never alter this
+                Prices shown are frozen at the time of this enquiry; later catalogue price changes never alter this
                 total.
               </p>
             </CardContent>
@@ -93,7 +93,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
               {!linkedSales || linkedSales.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   No sales recorded against this enquiry yet. A sale is only recorded here once you explicitly link
-                  it — an enquiry is never treated as a sale on its own.
+                  it; an enquiry is never treated as a sale on its own.
                 </p>
               ) : (
                 <div className="divide-y divide-border">
@@ -167,7 +167,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
             <CardContent className="space-y-2 pt-0">
               <EnquiryOutcomeSelect id={enquiry.id} outcome={enquiry.outcome as EnquiryOutcome} />
               <p className="text-xs text-muted-foreground">
-                Always set manually — recording a sale never changes this automatically.
+                Always set manually; recording a sale never changes this automatically.
               </p>
             </CardContent>
           </Card>
@@ -192,7 +192,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
                 </div>
               )}
               <p className="text-xs text-muted-foreground">
-                &ldquo;Opened&rdquo; means the WhatsApp chat was launched, not that a message was sent — the customer
+                &ldquo;Opened&rdquo; means the WhatsApp chat was launched, not that a message was sent; the customer
                 or admin still has to press Send.
               </p>
             </CardContent>
@@ -205,7 +205,7 @@ export default async function EnquiryDetailPage({ params }: { params: { id: stri
               <NotificationRow label="Email" status={enquiry.email_status} error={enquiry.email_error} />
               {(enquiry.whatsapp_status === "failed" || enquiry.email_status === "failed") && (
                 <p className="text-xs text-muted-foreground">
-                  The enquiry itself was saved successfully — only the automatic notification
+                  The enquiry itself was saved successfully; only the automatic notification
                   failed. Use &ldquo;Message on WhatsApp&rdquo; below to follow up directly.
                 </p>
               )}

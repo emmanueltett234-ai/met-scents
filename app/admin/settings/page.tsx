@@ -44,7 +44,7 @@ export default async function AdminSettingsPage() {
               <StatusRow label="Email (Resend)" configured={emailConfigured} />
               <p className="pt-4 text-xs leading-relaxed text-muted-foreground">
                 Every enquiry is saved here in Enquiries first. WhatsApp works by opening the
-                customer&apos;s own WhatsApp app with the enquiry pre-filled to your number above —
+                customer&apos;s own WhatsApp app with the enquiry pre-filled to your number above;
                 they press Send themselves. There&apos;s no WhatsApp API, token, or setup required;
                 it works as soon as a number is saved.
               </p>
@@ -57,7 +57,7 @@ export default async function AdminSettingsPage() {
             </CardHeader>
             <CardContent className="pt-0 text-sm text-muted-foreground">
               Admin users are managed in Supabase under Authentication → Users. Invite a second
-              administrator there — no code changes needed.
+              administrator there; no code changes needed.
             </CardContent>
           </Card>
         </div>

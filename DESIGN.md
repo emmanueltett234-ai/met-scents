@@ -13,7 +13,7 @@ colors:
 typography:
   display:
     fontFamily: "Bodoni Moda, ui-serif, Georgia, serif"
-    fontSize: "clamp(3rem, 9vw, 5.4rem)"
+    fontSize: "2.75rem (mobile) / 4rem (desktop, lg+)"
     fontWeight: 500
     lineHeight: 0.98
   label:
@@ -82,14 +82,14 @@ Four colors, sampled, not invented.
 **Character:** Dramatic fashion-house serif for headlines and product names, paired with a confident neutral grotesque for everything functional (nav, labels, buttons, body copy).
 
 ### Hierarchy
-- **Display** (500 weight, `clamp(3rem, 9vw, 5.4rem)`, leading 0.98): hero headline only.
+- **Display** (500 weight, 2.75rem mobile / 4rem desktop, leading 1.05): hero headline only, sized to guarantee a 2-line headline (taste-skill pre-flight rule) at the hero's own column width.
 - **Headline** (Bodoni Moda, `text-3xl`–`text-4xl`): section headings, standing alone, no eyebrow above them.
 - **Body** (Archivo, `text-base`, leading relaxed): copy.
 - **Label** (Archivo 500, 9–11px, `tracking-widest2` = 0.1em, uppercase): nav, tags, table headers, badges, brand-name-above-product-title. The 9–13px range covers small functional labels (product badges, index tags, button text) and is a deliberate part of the ramp, not drift.
 
 ## Layout
 
-Public storefront content sits inside `.container-luxe` (max 1320px), inset from a fixed pale-sage frame — `clamp(14px, 4vw, 64px)`, `position: fixed; inset: 0`, applied once in `SiteChrome`, public routes only — reproducing the reference's measured ~5%-of-canvas-width mat rather than a thin hairline. Section rhythm stays generous vertical whitespace (`py-24`–`py-28`) alternating ink/white/parchment full-bleed bands.
+Public storefront content sits inside `.container-luxe` (max 1320px), inset from a pale-sage frame — `clamp(14px, 4vw, 64px)` of real padding on a wrapping element in `SiteChrome`, public routes only — reproducing the reference's measured ~5%-of-canvas-width mat rather than a thin hairline. This is real layout padding, not a `position: fixed` overlay: an earlier version painted the frame on top of the page and it covered the header logo whenever the header's own padding was narrower than the frame; real padding means content can never sit "under" the mat. Side padding stays visible at every scroll position; the top strip scrolls away once the sticky header reaches the true viewport top, which is the correct trade-off for a sticky header. Section rhythm stays generous vertical whitespace (`py-24`–`py-28`) alternating ink/white/parchment full-bleed bands.
 
 ## Elevation & Depth
 

@@ -14,7 +14,7 @@ const EVENT_CONFIG: Record<string, { label: (m: Record<string, unknown>) => stri
   },
   note_added: { label: () => "Note added", icon: StickyNote },
   sale_created: {
-    label: (m) => `Sale recorded${typeof m.sale_amount === "number" ? ` — GH₵${m.sale_amount.toLocaleString()}` : ""}`,
+    label: (m) => `Sale recorded${typeof m.sale_amount === "number" ? `: GH₵${m.sale_amount.toLocaleString()}` : ""}`,
     icon: ReceiptText,
   },
   sale_updated: { label: () => "Sale updated", icon: ReceiptText },
@@ -26,7 +26,7 @@ export function EnquiryTimeline({ activities }: { activities: EnquiryActivity[] 
   if (activities.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        No recorded activity yet. Activity is tracked from the moment this feature shipped onward — older enquiries
+        No recorded activity yet. Activity is tracked from the moment this feature shipped onward; older enquiries
         may not show early events.
       </p>
     );

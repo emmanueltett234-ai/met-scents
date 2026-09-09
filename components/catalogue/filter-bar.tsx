@@ -25,8 +25,8 @@ const VIEW_OPTIONS = [
 const PRICE_OPTIONS = [
   { value: "any", label: "Any Price", min: undefined, max: undefined },
   { value: "u250", label: "Under GH₵250", min: undefined, max: 250 },
-  { value: "250-350", label: "GH₵250 – GH₵350", min: 250, max: 350 },
-  { value: "350-500", label: "GH₵350 – GH₵500", min: 350, max: 500 },
+  { value: "250-350", label: "GH₵250 - GH₵350", min: 250, max: 350 },
+  { value: "350-500", label: "GH₵350 - GH₵500", min: 350, max: 500 },
   { value: "o500", label: "Over GH₵500", min: 500, max: undefined },
 ];
 

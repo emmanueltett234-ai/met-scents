@@ -17,7 +17,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   if (!product) notFound();
 
   return (
-    <AdminShell title={`Edit — ${product.name}`}>
+    <AdminShell title={`Edit: ${product.name}`}>
       <ProductForm product={product as Product} categories={categories} />
     </AdminShell>
   );

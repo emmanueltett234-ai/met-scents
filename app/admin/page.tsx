@@ -107,7 +107,7 @@ export default async function AdminDashboardPage({
         <section>
           <SectionHeading
             title="Overview"
-            description={`${range.label} — compared to the equal-length period immediately before it, where a comparison is meaningful.`}
+            description={`${range.label}, compared to the equal-length period immediately before it, where a comparison is meaningful.`}
           />
 
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -117,7 +117,7 @@ export default async function AdminDashboardPage({
                 value={metrics.confirmedSalesValue}
                 currency
                 changePercent={percentChange(metrics.confirmedSalesValue, metrics.previous.confirmedSalesValue)}
-                helpText="Actual revenue — the only figure that is"
+                helpText="Actual revenue, the only figure that is"
                 icon={Wallet}
                 hero
                 accent="revenue"

@@ -44,7 +44,7 @@ export default async function EnquiryAnalyticsPage({
     <AdminShell title="Enquiry Analytics" action={<DateRangeSelect current={range.key} />}>
       <div className="space-y-8">
         <p className="text-xs text-muted-foreground">
-          Every figure here comes from enquiries and enquiry_items — it never reflects confirmed sales. See Sales
+          Every figure here comes from enquiries and enquiry_items. It never reflects confirmed sales, see Sales
           Analytics for actual revenue.
         </p>
 
@@ -88,7 +88,7 @@ export default async function EnquiryAnalyticsPage({
               emptyMessage="No enquiries in this period yet."
               keyField={(r, i) => r.productId ?? `${r.productName}-${i}`}
               columns={[
-                { label: "Product", render: (r) => `${r.brand ? `${r.brand} — ` : ""}${r.productName}` },
+                { label: "Product", render: (r) => `${r.brand ? `${r.brand} - ` : ""}${r.productName}` },
                 { label: "Number of Enquiries", render: (r) => r.enquiryCount, align: "right" },
                 { label: "Quantity Requested", render: (r) => r.quantityRequested, align: "right" },
                 { label: "Estimated Value", render: (r) => formatGHS(r.estimatedValue), align: "right" },

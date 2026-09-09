@@ -55,9 +55,9 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           placeholder="233 24 123 4567"
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          Include the country code, or a local Ghana number starting with 0 — either is normalized
-          automatically. Every WhatsApp button on the site — the floating chat button, per-product
-          enquiries, and "Send on WhatsApp" — opens addressed to this number, pre-filled. Customers
+          Include the country code, or a local Ghana number starting with 0. Either is normalized
+          automatically. Every WhatsApp button on the site (the floating chat button, per-product
+          enquiries, and "Send on WhatsApp") opens addressed to this number, pre-filled. Customers
           still press Send themselves; nothing is sent automatically.
         </p>
         {whatsappNumber.trim() && (
@@ -69,7 +69,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
               </span>
             ) : (
               <span className="text-destructive">
-                This doesn&apos;t look like a complete number — double-check it before saving.
+                This doesn&apos;t look like a complete number. Double-check it before saving.
               </span>
             )}
           </p>
@@ -92,7 +92,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
         <div>
           <p className="text-sm font-medium">Email Notifications</p>
           <p className="text-xs text-muted-foreground">
-            Send an email for every new enquiry (requires Resend to be configured — see Settings
+            Send an email for every new enquiry (requires Resend to be configured, see Settings
             below).
           </p>
         </div>

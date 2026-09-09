@@ -138,7 +138,7 @@ export default async function AdminEnquiriesPage({ searchParams }: { searchParam
                     <Link href={`/admin/enquiries/${e.id}`} className="flex items-center gap-2 font-medium hover:text-accent-dark">
                       {e.customer_name}
                       {(e.whatsapp_status === "failed" || e.email_status === "failed") && (
-                        <span title="A notification failed to send — the enquiry itself was saved">
+                        <span title="A notification failed to send; the enquiry itself was saved">
                           <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
                         </span>
                       )}
@@ -151,7 +151,7 @@ export default async function AdminEnquiriesPage({ searchParams }: { searchParam
                   </TableCell>
                   <TableCell>
                     {e.whatsapp_opened ? (
-                      <span title="WhatsApp opened — not confirmation a message was sent" className="flex items-center gap-1 text-xs text-emerald-700">
+                      <span title="WhatsApp opened, not confirmation a message was sent" className="flex items-center gap-1 text-xs text-emerald-700">
                         <MessageCircleMore className="h-3.5 w-3.5" /> Opened
                       </span>
                     ) : (

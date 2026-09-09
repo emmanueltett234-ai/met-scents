@@ -84,7 +84,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             <TableRow key={c.id}>
               <TableCell className="font-medium">{c.name}</TableCell>
               <TableCell className="text-sm text-muted-foreground">{c.slug}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">{c.description || "—"}</TableCell>
+              <TableCell className="text-sm text-muted-foreground">{c.description || "-"}</TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(c.id)}>
                   <Trash2 className="h-4 w-4" />

@@ -85,7 +85,7 @@ export function EnquiryFilters({ products }: { products: { id: string; brand: st
         >
           <option value="">All Products</option>
           {products.map((p) => (
-            <option key={p.id} value={p.id}>{p.brand} — {p.name}</option>
+            <option key={p.id} value={p.id}>{p.brand} - {p.name}</option>
           ))}
         </select>
 
