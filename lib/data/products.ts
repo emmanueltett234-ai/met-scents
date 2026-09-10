@@ -12,7 +12,7 @@ export interface ProductFilters {
   view?: "decants" | "full-bottles" | "new-arrivals" | "best-sellers";
 }
 
-const PRODUCT_SELECT = "*, product_variants(*)";
+const PRODUCT_SELECT = "*, product_variants(*), product_types(*)";
 
 function minVariantPrice(product: Product): number {
   if (!product.product_variants || product.product_variants.length === 0) return 0;
@@ -21,11 +21,28 @@ function minVariantPrice(product: Product): number {
 
 export async function getProducts(filters: ProductFilters = {}): Promise<Product[]> {
   const supabase = createClient();
+
+  // filters.category is a product type slug (e.g. "perfumes"), not its id —
+  // resolve it first so filtering is a plain equality check on
+  // product_type_id. An unknown/stale slug simply resolves to no product
+  // type, so it matches nothing rather than erroring — the correct,
+  // graceful behavior for an invalid category in the URL.
+  let productTypeId: string | undefined;
+  if (filters.category) {
+    const { data: type } = await supabase
+      .from("product_types")
+      .select("id")
+      .eq("slug", filters.category)
+      .maybeSingle();
+    if (!type) return [];
+    productTypeId = type.id;
+  }
+
   let query = supabase.from("products").select(PRODUCT_SELECT);
 
   if (filters.brand) query = query.ilike("brand", filters.brand);
   if (filters.gender) query = query.eq("gender", filters.gender);
-  if (filters.category) query = query.eq("category", filters.category);
+  if (productTypeId) query = query.eq("product_type_id", productTypeId);
   if (filters.view === "new-arrivals") query = query.eq("new_arrival", true);
   if (filters.view === "best-sellers") query = query.eq("best_seller", true);
 

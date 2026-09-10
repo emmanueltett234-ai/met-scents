@@ -40,6 +40,14 @@ manually via WhatsApp or email to confirm availability and complete the sale.
 > submission API now writes to those new columns on every enquiry, so deploying first will break
 > "Send Enquiry" / "Send via WhatsApp" for customers until the migration has run. Existing enquiries
 > are left untouched (new columns default to `unknown` / `false` / `no_decision`, never guessed).
+>
+> **Upgrading to the Product Types system?** Run `supabase/migration_004_product_types.sql` in the
+> SQL editor after migration_003 — it renames the old gender-duplicate `categories` table to
+> `product_types` (adding an `is_active` flag), adds `products.product_type_id`, backfills every
+> existing product onto a seeded "Perfumes" type, and deactivates the old gender-named rows without
+> deleting anything. **Run this migration BEFORE deploying this version of the code** — the admin
+> product form and catalogue filter now read/write `product_type_id` directly, so deploying first
+> will break product create/edit and catalogue filtering until the migration has run.
 
 ## 2. Prerequisites
 

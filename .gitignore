@@ -28,3 +28,6 @@ next-env.d.ts
 /.agents/
 /.claude/
 skills-lock.json
+
+# supabase CLI local cache
+/supabase/.temp/

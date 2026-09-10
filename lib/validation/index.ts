@@ -64,7 +64,7 @@ export const productInputSchema = z.object({
   fragrance_notes: z.string().trim().max(500).optional().or(z.literal("")),
   fragrance_type: z.string().trim().max(80).optional().or(z.literal("")),
   gender: genderEnum,
-  category: z.string().trim().min(1, "Category is required"),
+  product_type_id: uuid,
   image_url: z.string().trim().url().optional().or(z.literal("")),
   featured: z.boolean().default(false),
   new_arrival: z.boolean().default(false),
@@ -75,10 +75,12 @@ export const productInputSchema = z.object({
 
 export type ProductInput = z.infer<typeof productInputSchema>;
 
-export const categoryInputSchema = z.object({
+export const productTypeInputSchema = z.object({
   name: z.string().trim().min(1).max(100),
   slug: z.string().trim().min(1).max(120).regex(/^[a-z0-9-]+$/),
   description: z.string().trim().max(300).optional().or(z.literal("")),
+  is_active: z.boolean().default(true),
+  sort_order: z.coerce.number().int().default(0),
 });
 
 export const enquiryStatusSchema = z.object({

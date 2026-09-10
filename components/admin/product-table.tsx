@@ -47,6 +47,7 @@ export function ProductTable({ products }: { products: Product[] }) {
         <TableHeader>
           <TableRow>
             <TableHead>Product</TableHead>
+            <TableHead>Type</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Flags</TableHead>
@@ -64,6 +65,7 @@ export function ProductTable({ products }: { products: Product[] }) {
                   <p className="text-xs text-muted-foreground">{p.brand}</p>
                   <p className="font-serif text-base">{p.name}</p>
                 </TableCell>
+                <TableCell className="text-sm">{p.product_types?.name ?? "—"}</TableCell>
                 <TableCell className="text-sm">{GENDER_LABELS[p.gender]}</TableCell>
                 <TableCell className="text-sm">{min !== null ? `from ${formatGHS(min)}` : "-"}</TableCell>
                 <TableCell>

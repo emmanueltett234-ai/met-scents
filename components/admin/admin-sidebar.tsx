@@ -35,7 +35,7 @@ export const ADMIN_NAV: NavGroup[] = [
     label: "Catalogue",
     links: [
       { href: "/admin/products", label: "Products", icon: Package },
-      { href: "/admin/categories", label: "Categories", icon: Tags },
+      { href: "/admin/product-types", label: "Product Types", icon: Tags },
     ],
   },
   {

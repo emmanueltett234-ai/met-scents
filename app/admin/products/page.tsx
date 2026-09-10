@@ -12,7 +12,7 @@ export default async function AdminProductsPage() {
   const supabase = createClient();
   const { data: products } = await supabase
     .from("products")
-    .select("*, product_variants(*)")
+    .select("*, product_variants(*), product_types(*)")
     .order("created_at", { ascending: false });
 
   return (

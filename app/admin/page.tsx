@@ -201,7 +201,7 @@ export default async function AdminDashboardPage({
             <QuickLink href="/admin/products/new" icon={PackagePlus} label="Add Product" />
             <QuickLink href="/admin/sales/new" icon={ReceiptText} label="Record Sale" />
             <QuickLink href="/admin/enquiries" icon={Inbox} label="View Enquiries" />
-            <QuickLink href="/admin/categories" icon={Tags} label="Manage Categories" />
+            <QuickLink href="/admin/product-types" icon={Tags} label="Manage Product Types" />
             <QuickLink href="/api/admin/export/enquiries" icon={FileSpreadsheet} label="Export Enquiries" external />
             <QuickLink href="/api/admin/export/sales" icon={FileSpreadsheet} label="Export Sales" external />
             <QuickLink href={exportSummaryHref} icon={FileSpreadsheet} label="Export Summary" external />

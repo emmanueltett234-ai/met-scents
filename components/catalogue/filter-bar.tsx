@@ -12,10 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GENDER_LABELS } from "@/types";
+import { GENDER_LABELS, type ProductType } from "@/types";
 
 const VIEW_OPTIONS = [
-  { value: "all", label: "All Categories" },
+  { value: "all", label: "All" },
   { value: "decants", label: "Decants" },
   { value: "full-bottles", label: "Full Bottles" },
   { value: "new-arrivals", label: "New Arrivals" },
@@ -37,7 +37,7 @@ const SORT_OPTIONS = [
   { value: "popularity", label: "Popularity" },
 ];
 
-export function FilterBar({ brands }: { brands: string[] }) {
+export function FilterBar({ brands, productTypes }: { brands: string[]; productTypes: ProductType[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -80,7 +80,7 @@ export function FilterBar({ brands }: { brands: string[] }) {
     setSearch("");
   }
 
-  const activeCount = ["gender", "brand", "view", "minPrice", "maxPrice", "search"].filter((k) =>
+  const activeCount = ["gender", "brand", "category", "view", "minPrice", "maxPrice", "search"].filter((k) =>
     searchParams.get(k)
   ).length;
 
@@ -114,6 +114,16 @@ export function FilterBar({ brands }: { brands: string[] }) {
       </div>
 
       <div className={`grid grid-cols-2 gap-3 sm:grid-cols-4 ${open ? "grid" : "hidden sm:grid"}`}>
+        <Select value={searchParams.get("category") ?? "all"} onValueChange={(v) => updateParam("category", v)}>
+          <SelectTrigger><SelectValue placeholder="Product Type" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Product Types</SelectItem>
+            {productTypes.map((t) => (
+              <SelectItem key={t.slug} value={t.slug}>{t.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Select value={searchParams.get("gender") ?? "all"} onValueChange={(v) => updateParam("gender", v)}>
           <SelectTrigger><SelectValue placeholder="Gender" /></SelectTrigger>
           <SelectContent>
@@ -135,7 +145,7 @@ export function FilterBar({ brands }: { brands: string[] }) {
         </Select>
 
         <Select value={searchParams.get("view") ?? "all"} onValueChange={(v) => updateParam("view", v)}>
-          <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder="Browse" /></SelectTrigger>
           <SelectContent>
             {VIEW_OPTIONS.map((o) => (
               <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>

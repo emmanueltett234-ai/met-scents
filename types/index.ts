@@ -32,11 +32,15 @@ export interface StoreSettings {
   updated_at: string;
 }
 
-export interface Category {
+export interface ProductType {
   id: string;
   name: string;
   slug: string;
   description: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProductVariant {
@@ -59,7 +63,7 @@ export interface Product {
   fragrance_notes: string | null;
   fragrance_type: string | null;
   gender: Gender;
-  category: string;
+  product_type_id: string;
   image_url: string | null;
   featured: boolean;
   new_arrival: boolean;
@@ -68,6 +72,7 @@ export interface Product {
   created_at: string;
   updated_at: string;
   product_variants?: ProductVariant[];
+  product_types?: ProductType | null;
 }
 
 export interface EnquiryItemInput {

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { slugify } from "@/lib/utils";
-import { GENDER_LABELS, AVAILABILITY_LABELS, type Product, type Category } from "@/types";
+import { GENDER_LABELS, AVAILABILITY_LABELS, type Product, type ProductType } from "@/types";
 
 interface VariantRow {
   id?: string;
@@ -21,7 +21,7 @@ interface VariantRow {
   availability: keyof typeof AVAILABILITY_LABELS;
 }
 
-export function ProductForm({ product, categories }: { product?: Product; categories: Category[] }) {
+export function ProductForm({ product, productTypes }: { product?: Product; productTypes: ProductType[] }) {
   const router = useRouter();
   const isEdit = Boolean(product);
 
@@ -33,7 +33,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
   const [notes, setNotes] = useState(product?.fragrance_notes ?? "");
   const [fragranceType, setFragranceType] = useState(product?.fragrance_type ?? "");
   const [gender, setGender] = useState(product?.gender ?? "unisex");
-  const [category, setCategory] = useState(product?.category ?? categories[0]?.slug ?? "");
+  const [productTypeId, setProductTypeId] = useState(product?.product_type_id ?? productTypes[0]?.id ?? "");
   const [availability, setAvailability] = useState(product?.availability ?? "available");
   const [featured, setFeatured] = useState(product?.featured ?? false);
   const [newArrival, setNewArrival] = useState(product?.new_arrival ?? false);
@@ -102,7 +102,7 @@ export function ProductForm({ product, categories }: { product?: Product; catego
       fragrance_notes: notes,
       fragrance_type: fragranceType,
       gender,
-      category,
+      product_type_id: productTypeId,
       image_url: imageUrl,
       featured,
       new_arrival: newArrival,
@@ -192,12 +192,15 @@ export function ProductForm({ product, categories }: { product?: Product; catego
           </Select>
         </div>
         <div>
-          <Label>Category</Label>
-          <Select value={category} onValueChange={setCategory}>
+          <Label>Product Type</Label>
+          <Select value={productTypeId} onValueChange={setProductTypeId}>
             <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {categories.map((c) => (
-                <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+              {productTypes.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name}
+                  {!t.is_active ? " (Inactive)" : ""}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
