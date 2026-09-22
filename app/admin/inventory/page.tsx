@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { Package, FileSpreadsheet } from "lucide-react";
+import { Package, FileSpreadsheet, TrendingUp, Wallet, Banknote } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { InventoryFilters } from "@/components/admin/inventory/inventory-filters";
 import { InventoryTable, type InventoryRow } from "@/components/admin/inventory/inventory-table";
+import { MetricCard } from "@/components/admin/metric-card";
+import { SectionHeading } from "@/components/admin/section-heading";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/data/settings";
@@ -28,7 +30,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
     getSettings(),
   ]);
 
-  let rows: InventoryRow[] = (products ?? []).map((p) => {
+  const allRows: InventoryRow[] = (products ?? []).map((p) => {
     const inv = oneOf(p.product_inventory) as ProductInventory | null;
     const type = oneOf(p.product_types);
     if (!inv) {
@@ -68,6 +70,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
     };
   });
 
+  let rows = allRows;
   if (searchParams.search) {
     const q = searchParams.search.toLowerCase();
     rows = rows.filter((r) => r.brand.toLowerCase().includes(q) || r.name.toLowerCase().includes(q));
@@ -79,26 +82,49 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
   }
 
   const sort = searchParams.sort ?? "brand_asc";
-  rows.sort((a, b) => {
+  rows = [...rows].sort((a, b) => {
     if (sort === "remaining_asc") return (a.currentMl ?? Infinity) - (b.currentMl ?? Infinity);
     if (sort === "remaining_desc") return (b.currentMl ?? -Infinity) - (a.currentMl ?? -Infinity);
     if (sort === "profit_desc") return (b.profitPerDecant ?? -Infinity) - (a.profitPerDecant ?? -Infinity);
     return `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`);
   });
 
-  const lowOrOutCount = rows.filter((r) => r.tracked && (r.status === "low_stock" || r.status === "out_of_stock")).length;
-  const juiceRemaining = rows.reduce((sum, r) => sum + (r.currentMl ?? 0), 0);
+  // Always computed from ALL tracked perfumes (never the filtered/searched
+  // view) — this is "if everything currently on the shelf sold at its
+  // listed price," recalculated live from current_ml/cost/price every time
+  // the page loads, so it updates itself the moment you restock, sell, or
+  // change a price. Nothing here is a stored/manually-entered figure.
+  const trackedRows = allRows.filter((r) => r.tracked);
+  const lowOrOutCount = trackedRows.filter((r) => r.status === "low_stock" || r.status === "out_of_stock").length;
+  const juiceRemaining = trackedRows.reduce((sum, r) => sum + (r.currentMl ?? 0), 0);
+  const potentialRevenue = trackedRows.reduce((sum, r) => sum + (r.fullDecants ?? 0) * (r.sellingPricePerDecant ?? 0), 0);
+  const inventoryCost = trackedRows.reduce((sum, r) => sum + (r.fullDecants ?? 0) * (r.costPerDecant ?? 0), 0);
+  const potentialProfit = Math.round((potentialRevenue - inventoryCost) * 100) / 100;
 
   return (
     <AdminShell
       title="Inventory"
-      description={`${juiceRemaining.toLocaleString()}ml remaining across ${rows.filter((r) => r.tracked).length} tracked perfume${rows.filter((r) => r.tracked).length === 1 ? "" : "s"}${lowOrOutCount > 0 ? ` — ${lowOrOutCount} need attention` : ""}.`}
+      description={`${juiceRemaining.toLocaleString()}ml remaining across ${trackedRows.length} tracked perfume${trackedRows.length === 1 ? "" : "s"}${lowOrOutCount > 0 ? ` — ${lowOrOutCount} need attention` : ""}.`}
       action={
         <Button asChild variant="outline" size="sm">
           <a href="/api/admin/export/inventory"><FileSpreadsheet className="h-4 w-4" /> Export</a>
         </Button>
       }
     >
+      {trackedRows.length > 0 && (
+        <div className="mb-8">
+          <SectionHeading
+            title="Projected Inventory Profit"
+            description="If every full decant currently on the shelf sold at its listed price — across all tracked perfumes. Updates itself the moment you restock, sell, or change a price."
+          />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <MetricCard label="Potential Revenue" value={potentialRevenue} currency icon={Banknote} accent="revenue" />
+            <MetricCard label="Inventory Cost" value={inventoryCost} currency icon={Wallet} accent="caution" />
+            <MetricCard label="Potential Profit" value={potentialProfit} currency icon={TrendingUp} accent="revenue" hero />
+          </div>
+        </div>
+      )}
+
       <InventoryFilters />
 
       {rows.length === 0 ? (

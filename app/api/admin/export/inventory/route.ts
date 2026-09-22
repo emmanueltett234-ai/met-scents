@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/route-auth";
-import { addInventorySheet, filenameFor } from "@/lib/export/build-workbook";
+import { addInventorySheet, addSummarySheet, filenameFor } from "@/lib/export/build-workbook";
 import { getSettings } from "@/lib/data/settings";
-import { inventoryStatus, effectiveThreshold, avgCostPerMl, totalCostPerDecant } from "@/lib/inventory/status";
+import { inventoryStatus, effectiveThreshold, avgCostPerMl, totalCostPerDecant, decantBreakdown } from "@/lib/inventory/status";
+import { formatGHS } from "@/lib/currency";
 import { INVENTORY_STATUS_LABELS, type InventoryStatus } from "@/types";
 import { oneOf } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ export async function GET(_req: NextRequest) {
       const status: InventoryStatus = inventoryStatus(inv.current_ml, threshold);
       const avgCost = avgCostPerMl(inv.total_cost_invested, inv.initial_ml);
       const costPerDecant = totalCostPerDecant(avgCost, inv.decant_size_ml, inv);
+      const { fullDecants } = decantBreakdown(inv.current_ml, inv.decant_size_ml);
       return {
         brand: p.brand,
         name: p.name,
@@ -42,14 +44,24 @@ export async function GET(_req: NextRequest) {
         selling_price_per_decant: Number(inv.selling_price_per_decant),
         profit_per_decant: Math.round((inv.selling_price_per_decant - costPerDecant) * 100) / 100,
         status: INVENTORY_STATUS_LABELS[status],
+        full_decants: fullDecants,
       };
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  const potentialRevenue = rows.reduce((sum, r) => sum + r.full_decants * r.selling_price_per_decant, 0);
+  const inventoryCost = rows.reduce((sum, r) => sum + r.full_decants * r.cost_per_decant, 0);
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Met Scents Admin";
   workbook.created = new Date();
   addInventorySheet(workbook, rows);
+  addSummarySheet(workbook, [
+    { label: "Tracked Perfumes", value: String(rows.length) },
+    { label: "Potential Revenue (if all current stock sold)", value: formatGHS(Math.round(potentialRevenue * 100) / 100) },
+    { label: "Inventory Cost (current stock)", value: formatGHS(Math.round(inventoryCost * 100) / 100) },
+    { label: "Potential Profit", value: formatGHS(Math.round((potentialRevenue - inventoryCost) * 100) / 100) },
+  ]);
 
   const buffer = await workbook.xlsx.writeBuffer();
   const filename = filenameFor("inventory");
