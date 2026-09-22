@@ -49,7 +49,7 @@ export default async function InventoryDetailPage({ params }: { params: { produc
 
   return (
     <AdminShell
-      title={`${product.brand} — ${product.name}`}
+      title={`${product.brand} - ${product.name}`}
       description={productType?.name ?? undefined}
       action={
         inventory && (
@@ -114,7 +114,7 @@ export default async function InventoryDetailPage({ params }: { params: { produc
                     <TableCell className="text-sm">{Number(p.bottle_size_ml).toLocaleString()}ml</TableCell>
                     <TableCell className="text-sm">{Number(p.ml_added).toLocaleString()}ml</TableCell>
                     <TableCell className="text-sm">{formatGHS(Number(p.cost_price))}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{p.notes ?? "—"}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{p.notes ?? "-"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

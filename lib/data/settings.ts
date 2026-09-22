@@ -18,6 +18,7 @@ export async function getSettings(): Promise<StoreSettings> {
       whatsapp_notifications_enabled: true,
       email_notifications_enabled: true,
       default_low_stock_threshold_ml: 20,
+      admin_display_name: null,
       updated_at: new Date().toISOString(),
     };
   }

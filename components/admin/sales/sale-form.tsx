@@ -349,7 +349,7 @@ export function SaleForm({
                     <p className="w-full text-xs text-muted-foreground">
                       {tracked
                         ? `Deducts ${(variant.size_ml * item.quantity).toLocaleString()}ml from inventory on save.`
-                        : `This size is ${variant.size_ml}ml, but inventory tracking isn't set up for this perfume yet — no ml will be deducted.`}
+                        : `This size is ${variant.size_ml}ml, but inventory tracking isn't set up for this perfume yet, so no ml will be deducted.`}
                     </p>
                   );
                 })()}

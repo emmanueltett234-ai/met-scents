@@ -118,7 +118,7 @@ export default async function AdminDashboardPage({
 
   return (
     <AdminShell
-      title={`${greeting()}.`}
+      title={`${greeting()}${settings.admin_display_name ? `, ${settings.admin_display_name}` : ""}.`}
       description="Here's what's happening with Met Scents."
       action={<DateRangeSelect current={range.key} />}
     >
@@ -212,7 +212,7 @@ export default async function AdminDashboardPage({
             kept visually distinct from Overview so revenue is never mistaken
             for profit. -------------------------------------------------- */}
         <section>
-          <SectionHeading title="Profit" description="Derived entirely from recorded sales, inventory cost, and expenses — never a manually-entered figure." />
+          <SectionHeading title="Profit" description="Derived entirely from recorded sales, inventory cost, and expenses. Never a manually-entered figure." />
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <MetricCard label="Product Cost" value={profitMetrics.productCost} currency icon={Wallet} accent="caution" />
             <MetricCard label="Gross Profit" value={profitMetrics.grossProfit} currency icon={TrendingUp} accent="revenue" />

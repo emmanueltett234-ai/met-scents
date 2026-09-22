@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest) {
       owner_notification_email: parsed.data.owner_notification_email || null,
       whatsapp_notifications_enabled: parsed.data.whatsapp_notifications_enabled,
       email_notifications_enabled: parsed.data.email_notifications_enabled,
+      admin_display_name: parsed.data.admin_display_name || null,
       ...(parsed.data.default_low_stock_threshold_ml !== undefined && {
         default_low_stock_threshold_ml: parsed.data.default_low_stock_threshold_ml,
       }),

@@ -65,7 +65,7 @@ export function ExpenseTable({ expenses }: { expenses: ExpenseRow[] }) {
               </TableCell>
               <TableCell><Badge variant="outline">{EXPENSE_CATEGORY_LABELS[e.category as ExpenseCategory]}</Badge></TableCell>
               <TableCell className="text-sm text-muted-foreground">
-                {e.products ? `${e.products.brand} - ${e.products.name}` : "—"}
+                {e.products ? `${e.products.brand} - ${e.products.name}` : "-"}
               </TableCell>
               <TableCell className="text-sm">{formatGHS(Number(e.amount))}</TableCell>
               <TableCell className="text-xs text-muted-foreground">

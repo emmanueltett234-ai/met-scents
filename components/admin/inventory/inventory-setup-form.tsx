@@ -83,7 +83,7 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
         });
         if (!restockRes.ok) {
           const restockData = await restockRes.json().catch(() => ({}));
-          throw new Error(restockData.error || "Inventory was saved, but adding the stock failed — restock it manually below.");
+          throw new Error(restockData.error || "Inventory was saved, but adding the stock failed. Restock it manually below.");
         }
         stocked = true;
         setCostOfPerfume("");
@@ -102,13 +102,13 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {!isEdit && (
         <p className="text-sm text-muted-foreground">
-          Set the bottle/decant sizes and what you paid for this bottle — saving logs it as your first stock, no
+          Set the bottle/decant sizes and what you paid for this bottle. Saving logs it as your first stock, no
           separate restock needed. Use the "Restock" button later for any bottle you buy after this one.
         </p>
       )}
       {isEdit && needsFirstStock && (
         <p className="text-sm text-destructive">
-          This perfume has no stock on the books yet — it will show as Out of Stock until you add its cost below
+          This perfume has no stock on the books yet. It will show as Out of Stock until you add its cost below
           (or use the "Restock" button above).
         </p>
       )}

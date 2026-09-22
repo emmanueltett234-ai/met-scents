@@ -43,6 +43,7 @@ export interface StoreSettings {
   whatsapp_notifications_enabled: boolean;
   email_notifications_enabled: boolean;
   default_low_stock_threshold_ml: number;
+  admin_display_name: string | null;
   updated_at: string;
 }
 

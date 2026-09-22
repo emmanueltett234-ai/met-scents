@@ -65,7 +65,7 @@ export default async function AdminExpensesPage({ searchParams }: { searchParams
   return (
     <AdminShell
       title="Expenses"
-      description="Marketing, branding, and operating costs — kept separate from product cost so gross profit and net profit never get confused."
+      description="Marketing, branding, and operating costs, kept separate from product cost so gross profit and net profit never get confused."
       action={
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm"><a href={exportHref}><FileSpreadsheet className="h-4 w-4" /> Export</a></Button>
@@ -76,7 +76,7 @@ export default async function AdminExpensesPage({ searchParams }: { searchParams
       <ExpenseFilters />
 
       <p className="mb-3 text-xs text-muted-foreground">
-        {total} expense{total === 1 ? "" : "s"} found{expenses && expenses.length > 0 ? ` — ${formatGHS(pageTotal)} on this page` : ""}
+        {total} expense{total === 1 ? "" : "s"} found{expenses && expenses.length > 0 ? ` (${formatGHS(pageTotal)} on this page)` : ""}
       </p>
 
       {!expenses || expenses.length === 0 ? (

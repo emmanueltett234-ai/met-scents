@@ -152,6 +152,7 @@ export const settingsInputSchema = z.object({
   whatsapp_notifications_enabled: z.boolean().optional().default(true),
   email_notifications_enabled: z.boolean(),
   default_low_stock_threshold_ml: z.coerce.number().min(0).optional(),
+  admin_display_name: z.string().trim().max(60).optional().or(z.literal("")),
 });
 
 // ----------------------------------------------------------------------------

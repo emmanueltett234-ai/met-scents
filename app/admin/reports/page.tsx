@@ -37,7 +37,7 @@ export default async function ReportsPage({
   return (
     <AdminShell
       title="Reports"
-      description="Inventory, sales, profit, expense, marketing, and product performance — one printable summary."
+      description="Inventory, sales, profit, expense, marketing, and product performance: one printable summary."
       action={<DateRangeSelect current={range.key} />}
     >
       <div className="mb-8 flex flex-wrap gap-2 print:hidden">
@@ -59,7 +59,7 @@ export default async function ReportsPage({
       {/* Everything below this point is what prints. */}
       <div className="space-y-10">
         <div>
-          <h1 className="font-serif text-2xl">Met Scents — Business Report</h1>
+          <h1 className="font-serif text-2xl">Met Scents Business Report</h1>
           <p className="text-sm text-muted-foreground">
             {range.label} · Generated {new Date().toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })}
           </p>
@@ -141,7 +141,7 @@ export default async function ReportsPage({
               <TableBody>
                 {lowStock.map((s) => (
                   <TableRow key={s.productId}>
-                    <TableCell>{s.brand} — {s.name}</TableCell>
+                    <TableCell>{s.brand} - {s.name}</TableCell>
                     <TableCell>{s.currentMl.toLocaleString()}ml</TableCell>
                     <TableCell>{s.thresholdMl.toLocaleString()}ml</TableCell>
                     <TableCell>{INVENTORY_STATUS_LABELS[s.status]}</TableCell>

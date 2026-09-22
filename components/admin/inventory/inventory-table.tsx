@@ -54,7 +54,7 @@ export function InventoryTable({ rows }: { rows: InventoryRow[] }) {
             </TableCell>
             {!r.tracked ? (
               <TableCell colSpan={6} className="text-xs text-muted-foreground">
-                Not tracked yet —{" "}
+                Not tracked yet,{" "}
                 <Link href={`/admin/inventory/${r.productId}`} className="underline hover:text-ink">
                   set up inventory
                 </Link>

@@ -18,6 +18,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
   const [email, setEmail] = useState(settings.owner_notification_email ?? "");
   const [emailEnabled, setEmailEnabled] = useState(settings.email_notifications_enabled);
   const [lowStockThreshold, setLowStockThreshold] = useState(String(settings.default_low_stock_threshold_ml));
+  const [displayName, setDisplayName] = useState(settings.admin_display_name ?? "");
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -32,6 +33,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           owner_notification_email: email,
           email_notifications_enabled: emailEnabled,
           default_low_stock_threshold_ml: lowStockThreshold === "" ? undefined : Number(lowStockThreshold),
+          admin_display_name: displayName,
         }),
       });
       const data = await res.json();
@@ -48,6 +50,20 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
+        <Label htmlFor="display_name">How Should We Greet You?</Label>
+        <Input
+          id="display_name"
+          className="mt-2 max-w-xs"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          placeholder="Mr. Odame"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Shown on the dashboard greeting, e.g. "Good morning, Mr. Odame." Leave blank for just "Good morning."
+        </p>
+      </div>
+
+      <div className="border-t border-border pt-4">
         <Label htmlFor="whatsapp">Shop WhatsApp Number</Label>
         <Input
           id="whatsapp"

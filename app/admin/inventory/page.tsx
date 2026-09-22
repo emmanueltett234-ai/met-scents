@@ -104,7 +104,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
   return (
     <AdminShell
       title="Inventory"
-      description={`${juiceRemaining.toLocaleString()}ml remaining across ${trackedRows.length} tracked perfume${trackedRows.length === 1 ? "" : "s"}${lowOrOutCount > 0 ? ` — ${lowOrOutCount} need attention` : ""}.`}
+      description={`${juiceRemaining.toLocaleString()}ml remaining across ${trackedRows.length} tracked perfume${trackedRows.length === 1 ? "" : "s"}${lowOrOutCount > 0 ? ` (${lowOrOutCount} need attention)` : ""}.`}
       action={
         <Button asChild variant="outline" size="sm">
           <a href="/api/admin/export/inventory"><FileSpreadsheet className="h-4 w-4" /> Export</a>
@@ -115,7 +115,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Se
         <div className="mb-8">
           <SectionHeading
             title="Projected Inventory Profit"
-            description="If every full decant currently on the shelf sold at its listed price — across all tracked perfumes. Updates itself the moment you restock, sell, or change a price."
+            description="If every full decant currently on the shelf sold at its listed price, across all tracked perfumes. Updates itself the moment you restock, sell, or change a price."
           />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <MetricCard label="Potential Revenue" value={potentialRevenue} currency icon={Banknote} accent="revenue" />
