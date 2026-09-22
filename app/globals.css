@@ -50,6 +50,24 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* The storefront's Bodoni Moda display serif is a deliberate fashion-house
+     choice for the public site, but it reads as a magazine layout rather
+     than an operations tool on the admin dashboard. Scoped to /admin (see
+     app/admin/layout.tsx): redefining these two variables makes every
+     existing font-serif/font-accent utility class resolve to the same
+     grotesque already used for admin nav/buttons/labels, so headings, card
+     titles, and figures fall in line with the rest of the dashboard without
+     touching each call site individually. Archivo has no loaded italic cut,
+     so the `italic` utility (used only for currency figures) is neutralized
+     here too, rather than rendering a synthesized/oblique fake italic. */
+  .admin-scope {
+    --font-serif: var(--font-sans);
+    --font-accent: var(--font-sans);
+  }
+  .admin-scope .italic {
+    font-style: normal;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
