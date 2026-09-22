@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Archivo } from "next/font/google";
+import { Bodoni_Moda, Archivo, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { getSettings } from "@/lib/data/settings";
@@ -29,6 +29,17 @@ const sans = Archivo({
   display: "swap",
 });
 
+// Inter — the standard, near-universal SaaS/admin-dashboard grotesque
+// (Linear, Notion, Stripe's dashboard, etc.). Used only inside /admin (see
+// `.admin-scope` in globals.css), so the storefront keeps its own Archivo +
+// Bodoni Moda identity untouched.
+const adminSans = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-admin",
+  display: "swap",
+});
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Met Scents";
 
@@ -52,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await getSettings();
 
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${adminSans.variable}`}>
       <body className="font-sans">
         <SiteChrome ownerWhatsappNumber={settings.owner_whatsapp_number}>{children}</SiteChrome>
         <Toaster position="bottom-center" richColors closeButton />

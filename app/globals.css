@@ -51,19 +51,21 @@
     @apply bg-background text-foreground antialiased;
   }
 
-  /* The storefront's Bodoni Moda display serif is a deliberate fashion-house
-     choice for the public site, but it reads as a magazine layout rather
-     than an operations tool on the admin dashboard. Scoped to /admin (see
-     app/admin/layout.tsx): redefining these two variables makes every
-     existing font-serif/font-accent utility class resolve to the same
-     grotesque already used for admin nav/buttons/labels, so headings, card
-     titles, and figures fall in line with the rest of the dashboard without
-     touching each call site individually. Archivo has no loaded italic cut,
-     so the `italic` utility (used only for currency figures) is neutralized
-     here too, rather than rendering a synthesized/oblique fake italic. */
+  /* The storefront's Archivo + Bodoni Moda pairing is a deliberate
+     fashion-house identity for the public site, but neither reads as an
+     operations tool on the admin dashboard. Scoped to /admin (see
+     app/admin/layout.tsx): redefining --font-sans and --font-serif makes
+     EVERY existing font-sans/font-serif/font-accent utility class (Tailwind's
+     `accent` family is itself just an alias for --font-serif, see
+     tailwind.config.ts — there is no separate --font-accent variable)
+     resolve to Inter, the near-universal SaaS/admin-dashboard grotesque,
+     without touching each call site individually. Inter has no loaded
+     italic cut here, so the `italic` utility (used only for currency
+     figures) is neutralized too, rather than rendering a synthesized/oblique
+     fake italic. */
   .admin-scope {
-    --font-serif: var(--font-sans);
-    --font-accent: var(--font-sans);
+    --font-sans: var(--font-admin);
+    --font-serif: var(--font-admin);
   }
   .admin-scope .italic {
     font-style: normal;
