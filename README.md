@@ -27,6 +27,18 @@ manually via WhatsApp or email to confirm availability and complete the sale.
 - Every enquiry records whether its WhatsApp/email notification actually succeeded
   (`whatsapp_status`, `email_status`), shown in the admin dashboard, so a failed notification is
   never silently lost or falsely reported as sent.
+- Inventory, cost & profit tracking (`/admin/inventory`): perfumes are tracked by **millilitres**,
+  not bottle count. Set a bottle/decant size and per-decant costs once, then record restocks —
+  the weighted-average cost per ml, decants remaining, and profit per decant all update
+  automatically. Recording a sale against a tracked size atomically deducts ml and snapshots that
+  sale's cost/profit, so later cost edits never rewrite historical numbers; deleting or editing a
+  sale correctly restores the ml it consumed.
+- Business expenses (`/admin/expenses`): marketing/branding/packaging/delivery/equipment/other
+  costs, optionally linked to a perfume, kept separate from product cost so gross profit and net
+  profit are never confused with each other.
+- The dashboard's Profit section (Revenue → Product Cost → Gross Profit → Expenses → Net Profit)
+  and `/admin/reports` (printable, plus `.xlsx` exports) are derived entirely from recorded sales,
+  inventory, and expenses — never a manually-entered figure.
 
 > **Upgrading an existing deployment?** Run `supabase/migration_002_settings_and_notifications.sql`
 > in the SQL editor after `schema.sql`/`seed.sql` — it adds the `settings` table and the
@@ -48,6 +60,18 @@ manually via WhatsApp or email to confirm availability and complete the sale.
 > deleting anything. **Run this migration BEFORE deploying this version of the code** — the admin
 > product form and catalogue filter now read/write `product_type_id` directly, so deploying first
 > will break product create/edit and catalogue filtering until the migration has run.
+>
+> **Upgrading to Inventory, Cost & Profit tracking?** Run
+> `supabase/migration_005_inventory_profit.sql` in the SQL editor after migration_004 — it adds
+> `product_inventory` (ml/cost/profit per perfume, admin-only), `inventory_purchases` (restock
+> ledger), `business_expenses`, a `size_ml` column on `product_variants`, cost/profit snapshot
+> columns on `sale_items`, a `default_low_stock_threshold_ml` column on `settings`, and three
+> Postgres functions (`record_inventory_purchase`, `record_inventory_sale`,
+> `reverse_inventory_sale`) that keep ml/cost movements atomic. All additive — nothing existing is
+> altered or removed, and every new/changed column is nullable or defaulted, so deploying before
+> running it is safe (the new admin sections just show nothing until you do). Inventory is opt-in
+> per perfume: open `/admin/inventory`, pick a product, and "Set Up Inventory" before its ml/profit
+> figures start tracking; nothing is inferred or backfilled for products you haven't set up.
 
 ## 2. Prerequisites
 

@@ -2,6 +2,8 @@ import "server-only";
 import type { createClient } from "@/lib/supabase/server";
 import type { DateRange } from "@/lib/analytics/date-range";
 import { previousPeriod } from "@/lib/analytics/date-range";
+import { inventoryStatus, effectiveThreshold } from "@/lib/inventory/status";
+import { EXPENSE_CATEGORY_LABELS } from "@/types";
 
 type Supabase = ReturnType<typeof createClient>;
 
@@ -318,8 +320,8 @@ export interface AttentionItem {
 // Always reflects CURRENT state, not the selected date range — "what needs
 // my attention right now" doesn't care whether a stale enquiry arrived
 // yesterday or three weeks ago. Every count is a cheap head-only query.
-export async function getNeedsAttention(supabase: Supabase): Promise<AttentionItem[]> {
-  const [newEnquiries, pendingEnquiries, awaitingFollowUp, unavailableProducts] = await Promise.all([
+export async function getNeedsAttention(supabase: Supabase, defaultLowStockThresholdMl: number): Promise<AttentionItem[]> {
+  const [newEnquiries, pendingEnquiries, awaitingFollowUp, unavailableProducts, lowStock] = await Promise.all([
     supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
     supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase
@@ -328,6 +330,7 @@ export async function getNeedsAttention(supabase: Supabase): Promise<AttentionIt
       .eq("whatsapp_opened", true)
       .eq("outcome", "no_decision"),
     supabase.from("products").select("id", { count: "exact", head: true }).eq("availability", "out_of_stock"),
+    getLowStockAlerts(supabase, defaultLowStockThresholdMl),
   ]);
 
   const items: AttentionItem[] = [
@@ -359,6 +362,13 @@ export async function getNeedsAttention(supabase: Supabase): Promise<AttentionIt
       description: "Review catalogue availability",
       href: "/admin/products?availability=out_of_stock",
     },
+    {
+      key: "low_stock",
+      count: lowStock.length,
+      label: "Low or Out of Stock Perfumes",
+      description: "Juice running low — restock soon",
+      href: "/admin/inventory?status=low_stock",
+    },
   ];
 
   return items.filter((i) => i.count > 0);
@@ -381,5 +391,266 @@ export async function getProductHealth(supabase: Supabase): Promise<ProductHealt
     featured: data.filter((p) => p.featured).length,
     bestSellers: data.filter((p) => p.best_seller).length,
     newArrivals: data.filter((p) => p.new_arrival).length,
+  };
+}
+
+// ----------------------------------------------------------------------------
+// Inventory cost/profit & expenses — a sale's true product cost/profit is
+// only ever read from sale_items.line_cost/line_profit (snapshotted at sale
+// time), never recomputed from current inventory cost, so historical profit
+// never drifts when costs are edited later.
+// ----------------------------------------------------------------------------
+
+interface SaleItemCostRow {
+  sale_id: string;
+  sale_date: string | null;
+  product_id: string | null;
+  product_name_snapshot: string;
+  quantity: number;
+  line_total: number;
+  line_cost: number | null;
+  line_profit: number | null;
+}
+
+async function fetchSaleItemsWithCost(supabase: Supabase, from: Date, to: Date): Promise<SaleItemCostRow[]> {
+  const { data: sales, error: salesError } = await supabase
+    .from("sales")
+    .select("id, sale_date")
+    .gte("sale_date", from.toISOString())
+    .lt("sale_date", to.toISOString());
+  if (salesError || !sales || sales.length === 0) {
+    if (salesError) console.error("Failed to fetch sales for profit analytics:", salesError.message);
+    return [];
+  }
+
+  const saleDateById = new Map(sales.map((s) => [s.id, s.sale_date]));
+  const { data, error } = await supabase
+    .from("sale_items")
+    .select("sale_id, product_id, product_name_snapshot, quantity, line_total, line_cost, line_profit")
+    .in("sale_id", sales.map((s) => s.id));
+  if (error) {
+    console.error("Failed to fetch sale items for profit analytics:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((r) => ({
+    ...r,
+    sale_date: saleDateById.get(r.sale_id) ?? null,
+    line_total: Number(r.line_total),
+    line_cost: r.line_cost != null ? Number(r.line_cost) : null,
+    line_profit: r.line_profit != null ? Number(r.line_profit) : null,
+  }));
+}
+
+interface ExpenseRow {
+  id: string;
+  amount: number;
+  category: string;
+  expense_date: string;
+}
+
+async function fetchExpenses(supabase: Supabase, from: Date, to: Date): Promise<ExpenseRow[]> {
+  const { data, error } = await supabase
+    .from("business_expenses")
+    .select("id, amount, category, expense_date")
+    .gte("expense_date", from.toISOString())
+    .lt("expense_date", to.toISOString());
+  if (error) {
+    console.error("Failed to fetch expenses for analytics:", error.message);
+    return [];
+  }
+  return (data ?? []).map((r) => ({ ...r, amount: Number(r.amount) }));
+}
+
+export interface ProfitMetrics {
+  revenue: number;
+  productCost: number;
+  grossProfit: number;
+  totalExpenses: number;
+  netProfit: number;
+  previous: {
+    revenue: number;
+    productCost: number;
+    grossProfit: number;
+    totalExpenses: number;
+    netProfit: number;
+  };
+}
+
+// Revenue is the recorded sale_amount (the source of truth used everywhere
+// else on the dashboard) — NOT the sum of sale_items line totals, since a
+// sale's amount can be manually overridden for discounts/adjustments.
+// Product cost is summed separately from sale_items.line_cost (COGS), so
+// gross profit = revenue - productCost, matching the brief's worked example
+// exactly (never confusing revenue with profit).
+export async function getProfitMetrics(supabase: Supabase, range: DateRange): Promise<ProfitMetrics> {
+  const prev = previousPeriod(range);
+
+  async function summarize(from: Date, to: Date) {
+    const [sales, items, expenses] = await Promise.all([
+      fetchSales(supabase, from, to),
+      fetchSaleItemsWithCost(supabase, from, to),
+      fetchExpenses(supabase, from, to),
+    ]);
+    const revenue = sales.reduce((sum, s) => sum + s.sale_amount, 0);
+    const productCost = items.reduce((sum, i) => sum + (i.line_cost ?? 0), 0);
+    const grossProfit = revenue - productCost;
+    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const netProfit = grossProfit - totalExpenses;
+    return {
+      revenue: Math.round(revenue * 100) / 100,
+      productCost: Math.round(productCost * 100) / 100,
+      grossProfit: Math.round(grossProfit * 100) / 100,
+      totalExpenses: Math.round(totalExpenses * 100) / 100,
+      netProfit: Math.round(netProfit * 100) / 100,
+    };
+  }
+
+  const [current, previous] = await Promise.all([summarize(range.from, range.to), summarize(prev.from, prev.to)]);
+  return { ...current, previous };
+}
+
+export async function getProfitOverTime(supabase: Supabase, range: DateRange): Promise<TimeSeriesPoint[]> {
+  const items = await fetchSaleItemsWithCost(supabase, range.from, range.to);
+  const totals = new Map<string, number>();
+  for (const i of items) {
+    if (i.line_profit == null || !i.sale_date) continue;
+    const key = bucketKey(new Date(i.sale_date), range.granularity);
+    totals.set(key, (totals.get(key) ?? 0) + i.line_profit);
+  }
+  return allBucketKeys(range.from, range.to, range.granularity).map((key) => ({
+    bucket: key,
+    label: bucketLabel(key, range.granularity),
+    value: Math.round((totals.get(key) ?? 0) * 100) / 100,
+  }));
+}
+
+export async function getExpensesOverTime(supabase: Supabase, range: DateRange): Promise<TimeSeriesPoint[]> {
+  const expenses = await fetchExpenses(supabase, range.from, range.to);
+  const totals = new Map<string, number>();
+  for (const e of expenses) {
+    const key = bucketKey(new Date(e.expense_date), range.granularity);
+    totals.set(key, (totals.get(key) ?? 0) + e.amount);
+  }
+  return allBucketKeys(range.from, range.to, range.granularity).map((key) => ({
+    bucket: key,
+    label: bucketLabel(key, range.granularity),
+    value: Math.round((totals.get(key) ?? 0) * 100) / 100,
+  }));
+}
+
+export async function getExpensesByCategory(supabase: Supabase, range: DateRange): Promise<BreakdownSlice[]> {
+  const expenses = await fetchExpenses(supabase, range.from, range.to);
+  const counts: Record<string, number> = {};
+  for (const e of expenses) counts[e.category] = (counts[e.category] ?? 0) + e.amount;
+  return Object.entries(EXPENSE_CATEGORY_LABELS)
+    .map(([key, label]) => ({ key, label, value: Math.round((counts[key] ?? 0) * 100) / 100 }))
+    .filter((s) => s.value > 0 || expenses.length === 0);
+}
+
+export interface ProductProfitRow {
+  productId: string | null;
+  productName: string;
+  unitsSold: number;
+  revenue: number;
+  cost: number | null; // null when NO item for this product had tracked cost
+  profit: number | null;
+}
+
+// Best-selling fragrances by units sold and by revenue/profit — grouped by
+// product_id where available, falling back to the snapshot name for
+// free-text items with no product link.
+export async function getProfitByProduct(supabase: Supabase, range: DateRange): Promise<ProductProfitRow[]> {
+  const items = await fetchSaleItemsWithCost(supabase, range.from, range.to);
+  const byKey = new Map<string, ProductProfitRow & { hasCost: boolean }>();
+
+  for (const i of items) {
+    const key = i.product_id ?? `name:${i.product_name_snapshot}`;
+    const existing = byKey.get(key) ?? {
+      productId: i.product_id,
+      productName: i.product_name_snapshot,
+      unitsSold: 0,
+      revenue: 0,
+      cost: 0,
+      profit: 0,
+      hasCost: false,
+    };
+    existing.unitsSold += i.quantity;
+    existing.revenue += i.line_total;
+    if (i.line_cost != null) {
+      existing.cost = (existing.cost ?? 0) + i.line_cost;
+      existing.profit = (existing.profit ?? 0) + (i.line_profit ?? 0);
+      existing.hasCost = true;
+    }
+    byKey.set(key, existing);
+  }
+
+  return Array.from(byKey.values())
+    .map((r) => ({
+      productId: r.productId,
+      productName: r.productName,
+      unitsSold: r.unitsSold,
+      revenue: Math.round(r.revenue * 100) / 100,
+      cost: r.hasCost ? Math.round((r.cost ?? 0) * 100) / 100 : null,
+      profit: r.hasCost ? Math.round((r.profit ?? 0) * 100) / 100 : null,
+    }))
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface LowStockAlert {
+  productId: string;
+  brand: string;
+  name: string;
+  currentMl: number;
+  thresholdMl: number;
+  status: "low_stock" | "out_of_stock";
+}
+
+// Always reflects CURRENT state (not the selected date range), like
+// getNeedsAttention — "what needs restocking right now."
+export async function getLowStockAlerts(supabase: Supabase, defaultThresholdMl: number): Promise<LowStockAlert[]> {
+  const { data, error } = await supabase
+    .from("product_inventory")
+    .select("product_id, current_ml, low_stock_threshold_ml, products(brand, name)");
+  if (error || !data) return [];
+
+  const alerts: LowStockAlert[] = [];
+  for (const row of data) {
+    const threshold = effectiveThreshold(row.low_stock_threshold_ml, defaultThresholdMl);
+    const status = inventoryStatus(Number(row.current_ml), threshold);
+    if (status === "in_stock") continue;
+    const product = Array.isArray(row.products) ? row.products[0] : row.products;
+    alerts.push({
+      productId: row.product_id,
+      brand: product?.brand ?? "",
+      name: product?.name ?? "",
+      currentMl: Number(row.current_ml),
+      thresholdMl: threshold,
+      status,
+    });
+  }
+  return alerts;
+}
+
+export interface InventorySummary {
+  trackedCount: number;
+  juiceRemainingMl: number;
+  lowOrOutCount: number;
+}
+
+export async function getInventorySummary(supabase: Supabase, defaultThresholdMl: number): Promise<InventorySummary> {
+  const { data, error } = await supabase.from("product_inventory").select("current_ml, low_stock_threshold_ml");
+  if (error || !data) return { trackedCount: 0, juiceRemainingMl: 0, lowOrOutCount: 0 };
+
+  let lowOrOutCount = 0;
+  for (const row of data) {
+    const threshold = effectiveThreshold(row.low_stock_threshold_ml, defaultThresholdMl);
+    if (inventoryStatus(Number(row.current_ml), threshold) !== "in_stock") lowOrOutCount++;
+  }
+
+  return {
+    trackedCount: data.length,
+    juiceRemainingMl: data.reduce((sum, r) => sum + Number(r.current_ml), 0),
+    lowOrOutCount,
   };
 }

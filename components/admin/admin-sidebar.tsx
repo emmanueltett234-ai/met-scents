@@ -12,6 +12,9 @@ import {
   TrendingUp,
   Settings,
   LogOut,
+  Boxes,
+  Wallet,
+  FileBarChart,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { createClient } from "@/lib/supabase/client";
@@ -51,6 +54,18 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: "/admin/sales", label: "All Sales", icon: Receipt },
       { href: "/admin/sales/analytics", label: "Sales Analytics", icon: TrendingUp },
     ],
+  },
+  {
+    label: "Inventory",
+    links: [{ href: "/admin/inventory", label: "Inventory List", icon: Boxes }],
+  },
+  {
+    label: "Expenses",
+    links: [{ href: "/admin/expenses", label: "All Expenses", icon: Wallet }],
+  },
+  {
+    label: "Reports",
+    links: [{ href: "/admin/reports", label: "Reports", icon: FileBarChart }],
   },
   { label: null, links: [{ href: "/admin/settings", label: "Settings", icon: Settings }] },
 ];

@@ -49,6 +49,7 @@ export const productVariantInputSchema = z.object({
   size: z.string().trim().min(1, "Size is required").max(60),
   price: z.coerce.number().min(0, "Price must be zero or more"),
   availability: availabilityEnum.default("available"),
+  size_ml: z.coerce.number().positive("ml must be greater than zero").optional(),
 });
 
 export const productInputSchema = z.object({
@@ -107,6 +108,10 @@ const paymentMethodEnum = z.enum(["cash", "mobile_money", "bank_transfer", "othe
 export const saleItemInputSchema = z.object({
   id: uuid.optional(),
   product_id: uuid.nullable().optional(),
+  // Which size variant was sold, so the server can look up its size_ml and
+  // deduct inventory. Nullable: a free-text/custom line item never had a
+  // real variant and simply won't get ml deduction or cost/profit tracking.
+  variant_id: uuid.nullable().optional(),
   product_name_snapshot: z.string().trim().min(1, "Product name is required").max(200),
   brand_snapshot: z.string().trim().max(100).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
   size_snapshot: z.string().trim().min(1, "Size is required").max(60),
@@ -146,4 +151,57 @@ export const settingsInputSchema = z.object({
   // integration to toggle. Always defaults to true if omitted.
   whatsapp_notifications_enabled: z.boolean().optional().default(true),
   email_notifications_enabled: z.boolean(),
+  default_low_stock_threshold_ml: z.coerce.number().min(0).optional(),
 });
+
+// ----------------------------------------------------------------------------
+// Admin: inventory (ml/cost tracking) & restocking
+// ----------------------------------------------------------------------------
+export const inventorySetupInputSchema = z.object({
+  bottle_size_ml: z.coerce.number().positive("Bottle size must be greater than zero"),
+  decant_size_ml: z.coerce.number().positive("Decant size must be greater than zero").default(10),
+  atomizer_cost: z.coerce.number().min(0).default(0),
+  label_cost: z.coerce.number().min(0).default(0),
+  packaging_cost: z.coerce.number().min(0).default(0),
+  pouch_cost: z.coerce.number().min(0).default(0),
+  shipping_cost: z.coerce.number().min(0).default(0),
+  other_cost: z.coerce.number().min(0).default(0),
+  selling_price_per_decant: z.coerce.number().min(0, "Selling price must be zero or more"),
+  low_stock_threshold_ml: z.coerce.number().min(0).optional().nullable(),
+});
+
+export type InventorySetupInput = z.infer<typeof inventorySetupInputSchema>;
+
+export const inventoryPurchaseInputSchema = z.object({
+  bottle_size_ml: z.coerce.number().positive("Bottle size must be greater than zero"),
+  ml_added: z.coerce.number().positive("ml added must be greater than zero"),
+  cost_price: z.coerce.number().min(0, "Cost price must be zero or more"),
+  purchase_date: z.coerce.date().optional(),
+  notes: z.string().trim().max(2000).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
+});
+
+export type InventoryPurchaseInput = z.infer<typeof inventoryPurchaseInputSchema>;
+
+// ----------------------------------------------------------------------------
+// Admin: business expenses
+// ----------------------------------------------------------------------------
+const expenseCategoryEnum = z.enum([
+  "marketing",
+  "branding",
+  "packaging",
+  "delivery",
+  "inventory",
+  "equipment",
+  "other",
+]);
+
+export const businessExpenseInputSchema = z.object({
+  expense_name: z.string().trim().min(1, "Expense name is required").max(150),
+  category: expenseCategoryEnum.default("other"),
+  amount: z.coerce.number().min(0, "Amount must be zero or more"),
+  expense_date: z.coerce.date().optional(),
+  description: z.string().trim().max(2000).optional().or(z.literal("")).transform((v) => (v ? v : undefined)),
+  related_product_id: uuid.nullable().optional(),
+});
+
+export type BusinessExpenseInput = z.infer<typeof businessExpenseInputSchema>;

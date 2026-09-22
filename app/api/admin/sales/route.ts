@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/route-auth";
 import { saleInputSchema } from "@/lib/validation";
+import { deductInventoryForSale, reverseSaleItemsInventory, buildSaleItemRows } from "@/lib/inventory/sale-deduction";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,18 @@ export async function POST(req: NextRequest) {
   const input = parsed.data;
   const supabase = createClient();
 
+  // Deduct inventory BEFORE the sale row exists, so an insufficient-stock
+  // failure never leaves a half-created sale — nothing is committed yet.
+  let deductions;
+  try {
+    deductions = await deductInventoryForSale(
+      supabase,
+      input.items.map((i) => ({ product_id: i.product_id ?? null, variant_id: i.variant_id ?? null, quantity: i.quantity }))
+    );
+  } catch (err) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Failed to update inventory." }, { status: 400 });
+  }
+
   const { data: sale, error: saleError } = await supabase
     .from("sales")
     .insert({
@@ -89,6 +102,10 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (saleError || !sale) {
+    await reverseSaleItemsInventory(
+      supabase,
+      input.items.map((item, idx) => ({ product_id: item.product_id ?? null, ml_deducted: deductions[idx].ml_deducted }))
+    );
     return NextResponse.json({ error: saleError?.message ?? "Failed to record sale." }, { status: 500 });
   }
 
@@ -96,25 +113,21 @@ export async function POST(req: NextRequest) {
   if (input.items.length > 0) {
     const { data: items, error: itemsError } = await supabase
       .from("sale_items")
-      .insert(
-        input.items.map((item) => ({
-          sale_id: sale.id,
-          product_id: item.product_id ?? null,
-          product_name_snapshot: item.product_name_snapshot,
-          brand_snapshot: item.brand_snapshot ?? null,
-          size_snapshot: item.size_snapshot,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          line_total: item.quantity * item.unit_price,
-        }))
-      )
+      .insert(buildSaleItemRows(sale.id, input.items, deductions))
       .select();
 
     if (itemsError) {
-      console.error("Failed to save sale items:", itemsError.message);
-    } else {
-      saleItems = items ?? [];
+      // A failed item write must never leave an orphaned inventory
+      // deduction with no record of which items caused it — reverse the ml
+      // and remove the sale itself rather than silently losing the items.
+      await reverseSaleItemsInventory(
+        supabase,
+        input.items.map((item, idx) => ({ product_id: item.product_id ?? null, ml_deducted: deductions[idx].ml_deducted }))
+      );
+      await supabase.from("sales").delete().eq("id", sale.id);
+      return NextResponse.json({ error: itemsError.message }, { status: 500 });
     }
+    saleItems = items ?? [];
   }
 
   // Timeline entry — only written if this sale is linked to a real enquiry.

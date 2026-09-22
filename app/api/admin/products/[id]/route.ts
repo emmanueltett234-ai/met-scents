@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (v.id) {
       await supabase
         .from("product_variants")
-        .update({ size: v.size, price: v.price, availability: v.availability, sort_order: i })
+        .update({ size: v.size, price: v.price, availability: v.availability, size_ml: v.size_ml ?? null, sort_order: i })
         .eq("id", v.id);
     } else {
       await supabase.from("product_variants").insert({
@@ -63,6 +63,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         size: v.size,
         price: v.price,
         availability: v.availability,
+        size_ml: v.size_ml ?? null,
         sort_order: i,
       });
     }

@@ -172,6 +172,126 @@ export function addSalesSheet(workbook: ExcelJS.Workbook, rows: SaleExportRow[])
   return sheet;
 }
 
+interface InventoryExportRow {
+  brand: string;
+  name: string;
+  initial_ml: number;
+  current_ml: number;
+  decants_sold: number;
+  avg_cost_per_ml: number;
+  cost_per_decant: number;
+  selling_price_per_decant: number;
+  profit_per_decant: number;
+  status: string;
+}
+
+export function addInventorySheet(workbook: ExcelJS.Workbook, rows: InventoryExportRow[]) {
+  const sheet = workbook.addWorksheet("Inventory", { views: [{ state: "frozen", ySplit: 1 }] });
+
+  sheet.columns = [
+    { header: "Brand", key: "brand", width: 18 },
+    { header: "Perfume", key: "name", width: 26 },
+    { header: "Initial ML", key: "initial_ml", width: 14 },
+    { header: "Remaining ML", key: "current_ml", width: 16 },
+    { header: "Decants Sold", key: "decants_sold", width: 14 },
+    { header: "Avg. Cost/ML", key: "avg_cost_per_ml", width: 14 },
+    { header: "Cost/Decant", key: "cost_per_decant", width: 14 },
+    { header: "Selling Price/Decant", key: "selling_price_per_decant", width: 18 },
+    { header: "Profit/Decant", key: "profit_per_decant", width: 14 },
+    { header: "Status", key: "status", width: 14 },
+  ];
+  styleHeaderRow(sheet.getRow(1));
+
+  for (const r of rows) {
+    const row = sheet.addRow(r);
+    for (const key of ["avg_cost_per_ml", "cost_per_decant", "selling_price_per_decant", "profit_per_decant"]) {
+      row.getCell(key).numFmt = CURRENCY_FORMAT;
+    }
+  }
+
+  sheet.autoFilter = { from: "A1", to: `J${rows.length + 1}` };
+  return sheet;
+}
+
+interface ExpenseExportRow {
+  expense_name: string;
+  category: string;
+  amount: number;
+  expense_date: string;
+  description: string | null;
+  related_product: string | null;
+  created_by: string | null;
+}
+
+export function addExpensesSheet(workbook: ExcelJS.Workbook, rows: ExpenseExportRow[]) {
+  const sheet = workbook.addWorksheet("Expenses", { views: [{ state: "frozen", ySplit: 1 }] });
+
+  sheet.columns = [
+    { header: "Expense", key: "expense_name", width: 26 },
+    { header: "Category", key: "category", width: 14 },
+    { header: "Amount", key: "amount", width: 14 },
+    { header: "Date", key: "date", width: 18 },
+    { header: "Description", key: "description", width: 30 },
+    { header: "Related Perfume", key: "related_product", width: 24 },
+    { header: "Recorded By", key: "created_by", width: 22 },
+  ];
+  styleHeaderRow(sheet.getRow(1));
+
+  for (const r of rows) {
+    const row = sheet.addRow({
+      expense_name: r.expense_name,
+      category: r.category,
+      amount: r.amount,
+      date: new Date(r.expense_date),
+      description: r.description ?? "",
+      related_product: r.related_product ?? "",
+      created_by: r.created_by ?? "",
+    });
+    row.getCell("amount").numFmt = CURRENCY_FORMAT;
+    row.getCell("date").numFmt = DATE_FORMAT;
+  }
+
+  sheet.autoFilter = { from: "A1", to: `G${rows.length + 1}` };
+  return sheet;
+}
+
+interface ProfitByProductExportRow {
+  product_name: string;
+  units_sold: number;
+  revenue: number;
+  cost: number | null;
+  profit: number | null;
+}
+
+export function addProfitByProductSheet(workbook: ExcelJS.Workbook, rows: ProfitByProductExportRow[]) {
+  const sheet = workbook.addWorksheet("Profit by Product", { views: [{ state: "frozen", ySplit: 1 }] });
+
+  sheet.columns = [
+    { header: "Perfume", key: "product_name", width: 28 },
+    { header: "Units Sold", key: "units_sold", width: 14 },
+    { header: "Revenue", key: "revenue", width: 16 },
+    { header: "Cost", key: "cost", width: 16 },
+    { header: "Profit", key: "profit", width: 16 },
+  ];
+  styleHeaderRow(sheet.getRow(1));
+
+  for (const r of rows) {
+    const row = sheet.addRow({
+      product_name: r.product_name,
+      units_sold: r.units_sold,
+      revenue: r.revenue,
+      cost: r.cost ?? "not tracked",
+      profit: r.profit ?? "not tracked",
+    });
+    row.getCell("revenue").numFmt = CURRENCY_FORMAT;
+    if (r.cost != null) row.getCell("cost").numFmt = CURRENCY_FORMAT;
+    if (r.profit != null) row.getCell("profit").numFmt = CURRENCY_FORMAT;
+  }
+
+  sheet.autoFilter = { from: "A1", to: `E${rows.length + 1}` };
+  return sheet;
+}
+
 export function addSummarySheet(
   workbook: ExcelJS.Workbook,
   summary: { label: string; value: string }[]

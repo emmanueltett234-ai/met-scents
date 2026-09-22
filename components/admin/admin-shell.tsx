@@ -21,11 +21,15 @@ export async function AdminShell({
 
   return (
     <div className="flex min-h-screen bg-secondary/30">
-      <AdminSidebar email={user?.email} />
+      <div className="print:hidden">
+        <AdminSidebar email={user?.email} />
+      </div>
       <div className="min-w-0 flex-1">
         {/* Mobile-only top bar — the fixed sidebar hides below `lg`, so this
-            is the only way to reach navigation on a phone/tablet. */}
-        <div className="flex items-center gap-3 border-b border-border bg-white px-4 py-3 lg:hidden">
+            is the only way to reach navigation on a phone/tablet. Also
+            hidden when printing, along with the sidebar above, so a printed
+            report (e.g. /admin/reports) never carries the admin chrome. */}
+        <div className="flex items-center gap-3 border-b border-border bg-white px-4 py-3 lg:hidden print:hidden">
           <MobileAdminNav email={user?.email} />
           <Logo className="pointer-events-none" />
         </div>

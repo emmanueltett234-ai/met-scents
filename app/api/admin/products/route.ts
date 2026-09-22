@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       size: v.size,
       price: v.price,
       availability: v.availability,
+      size_ml: v.size_ml ?? null,
       sort_order: i,
     }))
   );

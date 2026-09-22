@@ -10,9 +10,12 @@ import {
   Wallet,
   Receipt,
   TrendingUp,
+  TrendingDown,
   MessageCircleMore,
   Globe,
   Sparkles,
+  Boxes,
+  FileBarChart,
 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { DateRangeSelect } from "@/components/admin/date-range-select";
@@ -38,7 +41,13 @@ import {
   getConversionRate,
   getNeedsAttention,
   getProductHealth,
+  getProfitMetrics,
+  getProfitOverTime,
+  getExpensesOverTime,
+  getExpensesByCategory,
+  getInventorySummary,
 } from "@/lib/analytics/queries";
+import { getSettings } from "@/lib/data/settings";
 import { formatGHS } from "@/lib/currency";
 import { ENQUIRY_STATUS_LABELS, type EnquiryStatus } from "@/types";
 
@@ -62,6 +71,8 @@ export default async function AdminDashboardPage({
   const range = resolveDateRange(rangeKey, searchParams.from, searchParams.to);
 
   const supabase = createClient();
+  const settings = await getSettings();
+  const threshold = settings.default_low_stock_threshold_ml;
 
   const [
     metrics,
@@ -75,6 +86,11 @@ export default async function AdminDashboardPage({
     conversion,
     attention,
     productHealth,
+    profitMetrics,
+    profitOverTime,
+    expensesOverTime,
+    expensesByCategory,
+    inventorySummary,
     { data: recentEnquiries },
     { data: recentSales },
   ] = await Promise.all([
@@ -87,8 +103,13 @@ export default async function AdminDashboardPage({
     getSalesBySource(supabase, range),
     getPaymentMethodBreakdown(supabase, range),
     getConversionRate(supabase, range),
-    getNeedsAttention(supabase),
+    getNeedsAttention(supabase, threshold),
     getProductHealth(supabase),
+    getProfitMetrics(supabase, range),
+    getProfitOverTime(supabase, range),
+    getExpensesOverTime(supabase, range),
+    getExpensesByCategory(supabase, range),
+    getInventorySummary(supabase, threshold),
     supabase.from("enquiries").select("*").order("created_at", { ascending: false }).limit(6),
     supabase.from("sales").select("*").order("sale_date", { ascending: false }).limit(6),
   ]);
@@ -187,6 +208,25 @@ export default async function AdminDashboardPage({
           </div>
         </section>
 
+        {/* --- Profit: Revenue -> Gross Profit -> Expenses -> Net Profit,
+            kept visually distinct from Overview so revenue is never mistaken
+            for profit. -------------------------------------------------- */}
+        <section>
+          <SectionHeading title="Profit" description="Derived entirely from recorded sales, inventory cost, and expenses — never a manually-entered figure." />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <MetricCard label="Product Cost" value={profitMetrics.productCost} currency icon={Wallet} accent="caution" />
+            <MetricCard label="Gross Profit" value={profitMetrics.grossProfit} currency icon={TrendingUp} accent="revenue" />
+            <MetricCard label="Total Expenses" value={profitMetrics.totalExpenses} currency icon={TrendingDown} accent="caution" />
+            <MetricCard label="Net Profit" value={profitMetrics.netProfit} currency icon={Sparkles} accent="revenue" />
+          </div>
+
+          <div className="mt-3 flex flex-wrap divide-y divide-border border border-border bg-card sm:divide-x sm:divide-y-0">
+            <HealthStat label="Juice Remaining" value={inventorySummary.juiceRemainingMl} suffix="ml" href="/admin/inventory" />
+            <HealthStat label="Tracked Perfumes" value={inventorySummary.trackedCount} href="/admin/inventory" />
+            <HealthStat label="Need Restocking" value={inventorySummary.lowOrOutCount} href="/admin/inventory?status=low_stock" />
+          </div>
+        </section>
+
         {/* --- Needs Attention: actionable, sits right under the numbers —
             this is what the owner should look at before anything else. --- */}
         <section>
@@ -200,8 +240,11 @@ export default async function AdminDashboardPage({
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <QuickLink href="/admin/products/new" icon={PackagePlus} label="Add Product" />
             <QuickLink href="/admin/sales/new" icon={ReceiptText} label="Record Sale" />
+            <QuickLink href="/admin/inventory" icon={Boxes} label="Restock" />
+            <QuickLink href="/admin/expenses/new" icon={Wallet} label="Add Expense" />
             <QuickLink href="/admin/enquiries" icon={Inbox} label="View Enquiries" />
             <QuickLink href="/admin/product-types" icon={Tags} label="Manage Product Types" />
+            <QuickLink href="/admin/reports" icon={FileBarChart} label="View Reports" />
             <QuickLink href="/api/admin/export/enquiries" icon={FileSpreadsheet} label="Export Enquiries" external />
             <QuickLink href="/api/admin/export/sales" icon={FileSpreadsheet} label="Export Sales" external />
             <QuickLink href={exportSummaryHref} icon={FileSpreadsheet} label="Export Summary" external />
@@ -260,6 +303,25 @@ export default async function AdminDashboardPage({
               <CardHeader><CardTitle>Sales by Source</CardTitle></CardHeader>
               <CardContent className="pt-0">
                 <BarBreakdownChart data={salesBySource} currency emptyMessage="No sales recorded in this period yet." />
+              </CardContent>
+            </Card>
+
+            <Card className="lg:col-span-2">
+              <CardHeader><CardTitle>Profit Over Time</CardTitle></CardHeader>
+              <CardContent className="pt-0">
+                <TimeSeriesChart data={profitOverTime} currency emptyMessage="No tracked-cost sales in this period yet." />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader><CardTitle>Expenses by Category</CardTitle></CardHeader>
+              <CardContent className="pt-0">
+                <DonutChart data={expensesByCategory} currency emptyMessage="No expenses recorded in this period yet." />
+              </CardContent>
+            </Card>
+            <Card className="lg:col-span-3">
+              <CardHeader><CardTitle>Expenses Over Time</CardTitle></CardHeader>
+              <CardContent className="pt-0">
+                <TimeSeriesChart data={expensesOverTime} currency emptyMessage="No expenses recorded in this period yet." />
               </CardContent>
             </Card>
           </div>
@@ -354,10 +416,13 @@ export default async function AdminDashboardPage({
   );
 }
 
-function HealthStat({ label, value, href }: { label: string; value: number; href: string }) {
+function HealthStat({ label, value, href, suffix }: { label: string; value: number; href: string; suffix?: string }) {
   return (
     <Link href={href} className="min-w-[7rem] flex-1 px-5 py-4 text-center transition-colors hover:bg-secondary/40">
-      <p className="font-serif text-2xl text-ink">{value}</p>
+      <p className="font-serif text-2xl text-ink">
+        {value.toLocaleString("en-GH")}
+        {suffix ?? ""}
+      </p>
       <p className="mt-1 text-[10px] font-medium uppercase tracking-widest2 text-muted-foreground">{label}</p>
     </Link>
   );

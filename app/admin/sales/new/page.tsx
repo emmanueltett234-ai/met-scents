@@ -7,8 +7,9 @@ export const dynamic = "force-dynamic";
 export default async function NewSalePage({ searchParams }: { searchParams: { enquiry_id?: string } }) {
   const supabase = createClient();
 
-  const [{ data: products }, prefillData] = await Promise.all([
-    supabase.from("products").select("id, brand, name, product_variants(id, size, price)").order("brand"),
+  const [{ data: products }, { data: trackedInventory }, prefillData] = await Promise.all([
+    supabase.from("products").select("id, brand, name, product_variants(id, size, price, size_ml)").order("brand"),
+    supabase.from("product_inventory").select("product_id"),
     searchParams.enquiry_id
       ? Promise.all([
           supabase.from("enquiries").select("*").eq("id", searchParams.enquiry_id).maybeSingle(),
@@ -39,7 +40,11 @@ export default async function NewSalePage({ searchParams }: { searchParams: { en
 
   return (
     <AdminShell title="Record Sale">
-      <SaleForm products={products ?? []} prefill={prefill} />
+      <SaleForm
+        products={products ?? []}
+        prefill={prefill}
+        trackedProductIds={(trackedInventory ?? []).map((i) => i.product_id)}
+      />
     </AdminShell>
   );
 }

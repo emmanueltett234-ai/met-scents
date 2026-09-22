@@ -19,6 +19,7 @@ interface VariantRow {
   size: string;
   price: string;
   availability: keyof typeof AVAILABILITY_LABELS;
+  size_ml: string;
 }
 
 export function ProductForm({ product, productTypes }: { product?: Product; productTypes: ProductType[] }) {
@@ -47,8 +48,9 @@ export function ProductForm({ product, productTypes }: { product?: Product; prod
           size: v.size,
           price: String(v.price),
           availability: v.availability,
+          size_ml: v.size_ml != null ? String(v.size_ml) : "",
         }))
-      : [{ size: "10ml Decant", price: "", availability: "available" }]
+      : [{ size: "10ml Decant", price: "", availability: "available", size_ml: "10" }]
   );
   const [saving, setSaving] = useState(false);
 
@@ -65,7 +67,7 @@ export function ProductForm({ product, productTypes }: { product?: Product; prod
     setVariants((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
   function addVariant() {
-    setVariants((rows) => [...rows, { size: "", price: "", availability: "available" }]);
+    setVariants((rows) => [...rows, { size: "", price: "", availability: "available", size_ml: "" }]);
   }
   function removeVariant(i: number) {
     setVariants((rows) => rows.filter((_, idx) => idx !== i));
@@ -113,6 +115,7 @@ export function ProductForm({ product, productTypes }: { product?: Product; prod
         size: v.size,
         price: v.price === "" ? 0 : Number(v.price),
         availability: v.availability,
+        size_ml: v.size_ml === "" ? undefined : Number(v.size_ml),
       })),
     };
 
@@ -258,9 +261,13 @@ export function ProductForm({ product, productTypes }: { product?: Product; prod
             <Plus className="h-3.5 w-3.5" /> Add Size
           </Button>
         </div>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Set "ml" for any size that draws from tracked inventory (e.g. a 10ml decant) so recording a sale of it deducts juice
+          automatically. Leave it blank for sizes with no inventory tracking (bundles, etc).
+        </p>
         <div className="space-y-3">
           {variants.map((v, i) => (
-            <div key={i} className="grid grid-cols-[1fr_1fr_1fr_auto] items-end gap-3">
+            <div key={i} className="grid grid-cols-[1fr_1fr_0.8fr_1fr_auto] items-end gap-3">
               <div>
                 {i === 0 && <Label className="mb-1 block">Size</Label>}
                 <Input required value={v.size} onChange={(e) => updateVariant(i, { size: e.target.value })} placeholder="10ml Decant" />
@@ -268,6 +275,17 @@ export function ProductForm({ product, productTypes }: { product?: Product; prod
               <div>
                 {i === 0 && <Label className="mb-1 block">Price (GH₵)</Label>}
                 <Input required type="number" min="0" step="0.01" value={v.price} onChange={(e) => updateVariant(i, { price: e.target.value })} />
+              </div>
+              <div>
+                {i === 0 && <Label className="mb-1 block">ml</Label>}
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={v.size_ml}
+                  onChange={(e) => updateVariant(i, { size_ml: e.target.value })}
+                  placeholder="10"
+                />
               </div>
               <div>
                 {i === 0 && <Label className="mb-1 block">Availability</Label>}

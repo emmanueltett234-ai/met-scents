@@ -17,6 +17,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
   const normalizedPreview = normalizeWhatsappNumber(whatsappNumber);
   const [email, setEmail] = useState(settings.owner_notification_email ?? "");
   const [emailEnabled, setEmailEnabled] = useState(settings.email_notifications_enabled);
+  const [lowStockThreshold, setLowStockThreshold] = useState(String(settings.default_low_stock_threshold_ml));
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -30,6 +31,7 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           owner_whatsapp_number: whatsappNumber,
           owner_notification_email: email,
           email_notifications_enabled: emailEnabled,
+          default_low_stock_threshold_ml: lowStockThreshold === "" ? undefined : Number(lowStockThreshold),
         }),
       });
       const data = await res.json();
@@ -97,6 +99,23 @@ export function SettingsForm({ settings }: { settings: StoreSettings }) {
           </p>
         </div>
         <Switch checked={emailEnabled} onCheckedChange={setEmailEnabled} />
+      </div>
+
+      <div className="border-t border-border pt-4">
+        <Label htmlFor="low_stock_threshold">Default Low-Stock Threshold (ml)</Label>
+        <Input
+          id="low_stock_threshold"
+          type="number"
+          min="0"
+          step="0.01"
+          className="mt-2 max-w-xs"
+          value={lowStockThreshold}
+          onChange={(e) => setLowStockThreshold(e.target.value)}
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          A perfume is flagged "Low Stock" once its remaining juice drops to or below this. Applies to every
+          tracked perfume unless it has its own override set on its inventory page.
+        </p>
       </div>
 
       <Button type="submit" variant="gold" size="lg" disabled={saving}>

@@ -16,11 +16,12 @@ interface ProductOption {
   id: string;
   brand: string;
   name: string;
-  product_variants?: { id: string; size: string; price: number }[];
+  product_variants?: { id: string; size: string; price: number; size_ml: number | null }[];
 }
 
 interface LineItemRow {
   product_id: string | null;
+  variant_id: string | null;
   product_name_snapshot: string;
   brand_snapshot: string;
   size_snapshot: string;
@@ -32,6 +33,7 @@ export function SaleForm({
   products,
   sale,
   prefill,
+  trackedProductIds = [],
 }: {
   products: ProductOption[];
   sale?: Sale;
@@ -41,6 +43,10 @@ export function SaleForm({
     whatsappNumber: string;
     items: { product_id: string | null; product_name: string; brand: string; size: string; price: number; quantity: number }[];
   };
+  // Products that have inventory tracking set up (a product_inventory row).
+  // Only used for the informational "ml deducted" preview below each line —
+  // actual deduction/cost is always computed server-side.
+  trackedProductIds?: string[];
 }) {
   const router = useRouter();
   const isEdit = Boolean(sale);
@@ -58,6 +64,7 @@ export function SaleForm({
   const initialItems: LineItemRow[] = sale?.sale_items
     ? sale.sale_items.map((i) => ({
         product_id: i.product_id,
+        variant_id: i.variant_id,
         product_name_snapshot: i.product_name_snapshot,
         brand_snapshot: i.brand_snapshot ?? "",
         size_snapshot: i.size_snapshot,
@@ -65,14 +72,22 @@ export function SaleForm({
         unit_price: i.unit_price,
       }))
     : prefill
-    ? prefill.items.map((i) => ({
-        product_id: i.product_id,
-        product_name_snapshot: i.product_name,
-        brand_snapshot: i.brand,
-        size_snapshot: i.size,
-        quantity: i.quantity,
-        unit_price: i.price,
-      }))
+    ? prefill.items.map((i) => {
+        // enquiry_items has no variant_id column, so resolve one by
+        // matching the enquiry's recorded size text against the product's
+        // actual variants — best-effort, never fabricated if no match.
+        const product = products.find((p) => p.id === i.product_id);
+        const variant = product?.product_variants?.find((v) => v.size === i.size);
+        return {
+          product_id: i.product_id,
+          variant_id: variant?.id ?? null,
+          product_name_snapshot: i.product_name,
+          brand_snapshot: i.brand,
+          size_snapshot: i.size,
+          quantity: i.quantity,
+          unit_price: i.price,
+        };
+      })
     : [];
 
   const [items, setItems] = useState<LineItemRow[]>(initialItems);
@@ -100,6 +115,7 @@ export function SaleForm({
     const firstVariant = product?.product_variants?.[0];
     updateItem(i, {
       product_id: productId,
+      variant_id: firstVariant?.id ?? null,
       product_name_snapshot: product?.name ?? "",
       brand_snapshot: product?.brand ?? "",
       size_snapshot: firstVariant?.size ?? "",
@@ -108,7 +124,10 @@ export function SaleForm({
   }
 
   function addItem() {
-    setItems((rows) => [...rows, { product_id: null, product_name_snapshot: "", brand_snapshot: "", size_snapshot: "", quantity: 1, unit_price: 0 }]);
+    setItems((rows) => [
+      ...rows,
+      { product_id: null, variant_id: null, product_name_snapshot: "", brand_snapshot: "", size_snapshot: "", quantity: 1, unit_price: 0 },
+    ]);
   }
   function removeItem(i: number) {
     setItems((rows) => {
@@ -144,6 +163,7 @@ export function SaleForm({
           .filter((i) => i.product_name_snapshot.trim() && i.size_snapshot.trim())
           .map((i) => ({
             product_id: i.product_id,
+            variant_id: i.variant_id,
             product_name_snapshot: i.product_name_snapshot.trim(),
             brand_snapshot: i.brand_snapshot.trim() || undefined,
             size_snapshot: i.size_snapshot.trim(),
@@ -254,7 +274,9 @@ export function SaleForm({
                   <select
                     className="mt-1 w-full border border-border bg-white px-2 py-2 text-sm"
                     value={item.product_id ?? ""}
-                    onChange={(e) => (e.target.value ? selectProductForRow(i, e.target.value) : updateItem(i, { product_id: null }))}
+                    onChange={(e) =>
+                      e.target.value ? selectProductForRow(i, e.target.value) : updateItem(i, { product_id: null, variant_id: null })
+                    }
                   >
                     <option value="">Custom item…</option>
                     {products.map((p) => (
@@ -275,15 +297,19 @@ export function SaleForm({
                   {item.product_id ? (
                     <select
                       className="mt-1 w-full border border-border bg-white px-2 py-2 text-sm"
-                      value={item.size_snapshot}
+                      value={item.variant_id ?? ""}
                       onChange={(e) => {
                         const product = products.find((p) => p.id === item.product_id);
-                        const variant = product?.product_variants?.find((v) => v.size === e.target.value);
-                        updateItem(i, { size_snapshot: e.target.value, unit_price: variant?.price ?? item.unit_price });
+                        const variant = product?.product_variants?.find((v) => v.id === e.target.value);
+                        updateItem(i, {
+                          variant_id: variant?.id ?? null,
+                          size_snapshot: variant?.size ?? item.size_snapshot,
+                          unit_price: variant?.price ?? item.unit_price,
+                        });
                       }}
                     >
                       {(products.find((p) => p.id === item.product_id)?.product_variants ?? []).map((v) => (
-                        <option key={v.id} value={v.size}>{v.size}</option>
+                        <option key={v.id} value={v.id}>{v.size}</option>
                       ))}
                     </select>
                   ) : (
@@ -314,6 +340,19 @@ export function SaleForm({
                 <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(i)} aria-label="Remove item">
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
+                {(() => {
+                  if (!item.product_id) return null;
+                  const variant = products.find((p) => p.id === item.product_id)?.product_variants?.find((v) => v.id === item.variant_id);
+                  if (!variant?.size_ml) return null;
+                  const tracked = trackedProductIds.includes(item.product_id);
+                  return (
+                    <p className="w-full text-xs text-muted-foreground">
+                      {tracked
+                        ? `Deducts ${(variant.size_ml * item.quantity).toLocaleString()}ml from inventory on save.`
+                        : `This size is ${variant.size_ml}ml, but inventory tracking isn't set up for this perfume yet — no ml will be deducted.`}
+                    </p>
+                  );
+                })()}
               </div>
             ))}
           </div>
