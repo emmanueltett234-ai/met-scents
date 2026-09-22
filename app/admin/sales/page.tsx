@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, FileSpreadsheet, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, FileSpreadsheet, ChevronLeft, ChevronRight, BarChart3 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { SaleFilters } from "@/components/admin/sales/sale-filters";
 import { Badge } from "@/components/ui/badge";
@@ -65,6 +65,18 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  const saleIds = (sales ?? []).map((s) => s.id);
+  const { data: items } = saleIds.length
+    ? await supabase
+        .from("sale_items")
+        .select("sale_id, product_name_snapshot, size_snapshot, quantity, ml_deducted")
+        .in("sale_id", saleIds)
+    : { data: [] };
+  const itemsBySale = new Map<string, NonNullable<typeof items>>();
+  for (const item of items ?? []) {
+    itemsBySale.set(item.sale_id, [...(itemsBySale.get(item.sale_id) ?? []), item]);
+  }
+
   function pageHref(p: number) {
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries(searchParams)) if (v && k !== "page") params.set(k, v);
@@ -81,8 +93,10 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
   return (
     <AdminShell
       title="Sales"
+      description="See what's sold at a glance below, or open Sales Analytics for totals by perfume and by size (e.g. how many 10ml decants sold)."
       action={
         <div className="flex gap-2">
+          <Button asChild variant="outline" size="sm"><Link href="/admin/sales/analytics"><BarChart3 className="h-4 w-4" /> Best-Sellers</Link></Button>
           <Button asChild variant="outline" size="sm"><a href={exportHref}><FileSpreadsheet className="h-4 w-4" /> Export</a></Button>
           <Button asChild size="sm"><Link href="/admin/sales/new"><Plus className="h-4 w-4" /> Record Sale</Link></Button>
         </div>
@@ -100,6 +114,7 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
             <TableHeader>
               <TableRow>
                 <TableHead>Customer</TableHead>
+                <TableHead>Items Sold</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>Sale Amount</TableHead>
                 <TableHead>Payment Method</TableHead>
@@ -107,21 +122,43 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sales.map((s) => (
-                <TableRow key={s.id} className="cursor-pointer">
-                  <TableCell>
-                    <Link href={`/admin/sales/${s.id}`} className="font-medium hover:text-accent-dark">
-                      {s.customer_name}
-                    </Link>
-                  </TableCell>
-                  <TableCell><Badge variant="outline">{SALE_SOURCE_LABELS[s.source as SaleSource]}</Badge></TableCell>
-                  <TableCell className="text-sm">{formatGHS(Number(s.sale_amount))}</TableCell>
-                  <TableCell className="text-sm">{PAYMENT_METHOD_LABELS[s.payment_method as PaymentMethod]}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    {new Date(s.sale_date).toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {sales.map((s) => {
+                const saleItems = itemsBySale.get(s.id) ?? [];
+                const totalMlDeducted = saleItems.reduce((sum, i) => sum + Number(i.ml_deducted ?? 0), 0);
+                return (
+                  <TableRow key={s.id} className="cursor-pointer">
+                    <TableCell>
+                      <Link href={`/admin/sales/${s.id}`} className="font-medium hover:text-accent-dark">
+                        {s.customer_name}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="max-w-[260px] text-sm">
+                      {saleItems.length === 0 ? (
+                        <span className="text-xs text-muted-foreground">No items recorded</span>
+                      ) : (
+                        <>
+                          <div className="space-y-0.5">
+                            {saleItems.map((i, idx) => (
+                              <p key={idx} className="truncate">
+                                {i.quantity}× {i.product_name_snapshot} <span className="text-muted-foreground">({i.size_snapshot})</span>
+                              </p>
+                            ))}
+                          </div>
+                          {totalMlDeducted > 0 && (
+                            <p className="mt-0.5 text-xs text-muted-foreground">{totalMlDeducted.toLocaleString()}ml deducted</p>
+                          )}
+                        </>
+                      )}
+                    </TableCell>
+                    <TableCell><Badge variant="outline">{SALE_SOURCE_LABELS[s.source as SaleSource]}</Badge></TableCell>
+                    <TableCell className="text-sm">{formatGHS(Number(s.sale_amount))}</TableCell>
+                    <TableCell className="text-sm">{PAYMENT_METHOD_LABELS[s.payment_method as PaymentMethod]}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {new Date(s.sale_date).toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
 
