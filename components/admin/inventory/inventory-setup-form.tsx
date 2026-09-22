@@ -15,12 +15,10 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
 
   const [bottleSizeMl, setBottleSizeMl] = useState(inventory ? String(inventory.bottle_size_ml) : "");
   const [decantSizeMl, setDecantSizeMl] = useState(inventory ? String(inventory.decant_size_ml) : "10");
-  const [atomizerCost, setAtomizerCost] = useState(inventory ? String(inventory.atomizer_cost) : "0");
-  const [labelCost, setLabelCost] = useState(inventory ? String(inventory.label_cost) : "0");
-  const [packagingCost, setPackagingCost] = useState(inventory ? String(inventory.packaging_cost) : "0");
+  // Only used on first setup — it becomes the first restock automatically,
+  // so there's no separate "Restock" click needed to log the initial bottle.
+  const [costOfPerfume, setCostOfPerfume] = useState("");
   const [pouchCost, setPouchCost] = useState(inventory ? String(inventory.pouch_cost) : "0");
-  const [shippingCost, setShippingCost] = useState(inventory ? String(inventory.shipping_cost) : "0");
-  const [otherCost, setOtherCost] = useState(inventory ? String(inventory.other_cost) : "0");
   const [sellingPrice, setSellingPrice] = useState(inventory ? String(inventory.selling_price_per_decant) : "");
   const [threshold, setThreshold] = useState(inventory?.low_stock_threshold_ml != null ? String(inventory.low_stock_threshold_ml) : "");
   const [saving, setSaving] = useState(false);
@@ -29,18 +27,25 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
     e.preventDefault();
     setSaving(true);
 
+    const bottleSize = bottleSizeMl === "" ? 0 : Number(bottleSizeMl);
     const payload = {
       product_id: productId,
-      bottle_size_ml: bottleSizeMl === "" ? 0 : Number(bottleSizeMl),
+      bottle_size_ml: bottleSize,
       decant_size_ml: decantSizeMl === "" ? 10 : Number(decantSizeMl),
-      atomizer_cost: Number(atomizerCost) || 0,
-      label_cost: Number(labelCost) || 0,
-      packaging_cost: Number(packagingCost) || 0,
       pouch_cost: Number(pouchCost) || 0,
-      shipping_cost: Number(shippingCost) || 0,
-      other_cost: Number(otherCost) || 0,
       selling_price_per_decant: sellingPrice === "" ? 0 : Number(sellingPrice),
       low_stock_threshold_ml: threshold === "" ? null : Number(threshold),
+      // These fields no longer have inputs on this form, but PATCH replaces
+      // every cost column unconditionally — pass the existing values through
+      // untouched so editing an already-tracked perfume can never silently
+      // zero out a cost it had saved before this form was simplified.
+      ...(inventory && {
+        atomizer_cost: inventory.atomizer_cost,
+        label_cost: inventory.label_cost,
+        packaging_cost: inventory.packaging_cost,
+        shipping_cost: inventory.shipping_cost,
+        other_cost: inventory.other_cost,
+      }),
     };
 
     try {
@@ -52,7 +57,28 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save inventory settings");
 
-      toast.success(isEdit ? "Inventory settings updated" : "Inventory tracking set up — record a restock below to add stock");
+      if (!isEdit) {
+        // Fold the perfume's own cost into setup: the bottle just
+        // configured above becomes the first restock, so nothing has to be
+        // added separately via the Restock button to have real stock.
+        const restockRes = await fetch(`/api/admin/inventory/${productId}/purchases`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bottle_size_ml: bottleSize,
+            ml_added: bottleSize,
+            cost_price: costOfPerfume === "" ? 0 : Number(costOfPerfume),
+            purchase_date: new Date().toISOString(),
+            notes: "Initial stock (added during setup)",
+          }),
+        });
+        if (!restockRes.ok) {
+          const restockData = await restockRes.json().catch(() => ({}));
+          throw new Error(restockData.error || "Inventory was set up, but adding the initial stock failed — restock it manually below.");
+        }
+      }
+
+      toast.success(isEdit ? "Inventory settings updated" : "Inventory set up with its first stock");
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -65,8 +91,8 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {!isEdit && (
         <p className="text-sm text-muted-foreground">
-          Set the bottle/decant sizes and costs for this perfume. This doesn&apos;t add any stock yet — after saving,
-          record your first restock below.
+          Set the bottle/decant sizes and what you paid for this bottle — saving logs it as your first stock, no
+          separate restock needed. Use the "Restock" button later for any bottle you buy after this one.
         </p>
       )}
 
@@ -101,6 +127,23 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
         </div>
       </div>
 
+      {!isEdit && (
+        <div>
+          <Label htmlFor="cost_of_perfume">Cost of This Bottle (GH₵) *</Label>
+          <Input
+            id="cost_of_perfume"
+            required
+            type="number"
+            min="0"
+            step="0.01"
+            className="mt-2 max-w-xs"
+            value={costOfPerfume}
+            onChange={(e) => setCostOfPerfume(e.target.value)}
+            placeholder="What you paid for it"
+          />
+        </div>
+      )}
+
       <div>
         <Label htmlFor="selling_price">Selling Price Per Decant (GH₵) *</Label>
         <Input
@@ -116,29 +159,16 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
       </div>
 
       <div>
-        <Label className="mb-2 block">Additional Cost Per Decant (GH₵)</Label>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            ["Atomizer", atomizerCost, setAtomizerCost],
-            ["Label", labelCost, setLabelCost],
-            ["Packaging", packagingCost, setPackagingCost],
-            ["Pouch/Box", pouchCost, setPouchCost],
-            ["Shipping", shippingCost, setShippingCost],
-            ["Other", otherCost, setOtherCost],
-          ].map(([label, value, setter]) => (
-            <div key={label as string}>
-              <Label className="text-xs text-muted-foreground">{label as string}</Label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                className="mt-1"
-                value={value as string}
-                onChange={(e) => (setter as (v: string) => void)(e.target.value)}
-              />
-            </div>
-          ))}
-        </div>
+        <Label htmlFor="pouch_cost">Pouch/Box Cost Per Decant (GH₵)</Label>
+        <Input
+          id="pouch_cost"
+          type="number"
+          min="0"
+          step="0.01"
+          className="mt-2 max-w-xs"
+          value={pouchCost}
+          onChange={(e) => setPouchCost(e.target.value)}
+        />
       </div>
 
       <div>
