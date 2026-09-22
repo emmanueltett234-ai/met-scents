@@ -12,11 +12,19 @@ import type { ProductInventory } from "@/types";
 export function InventorySetupForm({ productId, inventory }: { productId: string; inventory: ProductInventory | null }) {
   const router = useRouter();
   const isEdit = Boolean(inventory);
+  // Not just "is this a brand-new setup" — a perfume that already has an
+  // inventory record but has never actually been stocked (0ml, e.g. it was
+  // set up before a restock was ever logged) needs this exact same "add
+  // your first stock" field, or there's no way to tell it has zero stock
+  // short of finding the separate Restock button.
+  const needsFirstStock = !inventory || Number(inventory.current_ml) <= 0;
 
   const [bottleSizeMl, setBottleSizeMl] = useState(inventory ? String(inventory.bottle_size_ml) : "");
   const [decantSizeMl, setDecantSizeMl] = useState(inventory ? String(inventory.decant_size_ml) : "10");
-  // Only used on first setup — it becomes the first restock automatically,
-  // so there's no separate "Restock" click needed to log the initial bottle.
+  // Becomes a restock automatically on save when there's no stock yet, so
+  // there's no separate "Restock" click needed just to get real stock on
+  // the books. Left blank, nothing is restocked — editing other settings
+  // on an out-of-stock perfume doesn't force a purchase to be logged.
   const [costOfPerfume, setCostOfPerfume] = useState("");
   const [pouchCost, setPouchCost] = useState(inventory ? String(inventory.pouch_cost) : "0");
   const [sellingPrice, setSellingPrice] = useState(inventory ? String(inventory.selling_price_per_decant) : "");
@@ -57,28 +65,31 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save inventory settings");
 
-      if (!isEdit) {
-        // Fold the perfume's own cost into setup: the bottle just
-        // configured above becomes the first restock, so nothing has to be
-        // added separately via the Restock button to have real stock.
+      let stocked = false;
+      if (needsFirstStock && costOfPerfume !== "" && bottleSize > 0) {
+        // Fold the perfume's own cost into this save: the bottle just
+        // configured above becomes a restock, so nothing has to be added
+        // separately via the Restock button to have real stock.
         const restockRes = await fetch(`/api/admin/inventory/${productId}/purchases`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             bottle_size_ml: bottleSize,
             ml_added: bottleSize,
-            cost_price: costOfPerfume === "" ? 0 : Number(costOfPerfume),
+            cost_price: Number(costOfPerfume),
             purchase_date: new Date().toISOString(),
             notes: "Initial stock (added during setup)",
           }),
         });
         if (!restockRes.ok) {
           const restockData = await restockRes.json().catch(() => ({}));
-          throw new Error(restockData.error || "Inventory was set up, but adding the initial stock failed — restock it manually below.");
+          throw new Error(restockData.error || "Inventory was saved, but adding the stock failed — restock it manually below.");
         }
+        stocked = true;
+        setCostOfPerfume("");
       }
 
-      toast.success(isEdit ? "Inventory settings updated" : "Inventory set up with its first stock");
+      toast.success(!isEdit ? (stocked ? "Inventory set up with its first stock" : "Inventory set up") : stocked ? "Stock added" : "Inventory settings updated");
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -93,6 +104,12 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
         <p className="text-sm text-muted-foreground">
           Set the bottle/decant sizes and what you paid for this bottle — saving logs it as your first stock, no
           separate restock needed. Use the "Restock" button later for any bottle you buy after this one.
+        </p>
+      )}
+      {isEdit && needsFirstStock && (
+        <p className="text-sm text-destructive">
+          This perfume has no stock on the books yet — it will show as Out of Stock until you add its cost below
+          (or use the "Restock" button above).
         </p>
       )}
 
@@ -127,12 +144,12 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
         </div>
       </div>
 
-      {!isEdit && (
+      {needsFirstStock && (
         <div>
-          <Label htmlFor="cost_of_perfume">Cost of This Bottle (GH₵) *</Label>
+          <Label htmlFor="cost_of_perfume">Cost of This Bottle (GH₵){!isEdit && " *"}</Label>
           <Input
             id="cost_of_perfume"
-            required
+            required={!isEdit}
             type="number"
             min="0"
             step="0.01"
@@ -141,6 +158,12 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
             onChange={(e) => setCostOfPerfume(e.target.value)}
             placeholder="What you paid for it"
           />
+          {isEdit && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Fill this in to log the bottle above as stock. Leave it blank to save the other settings without
+              adding stock.
+            </p>
+          )}
         </div>
       )}
 
