@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, FileSpreadsheet, ChevronLeft, ChevronRight, BarChart3 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { SaleFilters } from "@/components/admin/sales/sale-filters";
+import { SaleRow } from "@/components/admin/sales/sale-row";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -126,7 +127,7 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
                 const saleItems = itemsBySale.get(s.id) ?? [];
                 const totalMlDeducted = saleItems.reduce((sum, i) => sum + Number(i.ml_deducted ?? 0), 0);
                 return (
-                  <TableRow key={s.id} className="cursor-pointer">
+                  <SaleRow key={s.id} href={`/admin/sales/${s.id}`}>
                     <TableCell>
                       <Link href={`/admin/sales/${s.id}`} className="font-medium hover:text-accent-dark">
                         {s.customer_name}
@@ -156,7 +157,7 @@ export default async function AdminSalesPage({ searchParams }: { searchParams: S
                     <TableCell className="text-xs text-muted-foreground">
                       {new Date(s.sale_date).toLocaleString("en-GH", { dateStyle: "medium", timeStyle: "short" })}
                     </TableCell>
-                  </TableRow>
+                  </SaleRow>
                 );
               })}
             </TableBody>
