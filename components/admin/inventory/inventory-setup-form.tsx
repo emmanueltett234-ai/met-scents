@@ -126,7 +126,13 @@ export function InventorySetupForm({ productId, inventory }: { productId: string
             value={bottleSizeMl}
             onChange={(e) => setBottleSizeMl(e.target.value)}
             placeholder="100"
+            disabled={isEdit && !needsFirstStock}
           />
+          {isEdit && !needsFirstStock && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Set by your last restock. Use the "Restock" button above to log a new bottle.
+            </p>
+          )}
         </div>
         <div>
           <Label htmlFor="decant_size_ml">Decant Size (ml) *</Label>
