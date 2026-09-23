@@ -57,6 +57,9 @@ export const metadata: Metadata = {
     siteName,
     type: "website",
   },
+  verification: {
+    google: "vDHXy6Mmge3ohUxgolp_gFc6ZIoipoUOh1rP3ygrtMQ",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
