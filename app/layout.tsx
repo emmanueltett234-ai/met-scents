@@ -46,14 +46,15 @@ const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Met Scents";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} · Discover Your Signature Scent`,
-    template: `%s · ${siteName}`,
+    default: `${siteName} | Authentic Perfumes & Decants in Ghana`,
+    template: `%s | ${siteName}`,
   },
+  // Kept under ~155 characters so Google shows it whole instead of cutting it off.
   description:
-    "A curated boutique of authentic, premium fragrances in Ghana, offering decants and full bottles. Browse the collection and send your selection, no checkout required.",
+    "Authentic perfumes in Ghana, in 10ml decants and full bottles. Browse the collection and order on WhatsApp, with clear Cedi pricing on every size.",
   openGraph: {
-    title: `${siteName} · Discover Your Signature Scent`,
-    description: "Explore our curated collection of premium fragrances, available in full bottles and decants.",
+    title: `${siteName} | Authentic Perfumes & Decants in Ghana`,
+    description: "Authentic perfumes in Ghana, in 10ml decants and full bottles. Order on WhatsApp.",
     siteName,
     type: "website",
   },

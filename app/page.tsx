@@ -41,12 +41,38 @@ const REASONS = [
   },
 ];
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Met Scents";
+
+const SITE_JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    alternateName: ["MetScents", "metscents.com"],
+    url: `${siteUrl}/`,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteName,
+    url: `${siteUrl}/`,
+    logo: `${siteUrl}/icon.png`,
+  },
+];
+
 export default async function HomePage() {
   const featured = await getFeaturedProducts(8);
   const heroProduct = featured[0];
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        // Tells Google the site's name is "Met Scents" (shown above the
+        // result instead of the bare domain) and which logo belongs to it.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SITE_JSON_LD) }}
+      />
       {/* ---------------------------------------------------------------- */}
       {/* Hero — the product is the protagonist, not a watermark behind    */}
       {/* the copy: a single bottle staged large against a warm gold glow  */}
